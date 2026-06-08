@@ -519,6 +519,135 @@
       display: none;
     }
 
+    body.mobile-mode header {
+      position: static;
+      gap: 0.55rem;
+      padding: 0.65rem 0.75rem;
+    }
+
+    body.mobile-mode h1 {
+      font-size: 1.05rem;
+    }
+
+    body.mobile-mode header .hint {
+      display: none;
+    }
+
+    body.mobile-mode .author-line {
+      font-size: 0.76rem;
+      margin-top: 0.18rem;
+    }
+
+    body.mobile-mode .header-actions {
+      width: 100%;
+      gap: 0.4rem;
+    }
+
+    body.mobile-mode main {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      padding: 0.5rem;
+      max-width: 100%;
+    }
+
+    body.mobile-mode .stage {
+      order: 1;
+      min-height: auto;
+      grid-template-rows: auto minmax(56vh, 1fr) auto;
+    }
+
+    body.mobile-mode .controls {
+      order: 2;
+      max-height: 42vh;
+      padding: 0.65rem;
+      gap: 0.65rem;
+    }
+
+    body.mobile-mode .test-panel {
+      order: 3;
+      max-height: none;
+      padding: 0.65rem;
+    }
+
+    body.mobile-mode.hide-test .test-panel {
+      display: none;
+    }
+
+    body.mobile-mode .canvas-top {
+      padding: 0.5rem;
+      gap: 0.45rem;
+    }
+
+    body.mobile-mode .canvas-title strong {
+      font-size: 0.9rem;
+    }
+
+    body.mobile-mode .canvas-title span {
+      font-size: 0.78rem;
+    }
+
+    body.mobile-mode .canvas-wrap {
+      min-height: 56vh;
+      height: 56vh;
+      touch-action: none;
+    }
+
+    body.mobile-mode canvas {
+      min-height: 56vh;
+    }
+
+    body.mobile-mode .small-actions {
+      gap: 0.35rem;
+    }
+
+    body.mobile-mode .small-actions button,
+    body.mobile-mode .small-actions select,
+    body.mobile-mode .pill {
+      min-height: 36px;
+      padding: 0.42rem 0.55rem;
+      font-size: 0.82rem;
+    }
+
+    body.mobile-mode .search-actions {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-bottom: 0.2rem;
+    }
+
+    body.mobile-mode .readouts {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      padding: 0.45rem;
+      gap: 0.35rem;
+    }
+
+    body.mobile-mode .readout {
+      min-height: 52px;
+      padding: 0.42rem;
+    }
+
+    body.mobile-mode .readout span {
+      font-size: 0.68rem;
+    }
+
+    body.mobile-mode .readout strong {
+      font-size: 0.8rem;
+    }
+
+    body.mobile-mode .group {
+      gap: 0.45rem;
+    }
+
+    body.mobile-mode .lesson-card,
+    body.mobile-mode .source-panel {
+      display: none;
+    }
+
+    body.mobile-mode .formula-list {
+      grid-template-columns: 1fr;
+    }
+
     .panel {
       background: var(--panel);
       border: 1px solid var(--line);
@@ -1174,6 +1303,7 @@
       </div>
       <div class="header-actions">
         <span class="pill" id="clock">Autotest: 20:00</span>
+        <button class="toggle" id="mobileModeBtnTop">Celular OFF</button>
         <button class="primary" id="startTestBtn">Iniciar autotest</button>
       </div>
     </header>
@@ -1224,6 +1354,7 @@
             <button class="toggle" id="measurePanelBtn">Medidas ON/OFF</button>
             <button class="toggle active" id="testPanelBtn">Autotest ON</button>
             <button class="toggle" id="presentationModeBtn">Modo presentacion OFF</button>
+            <button class="toggle" id="mobileModeBtn">Modo celular OFF</button>
             <button class="toggle active" id="sourcesPanelBtn">Fuentes y modelo fisico ON</button>
           </div>
         </section>
@@ -1531,6 +1662,7 @@
       panelTest: true,
       panelSources: true,
       presentationMode: false,
+      mobileMode: false,
       radialGraphSize: "medium",
       radialGraphPlace: "inside",
       showSolution: false,
@@ -3617,6 +3749,7 @@
       if (arcControls) arcControls.hidden = !state.arc;
       document.body.classList.toggle("hide-test", !state.panelTest);
       document.body.classList.toggle("presentation-mode", state.presentationMode);
+      document.body.classList.toggle("mobile-mode", state.mobileMode);
       const testBtn = document.getElementById("testPanelBtn");
       if (testBtn) {
         testBtn.classList.toggle("active", state.panelTest);
@@ -3627,6 +3760,13 @@
         presentationBtn.classList.toggle("active", state.presentationMode);
         presentationBtn.textContent = state.presentationMode ? "Modo presentacion ON" : "Modo presentacion OFF";
       }
+      const mobileBtns = [document.getElementById("mobileModeBtn"), document.getElementById("mobileModeBtnTop")].filter(Boolean);
+      mobileBtns.forEach(btn => {
+        btn.classList.toggle("active", state.mobileMode);
+        btn.textContent = btn.id === "mobileModeBtnTop"
+          ? (state.mobileMode ? "Celular ON" : "Celular OFF")
+          : (state.mobileMode ? "Modo celular ON" : "Modo celular OFF");
+      });
       document.querySelectorAll(".source-panel").forEach(panel => {
         panel.hidden = !state.panelSources;
       });
@@ -4020,6 +4160,16 @@
     document.getElementById("measurePanelBtn").addEventListener("click", (e) => togglePanel("panelMeasurements", e.currentTarget));
     document.getElementById("testPanelBtn").addEventListener("click", (e) => togglePanel("panelTest", e.currentTarget));
     document.getElementById("presentationModeBtn").addEventListener("click", (e) => togglePanel("presentationMode", e.currentTarget));
+    document.getElementById("mobileModeBtn").addEventListener("click", () => {
+      state.mobileMode = !state.mobileMode;
+      updatePanelVisibility();
+      requestAnimationFrame(resizeCanvas);
+    });
+    document.getElementById("mobileModeBtnTop").addEventListener("click", () => {
+      state.mobileMode = !state.mobileMode;
+      updatePanelVisibility();
+      requestAnimationFrame(resizeCanvas);
+    });
     document.getElementById("sourcesPanelBtn").addEventListener("click", (e) => togglePanel("panelSources", e.currentTarget));
     document.getElementById("solutionBtn").addEventListener("click", (e) => {
       toggle("showSolution", e.currentTarget);
