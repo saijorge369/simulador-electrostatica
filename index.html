@@ -1,0 +1,4668 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Simulador de Campo Electrico, Potencial y Energia</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172026;
+      --muted: #5f6f79;
+      --line: #ccd7dc;
+      --panel: #f8fbfc;
+      --soft: #eaf2f4;
+      --brand: #006d77;
+      --brand-2: #7a4f01;
+      --on-brand: #ffffff;
+      --good: #1b7f45;
+      --bad: #ad2f2f;
+      --warn: #b76e00;
+      --pos: #d73737;
+      --neg: #2468c9;
+      --paper: #ffffff;
+      --canvas-bg: #ffffff;
+      --grid: #e6eef1;
+      --axis: #c7d5da;
+      --cavity: #eef6f8;
+      --shell-fill: rgba(226, 238, 240, 0.92);
+      --dielectric-fill: rgba(126, 205, 176, 0.26);
+      --shell-stroke: #607d87;
+      --hover-bg: #fafdff;
+      --active-bg: #dff3f0;
+      --active-ink: #034f56;
+      --readout-bg: #fbfdfe;
+      --option-bg: #fbfdfe;
+      --answer-bg: #fff8e6;
+      --answer-ink: #4e3b06;
+      --result-bg: #fffdf7;
+      --task-bg: #f9fcfd;
+      --task-ink: #334950;
+    }
+
+    body.theme-dark {
+      color-scheme: dark;
+      --ink: #edf6f9;
+      --muted: #aec2cb;
+      --line: #33515c;
+      --panel: #13252c;
+      --soft: #1f3942;
+      --brand: #4cc9c0;
+      --brand-2: #ffd166;
+      --on-brand: #061317;
+      --pos: #ff5a5f;
+      --neg: #62a8ff;
+      --paper: #0c171c;
+      --canvas-bg: #071115;
+      --grid: #1c333b;
+      --axis: #3c6570;
+      --cavity: #10242c;
+      --shell-fill: rgba(46, 77, 87, 0.9);
+      --dielectric-fill: rgba(77, 168, 143, 0.26);
+      --shell-stroke: #7296a0;
+      --hover-bg: #1d343d;
+      --active-bg: #173f45;
+      --active-ink: #e9fdff;
+      --readout-bg: #0f2027;
+      --option-bg: #14272f;
+      --answer-bg: #3d3219;
+      --answer-ink: #fff0bd;
+      --result-bg: #172a2f;
+      --task-bg: #152a32;
+      --task-ink: #e8f6f8;
+    }
+
+    body.theme-geogebra {
+      --ink: #222222;
+      --muted: #555f68;
+      --line: #c7d2dc;
+      --panel: #f6f9fc;
+      --soft: #e9f2ff;
+      --brand: #1565c0;
+      --brand-2: #f57c00;
+      --on-brand: #ffffff;
+      --pos: #c62828;
+      --neg: #1565c0;
+      --paper: #ffffff;
+      --canvas-bg: #ffffff;
+      --grid: #d6e4f0;
+      --axis: #5f7f97;
+      --cavity: #edf6ff;
+      --shell-fill: rgba(224, 235, 243, 0.95);
+      --dielectric-fill: rgba(126, 191, 151, 0.28);
+      --shell-stroke: #607d87;
+      --hover-bg: #eef6ff;
+      --active-bg: #e3f0ff;
+      --active-ink: #0d47a1;
+      --readout-bg: #f7fbff;
+      --option-bg: #fbfdff;
+      --answer-bg: #fff4df;
+      --answer-ink: #5d3700;
+      --result-bg: #fffaf0;
+      --task-bg: #f5fbff;
+      --task-ink: #263f56;
+    }
+
+    body.theme-phet {
+      --ink: #1f2440;
+      --muted: #5c607d;
+      --line: #c7b7ff;
+      --panel: #e8ddff;
+      --soft: #ffd6e8;
+      --brand: #6947e8;
+      --brand-2: #ff8a5c;
+      --on-brand: #ffffff;
+      --pos: #ff5d7a;
+      --neg: #4f8cff;
+      --paper: #fff0c7;
+      --canvas-bg: #d5f7ff;
+      --grid: #aee6f4;
+      --axis: #6e68b5;
+      --cavity: #eff6ff;
+      --shell-fill: rgba(255, 214, 232, 0.88);
+      --dielectric-fill: rgba(142, 236, 200, 0.36);
+      --shell-stroke: #7c5cff;
+      --hover-bg: #f5dcff;
+      --active-bg: #c7f5d9;
+      --active-ink: #173725;
+      --readout-bg: #fff7db;
+      --option-bg: #fff7db;
+      --answer-bg: #d9fbe7;
+      --answer-ink: #173725;
+      --result-bg: #ffe5ef;
+      --task-bg: #e3f8ff;
+      --task-ink: #24304f;
+    }
+
+    body.theme-mit {
+      --ink: #151515;
+      --muted: #666666;
+      --line: #d0d0d0;
+      --panel: #f7f7f7;
+      --soft: #ececec;
+      --brand: #a31f34;
+      --brand-2: #8a8b8c;
+      --on-brand: #ffffff;
+      --pos: #a31f34;
+      --neg: #2f5597;
+      --paper: #ffffff;
+      --canvas-bg: #ffffff;
+      --grid: #e5e5e5;
+      --axis: #a7a7a7;
+      --cavity: #f0f0f0;
+      --shell-fill: rgba(225, 225, 225, 0.95);
+      --dielectric-fill: rgba(150, 185, 165, 0.28);
+      --shell-stroke: #737373;
+      --hover-bg: #f1f1f1;
+      --active-bg: #f3e2e5;
+      --active-ink: #7b1727;
+      --readout-bg: #fbfbfb;
+      --option-bg: #fbfbfb;
+      --answer-bg: #fff5e5;
+      --answer-ink: #4e3100;
+      --result-bg: #fffdf7;
+      --task-bg: #f9f9f9;
+      --task-ink: #303030;
+    }
+
+    body.theme-minimal {
+      --ink: #111111;
+      --muted: #6a6a6a;
+      --line: #dddddd;
+      --panel: #fafafa;
+      --soft: #f1f1f1;
+      --brand: #222222;
+      --brand-2: #555555;
+      --on-brand: #ffffff;
+      --pos: #111111;
+      --neg: #777777;
+      --paper: #ffffff;
+      --canvas-bg: #ffffff;
+      --grid: #eeeeee;
+      --axis: #bbbbbb;
+      --cavity: #f4f4f4;
+      --shell-fill: rgba(230, 230, 230, 0.95);
+      --dielectric-fill: rgba(190, 190, 190, 0.26);
+      --shell-stroke: #777777;
+      --hover-bg: #f3f3f3;
+      --active-bg: #eeeeee;
+      --active-ink: #111111;
+      --readout-bg: #fbfbfb;
+      --option-bg: #fbfbfb;
+      --answer-bg: #f2f2f2;
+      --answer-ink: #111111;
+      --result-bg: #fbfbfb;
+      --task-bg: #f7f7f7;
+      --task-ink: #222222;
+    }
+
+    body.theme-pixar {
+      --ink: #152033;
+      --muted: #41566f;
+      --line: #3c8dc6;
+      --panel: #bde7ff;
+      --soft: #ffe98a;
+      --brand: #ffb703;
+      --brand-2: #e63946;
+      --on-brand: #061317;
+      --pos: #ff4d5a;
+      --neg: #2777ff;
+      --paper: #fff2a8;
+      --canvas-bg: #9fe8ff;
+      --grid: #6bc7ef;
+      --axis: #1d5f8a;
+      --cavity: #d8f6ff;
+      --shell-fill: rgba(255, 218, 92, 0.9);
+      --dielectric-fill: rgba(55, 220, 130, 0.35);
+      --shell-stroke: #ff7a00;
+      --hover-bg: #ffe169;
+      --active-bg: #ff7a00;
+      --active-ink: #111827;
+      --readout-bg: #fff7c7;
+      --option-bg: #fff7c7;
+      --answer-bg: #b9f7d0;
+      --answer-ink: #10341c;
+      --result-bg: #ffe7ec;
+      --task-bg: #d3f8ff;
+      --task-ink: #17233a;
+    }
+
+    body.theme-rainbow {
+      --ink: #101820;
+      --muted: #40515f;
+      --line: #9ec6df;
+      --panel: #f0fbff;
+      --soft: #daf7e7;
+      --brand: #00a651;
+      --brand-2: #8e24ff;
+      --on-brand: #061317;
+      --pos: #ff1744;
+      --neg: #2979ff;
+      --paper: #ffffff;
+      --canvas-bg: #fffdf7;
+      --grid: #c9f0ff;
+      --axis: #00a651;
+      --cavity: #fff3c9;
+      --shell-fill: rgba(215, 245, 255, 0.95);
+      --dielectric-fill: rgba(55, 220, 130, 0.3);
+      --shell-stroke: #00a651;
+      --hover-bg: #e9fff2;
+      --active-bg: #d9ffe9;
+      --active-ink: #00582a;
+      --readout-bg: #f2fcff;
+      --option-bg: #fbfdff;
+      --answer-bg: #fff0cc;
+      --answer-ink: #4c3200;
+      --result-bg: #fffaf0;
+      --task-bg: #f2fbff;
+      --task-ink: #17364c;
+    }
+
+    body.theme-chalk-green {
+      color-scheme: dark;
+      --ink: #f5f1df;
+      --muted: #d7d0ad;
+      --line: #78937b;
+      --panel: #243f32;
+      --soft: #315743;
+      --brand: #f4e7a1;
+      --brand-2: #ffca7a;
+      --on-brand: #14281f;
+      --pos: #ffb3a7;
+      --neg: #a9d8ff;
+      --paper: #1c3328;
+      --canvas-bg: #173024;
+      --grid: #335f48;
+      --axis: #e8dfbd;
+      --cavity: #244a38;
+      --shell-fill: rgba(55, 93, 74, 0.92);
+      --dielectric-fill: rgba(129, 178, 125, 0.28);
+      --shell-stroke: #a8c7a4;
+      --hover-bg: #315743;
+      --active-bg: #3b644e;
+      --active-ink: #fff7c7;
+      --readout-bg: #203b2e;
+      --option-bg: #223c30;
+      --answer-bg: #4a4124;
+      --answer-ink: #fff2b8;
+      --result-bg: #203b2e;
+      --task-bg: #213e31;
+      --task-ink: #f7f0d0;
+    }
+
+    body.theme-chalk-gray {
+      color-scheme: dark;
+      --ink: #f0f0e8;
+      --muted: #c7c7bd;
+      --line: #777a7d;
+      --panel: #3a3d40;
+      --soft: #4b4f52;
+      --brand: #f2f2d0;
+      --brand-2: #d5b56e;
+      --on-brand: #202225;
+      --pos: #f2a7a7;
+      --neg: #a7c7f2;
+      --paper: #2e3033;
+      --canvas-bg: #26282b;
+      --grid: #4b4f52;
+      --axis: #dadaca;
+      --cavity: #3b3d40;
+      --shell-fill: rgba(82, 85, 88, 0.92);
+      --dielectric-fill: rgba(160, 170, 150, 0.25);
+      --shell-stroke: #c4c4b8;
+      --hover-bg: #4b4f52;
+      --active-bg: #55585c;
+      --active-ink: #fff7c9;
+      --readout-bg: #35383b;
+      --option-bg: #383b3e;
+      --answer-bg: #51472e;
+      --answer-ink: #fff0ba;
+      --result-bg: #35383b;
+      --task-bg: #383b3e;
+      --task-ink: #f2f2e8;
+    }
+
+    body.theme-davinci {
+      --ink: #2c2217;
+      --muted: #6f5b3e;
+      --line: #b4935d;
+      --panel: #eadbb8;
+      --soft: #dcc798;
+      --brand: #6d4c1f;
+      --brand-2: #9a3e1f;
+      --on-brand: #fff7e6;
+      --pos: #8a2f1c;
+      --neg: #1f5f67;
+      --paper: #f4e6c5;
+      --canvas-bg: #ead7a8;
+      --grid: #d2b678;
+      --axis: #7c5c2d;
+      --cavity: #f0dfb5;
+      --shell-fill: rgba(201, 169, 104, 0.42);
+      --dielectric-fill: rgba(130, 118, 67, 0.22);
+      --shell-stroke: #7c5c2d;
+      --hover-bg: #f0dfb5;
+      --active-bg: #dec48b;
+      --active-ink: #2c2217;
+      --readout-bg: #f0dfb5;
+      --option-bg: #f7ebcd;
+      --answer-bg: #ead19a;
+      --answer-ink: #3b2711;
+      --result-bg: #f0dfb5;
+      --task-bg: #f0dfb5;
+      --task-ink: #342514;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: #f3f7f8;
+    }
+
+    body.theme-dark {
+      background: #081116;
+    }
+
+    body.theme-chalk-green {
+      background: #14281f;
+    }
+
+    body.theme-chalk-gray {
+      background: #202225;
+    }
+
+    body.theme-davinci {
+      background: #d8bf82;
+    }
+
+    body.theme-pixar {
+      background:
+        linear-gradient(90deg, rgba(255, 77, 90, 0.2) 0 18%, transparent 18% 100%),
+        linear-gradient(135deg, #ffcf47 0%, #9fe8ff 42%, #b9f7d0 72%, #ffd1dc 100%);
+    }
+
+    body.theme-phet {
+      background:
+        linear-gradient(120deg, rgba(124, 92, 255, 0.18) 0 24%, transparent 24% 100%),
+        linear-gradient(150deg, #ffd6e8 0%, #d5f7ff 34%, #fff0c7 66%, #c7f5d9 100%);
+    }
+
+    button, input, select {
+      font: inherit;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      background: var(--paper);
+      color: var(--ink);
+      border-radius: 7px;
+      padding: 0.55rem 0.75rem;
+      cursor: pointer;
+      min-height: 38px;
+    }
+
+    button:hover {
+      border-color: #9fb4bd;
+      background: var(--hover-bg);
+    }
+
+    button.primary {
+      background: var(--brand);
+      border-color: var(--brand);
+      color: var(--on-brand);
+      font-weight: 700;
+    }
+
+    button.danger {
+      color: var(--bad);
+    }
+
+    button.toggle.active {
+      background: var(--active-bg);
+      border-color: var(--brand);
+      color: var(--active-ink);
+      font-weight: 700;
+    }
+
+    input, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 0.55rem 0.65rem;
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 38px;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    header {
+      background: var(--paper);
+      border-bottom: 1px solid var(--line);
+      padding: 0.85rem clamp(1rem, 2vw, 1.6rem);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    h1 {
+      font-size: clamp(1.15rem, 2.5vw, 1.65rem);
+      margin: 0;
+      letter-spacing: 0;
+    }
+
+    .author-line {
+      margin-top: 0.28rem;
+      color: var(--muted);
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .author-line strong {
+      color: var(--brand-2);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      background: var(--soft);
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 0.35rem 0.7rem;
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: minmax(290px, 355px) 1fr minmax(290px, 380px);
+      gap: 1rem;
+      padding: 1rem;
+      max-width: 1600px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    body.hide-test .test-panel {
+      visibility: hidden;
+    }
+
+    body.presentation-mode main {
+      grid-template-columns: minmax(260px, 330px) minmax(0, 1fr);
+      max-width: 1600px;
+    }
+
+    body.presentation-mode .test-panel {
+      display: none;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      min-width: 0;
+    }
+
+    .controls,
+    .test-panel {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      max-height: calc(100vh - 88px);
+      overflow: auto;
+    }
+
+    .stage {
+      background: var(--paper);
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      min-height: calc(100vh - 88px);
+    }
+
+    .canvas-top {
+      border-bottom: 1px solid var(--line);
+      padding: 0.75rem;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+      align-items: start;
+    }
+
+    .canvas-toolbar {
+      display: grid;
+      gap: 0.55rem;
+    }
+
+    .view-actions {
+      justify-content: flex-start;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-bottom: 0.15rem;
+      gap: 0.35rem;
+      font-size: 0.84rem;
+    }
+
+    .view-actions select {
+      width: auto;
+      min-width: 0;
+      flex: 0 0 auto;
+      padding: 0.45rem 0.5rem;
+    }
+
+    .view-actions button,
+    .view-actions .pill {
+      flex: 0 0 auto;
+    }
+
+    .view-actions button {
+      padding: 0.45rem 0.55rem;
+    }
+
+    #radialGraphSize {
+      width: 92px;
+    }
+
+    #radialGraphPlace {
+      width: 82px;
+    }
+
+    .search-actions {
+      padding-top: 0.1rem;
+    }
+
+    .canvas-title {
+      min-width: 0;
+    }
+
+    .canvas-title strong {
+      display: block;
+      font-size: 1rem;
+    }
+
+    .canvas-title span {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    #searchNote {
+      display: none;
+      margin-top: 0.35rem;
+      color: var(--brand-2);
+      font-weight: 800;
+    }
+
+    #searchNote.show {
+      display: block;
+    }
+
+    .canvas-wrap {
+      position: relative;
+      min-height: 420px;
+      background: var(--canvas-bg);
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-height: 420px;
+    }
+
+    .radial-panel {
+      border-top: 1px solid var(--line);
+      background: var(--paper);
+      padding: 0.75rem;
+    }
+
+    .radial-panel canvas {
+      min-height: 210px;
+      height: 260px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--canvas-bg);
+    }
+
+    .formula-panel {
+      display: none;
+      border-top: 1px solid var(--line);
+      padding: 0.75rem;
+      background: var(--paper);
+      color: var(--ink);
+    }
+
+    .formula-panel.show {
+      display: grid;
+      gap: 0.55rem;
+    }
+
+    .formula-title {
+      font-weight: 900;
+      color: var(--brand-2);
+    }
+
+    .formula-list {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.5rem;
+    }
+
+    .formula-chip {
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: var(--option-bg);
+      color: var(--ink);
+      padding: 0.6rem;
+      line-height: 1.35;
+      min-height: 70px;
+    }
+
+    .formula-chip strong {
+      display: block;
+      color: var(--brand);
+      margin-bottom: 0.2rem;
+    }
+
+    .formula-chip code {
+      color: var(--ink);
+      white-space: normal;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-weight: 800;
+    }
+
+    .readouts {
+      border-top: 1px solid var(--line);
+      padding: 0.75rem;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.5rem;
+      background: var(--readout-bg);
+    }
+
+    .readout {
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 0.6rem;
+      background: var(--paper);
+      min-height: 70px;
+    }
+
+    .readout span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .readout strong {
+      display: block;
+      margin-top: 0.2rem;
+      font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+    }
+
+    .readouts.hide-values strong {
+      visibility: hidden;
+    }
+
+    .group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .group-title {
+      font-weight: 800;
+      font-size: 0.92rem;
+    }
+
+    .compact-title {
+      margin-top: 0.7rem;
+      font-size: 0.82rem;
+    }
+
+    .compact-grid button {
+      min-height: 32px;
+      padding: 0.38rem 0.45rem;
+      font-size: 0.78rem;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.38;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.55rem;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.55rem;
+    }
+
+    .slider-row {
+      display: grid;
+      grid-template-columns: 1fr 52px;
+      gap: 0.55rem;
+      align-items: center;
+    }
+
+    input[type="range"] {
+      padding: 0;
+      border: 0;
+      min-height: 28px;
+      accent-color: var(--brand);
+    }
+
+    .topic-list {
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    .topic-list button {
+      text-align: left;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.55rem;
+      align-items: center;
+    }
+
+    .topic-list button.active {
+      border-color: var(--brand);
+      background: var(--active-bg);
+      color: var(--active-ink);
+    }
+
+    .badge {
+      display: inline-grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+
+    .charge-list {
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    .charge-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 0.55rem;
+      background: var(--paper);
+    }
+
+    .charge-row strong {
+      display: block;
+    }
+
+    .charge-row span {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .charge-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr) auto;
+      gap: 0.4rem;
+      align-items: end;
+    }
+
+    .mini-grid label {
+      display: grid;
+      gap: 0.2rem;
+      color: var(--muted);
+      font-size: 0.74rem;
+      font-weight: 700;
+    }
+
+    .mini-grid input {
+      min-height: 34px;
+      padding: 0.35rem 0.45rem;
+    }
+
+    .icon-btn {
+      width: 34px;
+      height: 34px;
+      min-height: 34px;
+      padding: 0;
+      display: inline-grid;
+      place-items: center;
+      font-weight: 900;
+    }
+
+    .measurement-list {
+      display: grid;
+      gap: 0.35rem;
+      font-size: 0.88rem;
+    }
+
+    .measurement-list div {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 0.25rem;
+    }
+
+    .solution-key {
+      display: none;
+      border: 1px solid var(--brand-2);
+      border-radius: 7px;
+      background: var(--answer-bg);
+      padding: 0.6rem;
+      font-size: 0.9rem;
+      color: var(--answer-ink);
+    }
+
+    .solution-key.show {
+      display: block;
+    }
+
+    .print-sheet {
+      display: none;
+    }
+
+    .answers label.correct-answer {
+      border-color: #d2ad46;
+      background: var(--answer-bg);
+      color: var(--answer-ink);
+    }
+
+    .lesson-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0.75rem;
+      background: var(--paper);
+    }
+
+    .lesson-card strong {
+      display: block;
+      margin-bottom: 0.35rem;
+    }
+
+    .lesson-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.42;
+      font-size: 0.92rem;
+    }
+
+    .source-list {
+      margin: 0.45rem 0 0;
+      padding-left: 1.05rem;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.38;
+    }
+
+    .source-list a {
+      color: var(--brand);
+      font-weight: 700;
+    }
+
+    .test-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0.85rem;
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .test-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+      flex-wrap: wrap;
+    }
+
+    .question {
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .answers {
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    .answers label {
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 0.6rem;
+      background: var(--option-bg);
+      color: var(--ink);
+      cursor: pointer;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.55rem;
+      align-items: start;
+    }
+
+    .answers input {
+      width: auto;
+      min-height: 0;
+      margin-top: 0.2rem;
+    }
+
+    .check-row {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.5rem;
+      align-items: center;
+      color: var(--ink);
+      font-weight: 800;
+    }
+
+    .check-row input {
+      width: auto;
+      min-height: 0;
+    }
+
+    .test-feedback {
+      min-height: 24px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .result {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0.85rem;
+      background: var(--result-bg);
+      color: var(--ink);
+      display: none;
+      line-height: 1.4;
+    }
+
+    .result.show {
+      display: block;
+    }
+
+    .result strong {
+      color: var(--brand-2);
+    }
+
+    .small-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .canvas-task {
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      padding: 0.65rem;
+      background: var(--task-bg);
+      font-size: 0.9rem;
+      color: var(--task-ink);
+    }
+
+    @media (max-width: 1180px) {
+      main {
+        grid-template-columns: 320px 1fr;
+      }
+
+      .test-panel {
+        grid-column: 1 / -1;
+        max-height: none;
+      }
+    }
+
+    @media (max-width: 780px) {
+      header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      main {
+        grid-template-columns: 1fr;
+        padding: 0.65rem;
+      }
+
+      .controls,
+      .test-panel,
+      .stage {
+        max-height: none;
+      }
+
+      .readouts {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .formula-list {
+        grid-template-columns: 1fr;
+      }
+
+      .canvas-top {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+
+      body {
+        background: #ffffff;
+        color: #111111;
+      }
+
+      .print-sheet,
+      .print-sheet * {
+        visibility: visible !important;
+      }
+
+      .print-sheet {
+        display: block !important;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        padding: 0.2in;
+        background: #ffffff;
+        color: #111111;
+      }
+
+      .print-sheet li {
+        display: list-item !important;
+      }
+
+      .print-question {
+        border: 1px solid #d8e3e7;
+        border-radius: 6px;
+        padding: 0.12in;
+        margin-bottom: 0.12in;
+        break-inside: avoid;
+      }
+
+      .print-question strong {
+        display: block;
+        margin-bottom: 0.05in;
+      }
+
+      .print-question ol {
+        margin: 0.05in 0 0 0.2in;
+      }
+
+      .print-answer {
+        display: none !important;
+        margin-top: 0.05in;
+        color: #7a4f01;
+        font-weight: 700;
+      }
+
+      body.print-solutions .print-answer {
+        display: block !important;
+      }
+
+      .stage {
+        page-break-after: always;
+        min-height: auto;
+      }
+
+      .canvas-wrap canvas {
+        max-height: 5.2in;
+      }
+
+      .answers label {
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div>
+        <h1>Simulador de campo electrico, potencial y energia</h1>
+        <div class="hint">Mueve cargas y punto de prueba. Activa campo, potencial, energia y equipotenciales para comprobar respuestas.</div>
+        <div class="author-line">Autor: <strong>Prof. Wong OM SAI RAM</strong> · Copyright 2026</div>
+      </div>
+      <div class="header-actions">
+        <span class="pill" id="clock">Autotest: 20:00</span>
+        <button class="primary" id="startTestBtn">Iniciar autotest</button>
+      </div>
+    </header>
+
+    <main>
+      <aside class="panel controls">
+        <section class="group">
+          <div class="group-title">Escenarios</div>
+          <select id="scenarioSelect" aria-label="Seleccionar escenario"></select>
+          <div class="hint" id="scenarioHint">Elige un tema para cargar su simulacion.</div>
+        </section>
+
+        <section class="group">
+          <div class="group-title">Visualizaciones</div>
+          <label>
+            Estilo visual
+            <select id="themeSelect">
+              <option value="">Claro clasico</option>
+              <option value="theme-dark">Modo oscuro</option>
+              <option value="theme-geogebra">Modo GeoGebra</option>
+              <option value="theme-phet">Moderno pastel</option>
+              <option value="theme-mit">Modo MIT</option>
+              <option value="theme-minimal">Minimalista</option>
+              <option value="theme-pixar">Pixar full color</option>
+              <option value="theme-rainbow">Colores intensos</option>
+              <option value="theme-chalk-green">Pizarra verde</option>
+              <option value="theme-chalk-gray">Pizarra plomo</option>
+              <option value="theme-davinci">Da Vinci</option>
+            </select>
+          </label>
+          <div class="grid-2">
+            <button class="toggle active" id="fieldBtn" title="Mostrar u ocultar flechas de campo electrico">E campo</button>
+            <button class="toggle" id="fieldLinesBtn" title="Mostrar lineas continuas del campo electrico">Lineas E</button>
+            <button class="toggle active" id="potentialBtn" title="Mostrar u ocultar mapa de potencial electrico">V potencial</button>
+            <button class="toggle active" id="equipBtn" title="Mostrar u ocultar curvas equipotenciales">Equipot.</button>
+            <button class="toggle" id="energyBtn" title="Mostrar u ocultar energia potencial de una carga de prueba">U energia</button>
+            <button class="toggle active" id="gridBtn" title="Mostrar u ocultar cuadricula en centimetros">Cuadricula</button>
+            <button class="toggle active" id="figureTextBtn" title="Mostrar u ocultar textos dentro de las figuras">Texto fig.</button>
+            <button class="toggle" id="moveSourcesBtn" title="Activar arrastre de cargas, placas, laminas y circulos">Mover ON/OFF</button>
+            <button class="toggle" id="erGraphBtn" title="Mostrar grafica radial E(r)">E(r)</button>
+            <button class="toggle" id="vrGraphBtn" title="Mostrar grafica radial V(r)">V(r)</button>
+          </div>
+          <div class="group-title compact-title">Paneles</div>
+          <div class="grid-2 compact-grid">
+            <button class="toggle active" id="probePanelBtn">Punto ON/OFF</button>
+            <button class="toggle" id="geometryPanelBtn">Geometria ON/OFF</button>
+            <button class="toggle active" id="chargesPanelBtn">Cargas ON/OFF</button>
+            <button class="toggle" id="measurePanelBtn">Medidas ON/OFF</button>
+            <button class="toggle active" id="testPanelBtn">Autotest ON</button>
+            <button class="toggle" id="presentationModeBtn">Modo presentacion OFF</button>
+            <button class="toggle active" id="sourcesPanelBtn">Fuentes y modelo fisico ON</button>
+          </div>
+        </section>
+
+        <section class="group" id="probePanel">
+          <div class="group-title">Punto de prueba</div>
+          <div class="grid-2">
+            <label>
+              Carga q
+              <select id="probeCharge">
+                <option value="1">+1 uC</option>
+                <option value="-1">-1 uC</option>
+                <option value="2">+2 uC</option>
+              </select>
+            </label>
+            <label>
+              Modo
+              <select id="dragMode">
+                <option value="probe">Mover punto</option>
+                <option value="charges">Mover cargas</option>
+              </select>
+            </label>
+          </div>
+          <div class="grid-2">
+            <label>
+              P x (cm)
+              <input id="probeX" type="number" min="-3.45" max="3.45" step="0.1" value="0">
+            </label>
+            <label>
+              P y (cm)
+              <input id="probeY" type="number" min="-2.35" max="2.35" step="0.1" value="0">
+            </label>
+          </div>
+          <div class="hint">El punto negro mide E, V y U. En modo "Mover cargas", arrastra las cargas roja/azul.</div>
+        </section>
+
+        <section class="group" id="finitePlateControls" hidden>
+          <div class="group-title">Lamina movil</div>
+          <label>
+            Lamina a inclinar
+            <select id="plateSideSelect">
+              <option value="right">Derecha</option>
+              <option value="left">Izquierda</option>
+            </select>
+          </label>
+          <label>
+            Angulo de la lamina seleccionada
+            <input id="plateAngle" type="range" min="0" max="90" step="1" value="65">
+          </label>
+          <div class="grid-2">
+            <label>
+              Angulo (grados)
+              <input id="plateAngleNumber" type="number" min="0" max="90" step="1" value="65">
+            </label>
+            <label>
+              Rango
+              <input value="0-90" disabled>
+            </label>
+          </div>
+          <div class="hint">0 grados deja la lamina horizontal; 90 grados la deja paralela a la lamina fija.</div>
+        </section>
+
+        <section class="group" id="geometryPanel">
+          <div class="group-title">Geometria</div>
+          <div class="grid-2">
+            <label>
+              Separacion
+              <input id="spacingInput" type="number" min="0.5" max="6" step="0.5" value="4">
+            </label>
+            <label>
+              Unidad
+              <input value="cm" disabled>
+            </label>
+          </div>
+          <div class="grid-2">
+            <label>
+              N cargas
+              <input id="polygonCount" type="number" min="3" max="12" step="1" value="5">
+            </label>
+            <label>
+              Signos
+              <select id="polygonPattern">
+                <option value="positive">Todas +</option>
+                <option value="negative">Todas -</option>
+                <option value="alternating">+/- alternadas</option>
+              </select>
+            </label>
+          </div>
+          <div class="grid-3">
+            <button id="makeDipole">Dipolo</button>
+            <button id="makeSquare">Cuadrado</button>
+            <button id="makeTriangle">Triangulo</button>
+          </div>
+          <button id="makePolygon">Crear N-gono regular</button>
+          <div class="hint">La cuadricula usa 1 unidad = 1 cm. En poligonos, la separacion es la distancia entre cargas vecinas.</div>
+        </section>
+
+        <section class="group" id="arcControls" hidden>
+          <div class="group-title">Espira / arco circular</div>
+          <div class="grid-2">
+            <label>
+              Angulo inicial
+              <input id="arcStart" type="number" min="0" max="360" step="5" value="0">
+            </label>
+            <label>
+              Angulo final
+              <input id="arcEnd" type="number" min="0" max="360" step="5" value="180">
+            </label>
+          </div>
+          <div class="grid-2">
+            <label>
+              Radio
+              <input id="arcRadius" type="number" min="0.5" max="3" step="0.1" value="1.6">
+            </label>
+            <label>
+              Carga
+              <select id="arcPattern">
+                <option value="positive">+</option>
+                <option value="negative">-</option>
+                <option value="alternating">+/- alternada</option>
+              </select>
+            </label>
+          </div>
+          <div class="hint">Usa 0-360 para una espira completa. El campo se calcula sumando pequeñas cargas sobre el arco.</div>
+        </section>
+
+        <section class="group" id="chargesPanel">
+          <div class="group-title">Cargas</div>
+          <div class="charge-list" id="chargeList"></div>
+          <div class="grid-3">
+            <button id="addPositive">+Q</button>
+            <button id="addNegative">-Q</button>
+            <button class="danger" id="resetScenario">Reset</button>
+          </div>
+          <div class="hint">Para borrar una carga: usa el boton x de la carga o pon el mouse cerca de ella y presiona Delete.</div>
+        </section>
+
+        <section class="group" id="measurePanel">
+          <div class="group-title">Mediciones</div>
+          <div class="measurement-list" id="measurementList"></div>
+        </section>
+
+        <section class="lesson-card">
+          <strong id="lessonTitle">Idea clave</strong>
+          <p id="lessonText"></p>
+          <div class="solution-key" id="scenarioSolution"></div>
+        </section>
+      </aside>
+
+      <section class="panel stage">
+        <div class="canvas-top">
+          <div class="canvas-title">
+            <strong id="scenarioName"></strong>
+            <span id="scenarioPrompt"></span>
+            <span id="searchNote"></span>
+          </div>
+          <div class="canvas-toolbar">
+            <div class="small-actions view-actions">
+              <button id="formulaBtn" class="toggle" title="Mostrar u ocultar expresiones matematicas">Formula</button>
+              <button id="zoomOut" title="Alejar la simulacion">-</button>
+              <span class="pill" id="zoomRead">Zoom 100%</span>
+              <button id="zoomIn" title="Acercar la simulacion">+</button>
+              <button id="zoomReset" title="Restaurar zoom">100%</button>
+              <select id="radialGraphSize" title="Tamano de E(r) y V(r)">
+                <option value="small">Grafica S</option>
+                <option value="medium" selected>Grafica M</option>
+                <option value="large">Grafica L</option>
+              </select>
+              <select id="radialGraphPlace" title="Ubicacion de E(r) y V(r)">
+                <option value="inside">Dentro</option>
+                <option value="outside">Derecha</option>
+              </select>
+            </div>
+            <div class="small-actions search-actions">
+              <button id="centerProbe">Punto al centro</button>
+              <button id="findZeroE">Buscar E = 0</button>
+              <button id="findZeroV">Buscar V = 0</button>
+              <button id="findMaxV">Buscar V mayor</button>
+              <button id="findMinV">Buscar V menor</button>
+            </div>
+          </div>
+        </div>
+        <div class="canvas-wrap">
+          <canvas id="sim" width="980" height="640" aria-label="Simulacion interactiva de electrostatica"></canvas>
+        </div>
+        <div class="radial-panel" id="radialPanel" hidden>
+          <canvas id="radialCanvas" width="980" height="260" aria-label="Graficas radiales E(r) y V(r)"></canvas>
+        </div>
+        <div class="formula-panel" id="formulaPanel" aria-live="polite">
+          <div class="formula-title">Expresiones matematicas</div>
+          <div class="formula-list" id="formulaList"></div>
+        </div>
+        <div class="readouts" id="readoutsPanel">
+          <div class="readout"><span>|E| en el punto</span><strong id="eRead">0 N/C</strong></div>
+          <div class="readout"><span>|F| = |qE|</span><strong id="fRead">0 N</strong></div>
+          <div class="readout"><span>V en el punto</span><strong id="vRead">0 V</strong></div>
+          <div class="readout"><span>U = qV</span><strong id="uRead">0 J</strong></div>
+          <div class="readout"><span>U sistema</span><strong id="sysURead">0 J</strong></div>
+          <div class="readout"><span>Trabajo A -> punto</span><strong id="wRead">0 J</strong></div>
+          <div class="readout"><span>Posicion P</span><strong id="posRead">(0,0) cm</strong></div>
+          <div class="readout"><span>Distancia menor</span><strong id="dRead">0 cm</strong></div>
+        </div>
+      </section>
+
+      <aside class="panel test-panel">
+        <section class="group">
+          <div class="group-title">Autotest</div>
+          <label>
+            Nombre del estudiante
+            <input id="studentName" placeholder="Escribe tu nombre">
+          </label>
+          <label>
+            Correo opcional
+            <input id="studentEmail" type="email" placeholder="correo@ejemplo.com">
+          </label>
+          <label>
+            Nivel
+            <select id="level">
+              <option value="basico">Basico</option>
+              <option value="medio">Medio</option>
+              <option value="avanzado">Avanzado</option>
+            </select>
+          </label>
+          <label class="check-row">
+            <input id="examMode" type="checkbox" checked>
+            Modo examen: al marcar una respuesta queda fija
+          </label>
+          <div class="small-actions">
+            <button class="toggle" id="solutionBtn" title="Mostrar u ocultar solucion en el panel">Solucion OFF</button>
+            <button class="primary" id="startTestBtn2">Empezar 10 preguntas</button>
+            <button id="resetTestBtn">Reiniciar</button>
+            <button id="printTestBtn">Imprimir</button>
+            <button id="printResultBtn" disabled>Imprimir resultados</button>
+          </div>
+          <div class="grid-2">
+            <button class="toggle" id="printSolutionsBtn">Clave impresa OFF</button>
+            <button id="copyTestBtn">Preparar test</button>
+          </div>
+        </section>
+
+        <section class="test-card" id="testCard">
+          <div class="test-meta">
+            <span id="qCounter">Pregunta 0/10</span>
+            <span id="qLevel">Nivel: basico</span>
+          </div>
+          <div class="question" id="questionText">Inicia el autotest para practicar con preguntas de campo, potencial, trabajo y energia.</div>
+          <div class="canvas-task" id="canvasTask" hidden></div>
+          <div class="answers" id="answers"></div>
+          <div class="solution-key" id="solutionKey"></div>
+          <div class="test-feedback" id="testFeedback"></div>
+          <div class="small-actions">
+            <button id="submitAnswer" disabled>Responder</button>
+            <button id="nextQuestion" disabled>Siguiente</button>
+          </div>
+        </section>
+
+        <section class="result" id="resultBox"></section>
+
+        <section class="print-sheet" id="printSheet"></section>
+
+        <section class="lesson-card source-panel">
+          <strong>Temas cubiertos</strong>
+          <p>Cargas puntuales, dipolo, cargas iguales y desiguales, placas ideales y reales, placa inclinada, lamina con carga o circulo, conductor solido y hueco, cuatro cargas en cuadrado, grafica V(x), energia, trabajo y equipotenciales.</p>
+        </section>
+
+        <section class="lesson-card source-panel">
+          <strong>Fuentes y modelo fisico</strong>
+          <p>El simulador separa el modelo ideal de libro y el modelo finito: placas ideales usan E uniforme dentro y E = 0 fuera; placas reales aproximan laminas finitas con cargas discretas y muestran efectos de borde.</p>
+          <ol class="source-list">
+            <li><a href="https://openstax.org/books/university-physics-volume-2/pages/8-1-capacitors-and-capacitance" target="_blank" rel="noopener">OpenStax University Physics Vol. 2</a>: capacitores, E uniforme y V = Ed.</li>
+            <li><a href="https://phys.libretexts.org/Bookshelves/University_Physics/Radically_Modern_Introductory_Physics_Text_II_%28Raymond%29/17%3A_Capacitors_Inductors_and_Resistors/17.01%3A_The_Capacitor_and_Amperes_Law" target="_blank" rel="noopener">Physics LibreTexts</a>: campo entre placas paralelas y aproximacion ideal.</li>
+            <li><a href="https://www.feynmanlectures.caltech.edu/II_06.html" target="_blank" rel="noopener">Feynman Lectures, Vol. II</a>: campos electrostaticos y bordes en capacitores.</li>
+            <li><a href="https://ocw.mit.edu/courses/8-02t-electricity-and-magnetism-spring-2005/resources/presentati_w03d1-1/" target="_blank" rel="noopener">MIT OpenCourseWare 8.02</a>: Gauss, equipotenciales, conductores y capacitores.</li>
+          </ol>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("sim");
+    const ctx = canvas.getContext("2d");
+    const radialCanvas = document.getElementById("radialCanvas");
+    const radialCtx = radialCanvas.getContext("2d");
+    const K_COULOMB = 8.9875517923e9;
+    const MICRO = 1e-6;
+    const CM = 1e-2;
+    const MIN_R_M = 1e-4;
+    const state = {
+      scenario: "dipole",
+      showField: true,
+      showFieldLines: false,
+      showPotential: true,
+      showEquip: true,
+      showEnergy: false,
+      showGrid: true,
+      showFigureText: true,
+      showErGraph: false,
+      showVrGraph: false,
+      showFormulas: false,
+      panelProbe: true,
+      panelGeometry: false,
+      panelCharges: true,
+      panelMeasurements: false,
+      panelTest: true,
+      panelSources: true,
+      presentationMode: false,
+      radialGraphSize: "medium",
+      radialGraphPlace: "inside",
+      showSolution: false,
+      printSolutions: false,
+      zoom: 1,
+      dragMode: "probe",
+      probeQ: 1,
+      probe: { x: 0, y: 0 },
+      originProbe: { x: -2.2, y: 1.8 },
+      searchNote: "",
+      charges: [],
+      plates: null,
+      finiteSources: null,
+      finitePlateAngle: 65,
+      finitePlateSide: "right",
+      conductor: null,
+      graph: null,
+      arc: null,
+      dragging: null,
+      lastChargeIndex: null,
+      testTarget: null
+    };
+
+    const scenarios = {
+      singlePositive: {
+        label: "Carga positiva",
+        prompt: "Comprueba que V es mayor cerca de +Q y que E apunta hacia afuera.",
+        lesson: "Para una carga positiva, el potencial V = kQ/r disminuye con la distancia y las flechas de campo salen radialmente.",
+        charges: [{ q: 3, x: 0, y: 0 }],
+        probe: { x: 2.2, y: -0.8 }
+      },
+      singleNegative: {
+        label: "Carga negativa",
+        prompt: "Observa que las flechas entran hacia -Q y el potencial es negativo.",
+        lesson: "Una carga negativa produce potencial negativo. Una carga de prueba positiva pierde energia potencial al acercarse a -Q.",
+        charges: [{ q: -3, x: 0, y: 0 }],
+        probe: { x: 2.1, y: 0.7 }
+      },
+      dipole: {
+        label: "Dipolo +Q y -Q",
+        prompt: "Mueve el punto al centro: V se hace cero, pero E no es cero.",
+        lesson: "En el centro de un dipolo, los potenciales de +Q y -Q se cancelan. Los campos no se cancelan: apuntan en la misma direccion.",
+        charges: [{ q: 2, x: -1.2, y: 0 }, { q: -2, x: 1.2, y: 0 }],
+        probe: { x: 0, y: 0 }
+      },
+      equalPositive: {
+        label: "Dos cargas positivas",
+        prompt: "En el punto medio E = 0, pero V es positivo y no es cero.",
+        lesson: "Entre dos cargas iguales del mismo signo, el campo se cancela en el centro, mientras el potencial se suma.",
+        charges: [{ q: 2, x: -1.3, y: 0 }, { q: 2, x: 1.3, y: 0 }],
+        probe: { x: 0, y: 0 }
+      },
+      unequal: {
+        label: "Cargas desiguales",
+        prompt: "Busca donde V = 0 o donde E = 0; no siempre es el mismo lugar.",
+        lesson: "El potencial es escalar y se suma con signo. El campo es vectorial, por eso sus cancelaciones dependen de direccion y magnitud.",
+        charges: [{ q: 4, x: -1.7, y: 0 }, { q: -2, x: 1.2, y: 0 }],
+        probe: { x: 0.1, y: 0.5 }
+      },
+      plates: {
+        label: "Placas paralelas",
+        prompt: "Modelo ideal: entre placas grandes E es uniforme; fuera se cancela y E = 0.",
+        lesson: "Para placas paralelas muy grandes comparadas con su separacion, se desprecia el efecto de borde: dentro E = Delta V/d es constante y las equipotenciales son planos paralelos; fuera los campos de ambas placas se cancelan.",
+        charges: [],
+        plates: { leftV: 80, rightV: 0 },
+        probe: { x: 0, y: 0 }
+      },
+      realPlates: {
+        label: "Placas paralelas reales",
+        prompt: "Observa los bordes: dentro el campo es casi uniforme, pero afuera se debilita por superposicion de campos contrarios.",
+        lesson: "Las placas reales tienen tamano finito. En el centro se parecen al caso ideal, pero cerca de los bordes aparecen efectos de borde: las lineas se curvan y fuera de las placas el campo de ambas laminas tiende a cancelarse parcialmente.",
+        charges: [],
+        finiteSources: [
+          { type: "line", label: "+ lamina", q: 8, x: -1.45, y: 0, length: 3.6, angle: 90, samples: 34 },
+          { type: "line", label: "- lamina", q: -8, x: 1.45, y: 0, length: 3.6, angle: 90, samples: 34 }
+        ],
+        probe: { x: 0, y: 0 }
+      },
+      angledPlates: {
+        label: "Placas: una lamina inclinada",
+        prompt: "Mueve el angulo 0-90 grados y compara como cambian las lineas de campo y las equipotenciales.",
+        lesson: "Cuando una placa deja de ser paralela, el campo ya no puede ser uniforme. Las equipotenciales se deforman y se concentran donde las placas quedan mas cercanas.",
+        charges: [],
+        finitePlateAngle: 65,
+        finitePlateSide: "right",
+        finiteSources: [
+          { type: "line", label: "+ izquierda", side: "left", q: 8, x: -1.5, y: 0, length: 3.6, angle: 90, samples: 34 },
+          { type: "line", label: "- derecha", side: "right", q: -8, x: 1.35, y: 0, length: 3.6, angle: 90, samples: 34 }
+        ],
+        probe: { x: 0, y: 0 }
+      },
+      platePointSame: {
+        label: "Lamina + carga igual",
+        prompt: "Una lamina positiva junto a una carga positiva: mira la repulsion de las lineas cerca de la carga.",
+        lesson: "Una carga puntual del mismo signo que la lamina refuerza el potencial positivo y deforma el campo; las lineas se apartan entre regiones de igual signo.",
+        charges: [],
+        finiteSources: [
+          { type: "line", label: "+ lamina", q: 7, x: -1.35, y: 0, length: 3.6, angle: 90, samples: 34 },
+          { type: "point", label: "+ carga", q: 3, x: 1.25, y: 0 }
+        ],
+        probe: { x: 0.2, y: 0.5 }
+      },
+      platePointOpposite: {
+        label: "Lamina + carga opuesta",
+        prompt: "Una lamina positiva con una carga negativa: observa como las lineas terminan en la carga.",
+        lesson: "Con signos opuestos, las lineas de campo salen de la lamina positiva y llegan a la carga negativa. Las equipotenciales se cierran y se comprimen entre ambas fuentes.",
+        charges: [],
+        finiteSources: [
+          { type: "line", label: "+ lamina", q: 7, x: -1.35, y: 0, length: 3.6, angle: 90, samples: 34 },
+          { type: "point", label: "- carga", q: -3, x: 1.25, y: 0 }
+        ],
+        probe: { x: 0.2, y: 0.5 }
+      },
+      plateRingSame: {
+        label: "Lamina + circulo igual",
+        prompt: "Una lamina positiva junto a un circulo positivo: observa la simetria circular deformada por la lamina.",
+        lesson: "Un circulo cargado se modela como muchas cargas sobre una circunferencia. Si tiene el mismo signo que la lamina, el campo se redistribuye y se debilita en algunas zonas por direccion opuesta.",
+        charges: [],
+        finiteSources: [
+          { type: "line", label: "+ lamina", q: 7, x: -1.45, y: 0, length: 3.6, angle: 90, samples: 34 },
+          { type: "ring", label: "+ circulo", q: 5, x: 1.15, y: 0, radius: 0.78, samples: 48 }
+        ],
+        probe: { x: 0, y: 0.9 }
+      },
+      plateRingOpposite: {
+        label: "Lamina + circulo opuesto",
+        prompt: "Una lamina positiva junto a un circulo negativo: observa como el campo conecta ambas distribuciones.",
+        lesson: "Con signos opuestos, muchas lineas salen de la lamina y terminan sobre el circulo cargado. Las equipotenciales se curvan fuertemente alrededor del anillo.",
+        charges: [],
+        finiteSources: [
+          { type: "line", label: "+ lamina", q: 7, x: -1.45, y: 0, length: 3.6, angle: 90, samples: 34 },
+          { type: "ring", label: "- circulo", q: -5, x: 1.15, y: 0, radius: 0.78, samples: 48 }
+        ],
+        probe: { x: 0, y: 0.9 }
+      },
+      conductor: {
+        label: "Esfera conductora",
+        prompt: "Dentro del conductor E = 0 y la superficie es equipotencial.",
+        lesson: "En equilibrio electrostatico, el campo dentro de un conductor es cero y toda su superficie esta al mismo potencial.",
+        charges: [],
+        conductor: { q: 5, r: 1.15 },
+        probe: { x: 0.55, y: 0.2 }
+      },
+      hollowConductor: {
+        label: "Conductor hueco",
+        prompt: "Dentro de la cavidad y del metal, V es constante y E es cero.",
+        lesson: "En un conductor hueco cargado sin carga dentro de la cavidad, el campo electrico en el interior es cero. El potencial dentro queda constante e igual al de la superficie.",
+        charges: [],
+        conductor: { q: 5, r: 1.55, innerR: 0.78, hollow: true },
+        probe: { x: 0.25, y: 0.15 }
+      },
+      hollowConductorCenterPositive: {
+        label: "Conductor hueco con + centro",
+        prompt: "Una carga + en la cavidad induce carga - en la pared interna y + en la externa.",
+        lesson: "En un conductor hueco con una carga en el centro, hay campo en la cavidad, E = 0 en el metal, y afuera el campo depende de la carga neta vista desde fuera.",
+        charges: [],
+        conductor: { q: 5, r: 1.55, innerR: 0.78, hollow: true, centralQ: 2 },
+        probe: { x: 0.35, y: 0.05 }
+      },
+      hollowConductorCenterNegative: {
+        label: "Conductor hueco con - centro",
+        prompt: "Una carga - en la cavidad induce carga + en la pared interna y ajusta la carga externa.",
+        lesson: "El metal mantiene E = 0 dentro del material conductor, pero en la cavidad el campo es producido por la carga central.",
+        charges: [],
+        conductor: { q: 5, r: 1.55, innerR: 0.78, hollow: true, centralQ: -2 },
+        probe: { x: 0.35, y: 0.05 }
+      },
+      dielectricShell: {
+        label: "Esfera dielectrica hueca",
+        prompt: "En la cavidad E = 0; dentro del material dielectrico E crece con la carga encerrada.",
+        lesson: "Una esfera dielectrica hueca con carga distribuida en el material no se comporta igual que un conductor: en la cavidad ideal E = 0, en el material aparece campo, y afuera se parece a una carga puntual total.",
+        charges: [],
+        conductor: { q: 5, r: 1.75, innerR: 0.75, hollow: true, dielectric: true },
+        probe: { x: 1.15, y: 0.2 }
+      },
+      dielectricShellCenterPositive: {
+        label: "Dielectrica hueca con + centro",
+        prompt: "La carga + central se suma al campo de la carga distribuida en el material.",
+        lesson: "En una esfera dielectrica hueca, una carga central produce campo en la cavidad; el material dielectrico tambien aporta campo segun la carga distribuida.",
+        charges: [],
+        conductor: { q: 5, r: 1.75, innerR: 0.75, hollow: true, dielectric: true, centralQ: 2 },
+        probe: { x: 0.35, y: 0.05 }
+      },
+      dielectricShellCenterNegative: {
+        label: "Dielectrica hueca con - centro",
+        prompt: "La carga - central puede competir con el campo de la carga positiva distribuida en el material.",
+        lesson: "En un dielectrico no toda la carga se va a la superficie: la carga del material queda distribuida en el volumen, y la carga central agrega su propio campo.",
+        charges: [],
+        conductor: { q: 5, r: 1.75, innerR: 0.75, hollow: true, dielectric: true, centralQ: -2 },
+        probe: { x: 0.35, y: 0.05 }
+      },
+      squareCharges: {
+        label: "Cuatro cargas en cuadrado",
+        prompt: "En el centro, los campos se cancelan pero el potencial se suma.",
+        lesson: "Cuatro cargas iguales en las esquinas de un cuadrado producen E = 0 en el centro por simetria. Si todas son positivas, V en el centro es positivo.",
+        charges: [{ q: 2, x: -1.25, y: -1.25 }, { q: 2, x: 1.25, y: -1.25 }, { q: 2, x: 1.25, y: 1.25 }, { q: 2, x: -1.25, y: 1.25 }],
+        probe: { x: 0, y: 0 }
+      },
+      triangleCharges: {
+        label: "Triangulo de cargas",
+        prompt: "Cambia signos y posiciones para calcular distancias, E, V, U y trabajo.",
+        lesson: "En un triangulo de cargas, cada contribucion se calcula con su distancia al punto de prueba. El potencial se suma como escalar y el campo como vector.",
+        charges: [{ q: 2, x: -1.5, y: -0.9 }, { q: -2, x: 1.5, y: -0.9 }, { q: 2, x: 0, y: 1.7 }],
+        probe: { x: 0, y: 0 }
+      },
+      zeroPotentialLine: {
+        label: "Puntos V = 0",
+        prompt: "Busca donde se anula V entre cargas de distinto signo y magnitud.",
+        lesson: "El potencial puede ser cero en mas de un punto porque suma cantidades escalares con signo. Eso no significa que el campo tambien sea cero.",
+        charges: [{ q: 2, x: -1.35, y: 0 }, { q: -1, x: 1.35, y: 0 }],
+        probe: { x: 0, y: 0 }
+      },
+      dipoleAngle: {
+        label: "Dipolo por angulo",
+        prompt: "Mueve el punto alrededor: V es maximo sobre el lado + y cero sobre la linea perpendicular.",
+        lesson: "Para un dipolo, lejos de las cargas V depende de cos(theta). Es maximo sobre el eje hacia la carga positiva, minimo hacia la negativa y cero en la linea perpendicular.",
+        charges: [{ q: 2, x: -0.9, y: 0 }, { q: -2, x: 0.9, y: 0 }],
+        probe: { x: -2.2, y: 0 }
+      },
+      potentialGraph: {
+        label: "Grafica V(x)",
+        prompt: "Donde V(x) tiene mayor pendiente, el campo electrico es mas intenso.",
+        lesson: "En una dimension, Ex = -dV/dx. Si V es constante, E = 0. Si V baja linealmente, E apunta hacia +x; si V sube, E apunta hacia -x.",
+        charges: [],
+        graph: { enabled: true },
+        probe: { x: 0.2, y: 0 }
+      },
+      chargedArc: {
+        label: "Espira/arco cargado",
+        prompt: "Cambia el angulo 0-360 y observa el campo en cualquier punto P.",
+        lesson: "El campo de una espira o arco se obtiene sumando las contribuciones de muchos elementos de carga. Una espira completa uniforme cancela el campo en el centro, pero un semiarco no.",
+        charges: [],
+        arc: { radius: 1.6, startDeg: 0, endDeg: 180, pattern: "positive", totalQ: 4 },
+        probe: { x: 0, y: 0 }
+      },
+      equipotential: {
+        label: "Mapa equipotencial",
+        prompt: "El campo es perpendicular a las curvas equipotenciales.",
+        lesson: "Mover una carga sobre una misma equipotencial no cambia V, por lo tanto el trabajo del campo es cero.",
+        charges: [{ q: 3, x: -1.2, y: -0.3 }, { q: -1.5, x: 1.4, y: 0.7 }, { q: 1.2, x: 0.3, y: -1.4 }],
+        probe: { x: 1.1, y: 1.2 }
+      }
+    };
+
+    const questions = [
+      {
+        level: "basico",
+        scenario: "dipole",
+        text: "En el centro de un dipolo formado por +Q y -Q, ¿que ocurre con el potencial electrico V?",
+        options: ["V = 0 porque es escalar y las contribuciones se cancelan", "V es maximo porque hay dos cargas", "V es negativo siempre", "V no se puede medir"],
+        answer: 0
+      },
+      {
+        level: "basico",
+        scenario: "equalPositive",
+        text: "Dos cargas positivas iguales estan separadas. En el punto medio, ¿que valor tiene el campo electrico total?",
+        options: ["Cero", "Maximo", "Igual al campo de una sola carga", "Negativo"],
+        answer: 0
+      },
+      {
+        level: "basico",
+        scenario: "singlePositive",
+        text: "Cerca de una carga positiva aislada, ¿donde es mayor el potencial?",
+        options: ["Mas cerca de la carga", "Mas lejos de la carga", "En todos los puntos igual", "Solo sobre el eje vertical"],
+        answer: 0
+      },
+      {
+        level: "medio",
+        scenario: "plates",
+        text: "Entre placas paralelas ideales, el campo electrico es:",
+        options: ["Aproximadamente uniforme", "Cero en el centro", "Mas fuerte solo en la placa negativa", "Circular alrededor de las placas"],
+        answer: 0
+      },
+      {
+        level: "medio",
+        scenario: "conductor",
+        text: "Dentro de una esfera conductora en equilibrio electrostatico:",
+        options: ["E = 0", "V = 0 obligatoriamente", "La carga queda en el centro", "El campo es tangente a la superficie"],
+        answer: 0
+      },
+      {
+        level: "medio",
+        scenario: "equipotential",
+        text: "Si una carga se mueve sobre una misma superficie equipotencial, el trabajo hecho por el campo es:",
+        options: ["Cero", "Maximo", "Siempre negativo", "Dependiente de la rapidez"],
+        answer: 0
+      },
+      {
+        level: "medio",
+        scenario: "singleNegative",
+        text: "Las lineas de campo electrico alrededor de una carga negativa:",
+        options: ["Entran hacia la carga", "Salen de la carga", "Forman circulos cerrados", "Son paralelas siempre"],
+        answer: 0
+      },
+      {
+        level: "avanzado",
+        scenario: "unequal",
+        text: "En un sistema de cargas, ¿por que el punto donde V = 0 puede no coincidir con el punto donde E = 0?",
+        options: ["Porque V es escalar y E es vectorial", "Porque V no depende de la distancia", "Porque E no obedece superposicion", "Porque las cargas negativas no producen campo"],
+        answer: 0
+      },
+      {
+        level: "avanzado",
+        scenario: "dipole",
+        text: "Ubica el punto de prueba en el centro del dipolo y responde: ¿que lectura debe acercarse a cero?",
+        options: ["V", "|E|", "La carga fuente", "La distancia entre cargas"],
+        answer: 0,
+        task: "Mueve el punto negro al centro del dipolo antes de responder."
+      },
+      {
+        level: "avanzado",
+        scenario: "equalPositive",
+        text: "Ubica el punto de prueba entre dos cargas positivas iguales. En el punto medio, ¿que se cancela?",
+        options: ["El campo electrico E", "El potencial V", "La energia de cualquier carga", "La carga de las fuentes"],
+        answer: 0,
+        task: "Usa 'Punto al centro' o arrastra el punto negro al centro."
+      },
+      {
+        level: "basico",
+        scenario: "hollowConductor",
+        text: "En una esfera conductora hueca cargada, sin carga dentro de la cavidad, el potencial en el centro es:",
+        options: ["Igual al potencial de la superficie", "Cero siempre", "Mayor que infinito", "Variable con la distancia al centro"],
+        answer: 0
+      },
+      {
+        level: "basico",
+        scenario: "plates",
+        text: "En placas paralelas, las superficies equipotenciales son:",
+        options: ["Paralelas a las placas", "Paralelas al campo electrico", "Circulos alrededor de cada placa", "Puntos aislados"],
+        answer: 0
+      },
+      {
+        level: "medio",
+        scenario: "squareCharges",
+        text: "Cuatro cargas positivas iguales estan en las esquinas de un cuadrado. En el centro, el campo electrico es:",
+        options: ["Cero por simetria", "Maximo por suma directa", "Igual al potencial", "Siempre hacia arriba"],
+        answer: 0
+      },
+      {
+        level: "medio",
+        scenario: "squareCharges",
+        text: "En el centro de cuatro cargas positivas iguales, el potencial electrico es:",
+        options: ["Positivo, porque los potenciales se suman", "Cero, porque el campo es cero", "Negativo", "Imposible de calcular"],
+        answer: 0
+      },
+      {
+        level: "medio",
+        scenario: "zeroPotentialLine",
+        text: "Si en un punto V = 0 para dos cargas opuestas, ¿que se puede concluir sobre E?",
+        options: ["No necesariamente es cero", "Siempre es cero", "Siempre apunta hacia arriba", "No existe campo electrico"],
+        answer: 0
+      },
+      {
+        level: "medio",
+        scenario: "dipoleAngle",
+        text: "Para un dipolo, el potencial es cero aproximadamente sobre:",
+        options: ["La linea perpendicular al eje del dipolo", "El eje hacia la carga positiva", "El eje hacia la carga negativa", "Solo dentro de las cargas"],
+        answer: 0
+      },
+      {
+        level: "avanzado",
+        scenario: "potentialGraph",
+        text: "En una grafica V(x), ¿como se obtiene la direccion del campo electrico?",
+        options: ["E apunta en direccion opuesta a la pendiente de V", "E apunta siempre hacia V mayor", "E es igual a V", "E solo existe si V es constante"],
+        answer: 0
+      },
+      {
+        level: "avanzado",
+        scenario: "potentialGraph",
+        text: "En una region donde V(x) es constante, el campo electrico es:",
+        options: ["Cero", "Maximo", "Negativo siempre", "Igual al potencial"],
+        answer: 0
+      },
+      {
+        level: "avanzado",
+        scenario: "plates",
+        text: "Una carga positiva se suelta entre placas y se mueve en direccion del campo. Su energia potencial electrica:",
+        options: ["Disminuye mientras aumenta su energia cinetica", "Aumenta siempre", "Permanece constante", "Se hace infinita"],
+        answer: 0
+      },
+      {
+        level: "avanzado",
+        scenario: "hollowConductor",
+        text: "La constante dielectrica efectiva de un metal ideal en electrostatica se considera:",
+        options: ["Infinita", "Cero", "Uno", "Igual a la del aire"],
+        answer: 0
+      },
+      {
+        level: "avanzado",
+        scenario: "dipoleAngle",
+        text: "El potencial de un dipolo es maximo y minimo cuando el punto esta, respectivamente:",
+        options: ["Sobre el eje hacia +Q y sobre el eje hacia -Q", "Sobre la linea perpendicular y en el centro", "Siempre a 90 grados", "En cualquier punto a la misma distancia"],
+        answer: 0
+      },
+      {
+        level: "medio",
+        scenario: "conductor",
+        text: "En equilibrio electrostatico, la superficie de un conductor es:",
+        options: ["Una superficie equipotencial", "Una linea de campo", "Una region de potencial cero obligatorio", "Una region sin carga posible"],
+        answer: 0
+      },
+      {
+        level: "avanzado",
+        scenario: "triangleCharges",
+        text: "En un triangulo de cargas, para calcular el potencial en P se debe:",
+        options: ["Sumar kQi/ri usando la distancia de cada carga a P", "Sumar solo las cargas positivas", "Usar una unica distancia aunque las cargas esten en lugares distintos", "Restar siempre el campo electrico"],
+        answer: 0,
+        task: "Activa la cuadricula y lee las distancias P-C1, P-C2 y P-C3."
+      },
+      {
+        level: "medio",
+        scenario: "dielectricShell",
+        text: "En una esfera dielectrica hueca con carga distribuida dentro del material, dentro de la cavidad ideal:",
+        options: ["El campo es cero por simetria", "El campo es maximo", "El potencial debe ser cero", "La carga se va toda a la superficie"],
+        answer: 0
+      },
+      {
+        level: "avanzado",
+        scenario: "chargedArc",
+        text: "En una espira circular completa con carga uniforme, el campo electrico en el centro:",
+        options: ["Es cero por simetria", "Apunta siempre hacia arriba", "Es igual al potencial", "Depende de la masa de la carga"],
+        answer: 0,
+        task: "Pon el arco de 0 a 360 grados y observa el punto P en el centro."
+      },
+      {
+        level: "avanzado",
+        scenario: "hollowConductorCenterNegative",
+        text: "En un conductor hueco con una carga negativa en el centro, dentro del material conductor:",
+        options: ["El campo electrico es cero", "El campo es maximo", "El potencial es necesariamente cero", "No hay carga inducida"],
+        answer: 0
+      },
+      {
+        level: "avanzado",
+        scenario: "dielectricShellCenterPositive",
+        text: "En una esfera dielectrica hueca con carga positiva en el centro, dentro de la cavidad:",
+        options: ["Hay campo debido a la carga central", "El campo siempre es cero", "La carga del material se va a la superficie", "El potencial debe ser cero"],
+        answer: 0
+      }
+    ];
+
+    let test = {
+      active: false,
+      index: 0,
+      score: 0,
+      selected: null,
+      startedAt: null,
+      ended: false,
+      order: [],
+      currentOptions: [],
+      currentAnswer: 0,
+      answered: false,
+      records: []
+    };
+
+    let practiceStats = {
+      count: 0,
+      totalMs: 0,
+      activeStart: null
+    };
+
+    const examQuestions = [
+      { level: "basico", scenario: "singlePositive", text: "Para una carga puntual positiva, ¿como cambia el potencial V al aumentar la distancia r?", options: ["Disminuye como kq/r", "Aumenta como r^2", "Permanece constante", "Se hace siempre negativo"], answer: 0, feedback: "Para una carga puntual, V = kq/r. Si r aumenta, V disminuye." },
+      { level: "basico", scenario: "singlePositive", text: "El campo electrico de una carga puntual positiva apunta:", options: ["Hacia afuera de la carga", "Hacia adentro de la carga", "Siempre horizontal", "En circulos cerrados"], answer: 0, feedback: "Las lineas de campo salen de cargas positivas y entran en cargas negativas." },
+      { level: "basico", scenario: "singleNegative", text: "El potencial alrededor de una carga negativa aislada es:", options: ["Negativo", "Positivo siempre", "Cero siempre", "Igual al campo"], answer: 0, feedback: "V = kq/r conserva el signo de q; si q es negativa, V es negativo." },
+      { level: "basico", scenario: "dipole", text: "En el centro de un dipolo +Q y -Q, el potencial electrico V es:", options: ["Cero por cancelacion escalar", "Maximo", "Igual a |E|", "Infinito"], answer: 0, feedback: "El potencial es escalar: kQ/r + k(-Q)/r = 0 en el centro." },
+      { level: "basico", scenario: "equalPositive", text: "Dos cargas positivas iguales: en el punto medio el campo electrico total es:", options: ["Cero", "Maximo", "Negativo", "Igual al potencial"], answer: 0, feedback: "Los campos tienen igual magnitud y sentidos opuestos en el punto medio." },
+      { level: "basico", scenario: "equalPositive", text: "Dos cargas positivas iguales: en el punto medio el potencial electrico es:", options: ["Positivo y no cero", "Cero porque E = 0", "Negativo", "No existe"], answer: 0, feedback: "El potencial se suma como escalar; dos contribuciones positivas dan V positivo." },
+      { level: "basico", scenario: "plates", text: "Entre placas paralelas ideales, las lineas de campo son aproximadamente:", options: ["Rectas y paralelas", "Circulares", "Aleatorias", "Tangentes a las equipotenciales"], answer: 0, feedback: "En el modelo ideal, E es uniforme entre placas: lineas rectas y paralelas." },
+      { level: "basico", scenario: "plates", text: "Las superficies equipotenciales entre placas paralelas ideales son:", options: ["Paralelas a las placas", "Paralelas al campo", "Solo puntos", "Circunferencias"], answer: 0, feedback: "Las equipotenciales son perpendiculares al campo y paralelas a las placas." },
+      { level: "basico", scenario: "equipotential", text: "Si una carga se mueve sobre una superficie equipotencial, el trabajo del campo electrico es:", options: ["Cero", "Maximo", "Siempre positivo", "Siempre negativo"], answer: 0, feedback: "W = q Delta V. En una equipotencial Delta V = 0, entonces W = 0." },
+      { level: "basico", scenario: "squareCharges", text: "Cuatro cargas positivas iguales equidistantes del centro producen en el centro:", options: ["E = 0 por simetria", "V = 0 por simetria", "E maximo", "Carga neta cero"], answer: 0, feedback: "Los vectores campo se cancelan por simetria; el potencial positivo se suma." },
+
+      { level: "medio", scenario: "singlePositive", text: "Una carga puntual +2 uC esta a 2 cm de P. ¿Cual es el potencial aproximado en P?", options: ["8.99 x 10^5 V", "8.99 x 10^3 V", "4.49 x 10^5 V", "1.80 x 10^6 V"], answer: 0, feedback: "V = kq/r = (8.99 x 10^9)(2 x 10^-6)/(0.02) = 8.99 x 10^5 V." },
+      { level: "medio", scenario: "singlePositive", text: "Una carga de prueba +1 uC esta en un campo E = 3.0 x 10^6 N/C. ¿Que fuerza siente?", options: ["3.0 N", "3.0 x 10^6 N", "3.0 x 10^-6 N", "0.003 N"], answer: 0, feedback: "F = qE = (1 x 10^-6 C)(3.0 x 10^6 N/C) = 3.0 N." },
+      { level: "medio", scenario: "dipole", text: "En el centro de un dipolo +2 uC y -2 uC, cada carga esta a 1.2 cm. ¿Que afirmacion es correcta?", options: ["V = 0, pero E no es cero", "E = 0 y V = 0", "V es maximo y E = 0", "E y V son negativos"], answer: 0, feedback: "Los potenciales se cancelan por signo, pero los campos apuntan en la misma direccion." },
+      { level: "medio", scenario: "equalPositive", text: "Dos cargas +2 uC estan a +/-1.3 cm. En el centro, ¿cual es el signo de V y el valor de E?", options: ["V positivo y E = 0", "V = 0 y E positivo", "V negativo y E = 0", "V = 0 y E = 0"], answer: 0, feedback: "El campo vectorial se cancela; el potencial escalar positivo se suma." },
+      { level: "medio", scenario: "plates", text: "Placas ideales con Delta V = 80 V separadas 5.4 cm. ¿Cual es la magnitud de E entre ellas?", options: ["1.48 x 10^3 N/C", "1.48 x 10^5 N/C", "432 N/C", "80 N/C"], answer: 0, feedback: "E = Delta V/d = 80/0.054 = 1.48 x 10^3 N/C." },
+      { level: "medio", scenario: "triangleCharges", text: "Para calcular U sistema de tres cargas puntuales, ¿que suma es correcta?", options: ["Sumar k qi qj/rij solo para pares i<j", "Sumar k qi/ri desde P", "Sumar q0 V(P)", "Sumar los campos y multiplicar por r"], answer: 0, feedback: "La energia del sistema cuenta cada par una sola vez: U = sum_i<j k qi qj/rij." },
+      { level: "medio", scenario: "hollowConductorCenterNegative", text: "Conductor hueco con carga central -2 uC: ¿donde puede existir campo electrico?", options: ["En la cavidad y fuera del conductor; no en el metal", "Solo en el metal", "En ninguna region", "Solo sobre la superficie externa"], answer: 0, feedback: "El metal tiene E = 0, pero la cavidad tiene campo de la carga central y afuera se ve la carga neta." },
+      { level: "medio", scenario: "dielectricShell", text: "Esfera dielectrica hueca con carga distribuida en el material y sin carga central. En la cavidad ideal:", options: ["E = 0, pero V no tiene que ser cero", "E y V son siempre cero", "E es maximo", "La carga se va al borde externo"], answer: 0, feedback: "La ley de Gauss da E = 0 en la cavidad por simetria, pero el potencial puede ser constante no nulo." },
+      { level: "medio", scenario: "chargedArc", text: "Una espira completa uniforme tiene V distinto de cero en el centro, pero E = 0. ¿Por que?", options: ["V es escalar y E es vectorial", "V y E siempre son iguales", "La carga total es cero", "No hay potencial en una espira"], answer: 0, feedback: "Las contribuciones de E se cancelan por direccion; las de V se suman como escalares." },
+      { level: "medio", scenario: "potentialGraph", text: "Si V cambia de 70 V a 20 V en 2.0 cm de forma lineal, ¿cual es |E|?", options: ["2.5 x 10^3 N/C", "25 N/C", "1.0 x 10^3 N/C", "1.4 x 10^2 N/C"], answer: 0, feedback: "|E| = |Delta V/Delta x| = 50/0.020 = 2.5 x 10^3 N/C." },
+
+      { level: "avanzado", scenario: "dipole", text: "Dipolo +2 uC y -2 uC separados 2.4 cm. En el centro, ¿cual es |E| aproximado?", options: ["2.50 x 10^8 N/C", "1.25 x 10^8 N/C", "0 N/C", "2.50 x 10^6 N/C"], answer: 0, feedback: "Cada carga aporta kq/r^2 con r=0.012 m; se suman dos aportes: 2kq/r^2 = 2.50 x 10^8 N/C." },
+      { level: "avanzado", scenario: "dipole", text: "Para el mismo dipolo, la energia del sistema es aproximadamente:", options: ["-1.50 J", "+1.50 J", "-0.75 J", "0 J"], answer: 0, feedback: "U = k q1 q2/r = (8.99 x 10^9)(2e-6)(-2e-6)/0.024 = -1.50 J." },
+      { level: "avanzado", scenario: "plates", text: "Entre placas ideales con E = 1.48 x 10^3 N/C, una carga +2 uC avanza 3.0 cm en direccion de E. ¿Cambio de energia potencial?", options: ["-8.9 x 10^-5 J", "+8.9 x 10^-5 J", "-8.9 x 10^-3 J", "0 J"], answer: 0, feedback: "Delta U = q Delta V = -q E d = -(2e-6)(1.48e3)(0.03) = -8.9e-5 J." },
+      { level: "avanzado", scenario: "dielectricShell", text: "Esfera dielectrica hueca: radio interno a, externo b, carga uniforme en el material. Para a<r<b, Q_enc(r) es proporcional a:", options: ["r^3 - a^3", "r^2 - a^2", "r - a", "b^3 - r^3"], answer: 0, feedback: "La carga encerrada es densidad por volumen de material encerrado: proporcional a r^3 - a^3." },
+      { level: "avanzado", scenario: "dielectricShell", text: "En esa esfera dielectrica hueca sin carga central, para r<a se cumple:", options: ["E = 0 y V es constante", "E = kQ/r^2 y V = 0", "E crece linealmente con r", "V = kQ/r y E no es cero"], answer: 0, feedback: "Dentro de la cavidad no hay carga encerrada y por simetria E = 0; por eso V no cambia con r." },
+      { level: "avanzado", scenario: "dielectricShellCenterNegative", text: "Esfera dielectrica hueca con Q_material = +5 uC y q_centro = -2 uC. Para r>b, el campo externo equivale a:", options: ["Una carga puntual neta +3 uC", "Una carga puntual +5 uC", "Una carga puntual -2 uC", "Campo cero siempre"], answer: 0, feedback: "Fuera de una distribucion esferica simetrica se ve la carga total encerrada: +5 uC - 2 uC = +3 uC." },
+      { level: "avanzado", scenario: "hollowConductorCenterPositive", text: "Conductor hueco con carga total del conductor +5 uC y carga central +2 uC. ¿Cargas inducidas en superficie interna y externa?", options: ["Interna -2 uC, externa +7 uC", "Interna +2 uC, externa +3 uC", "Interna 0, externa +5 uC", "Interna -7 uC, externa +2 uC"], answer: 0, feedback: "La superficie interna debe tener -q_centro. Como el conductor total vale +5 uC, la externa queda +7 uC." },
+      { level: "avanzado", scenario: "potentialGraph", text: "Si V(x) tiene un maximo local suave en x0, ¿que debe ocurrir con E_x en x0?", options: ["E_x = 0 porque dV/dx = 0", "E_x es maximo", "E_x apunta siempre a +x", "E_x = V(x0)/x0"], answer: 0, feedback: "E_x = -dV/dx. En un maximo local diferenciable, la pendiente es cero." },
+      { level: "avanzado", scenario: "platePointOpposite", text: "Lamina positiva finita y carga puntual negativa: si Buscar E=0 no lo encuentra dentro del grafico, la conclusion correcta es:", options: ["No se debe reportar cero; solo el borde con menor |E| o infinito", "Debe forzarse E=0 en el punto mas cercano", "V=0 implica E=0", "El campo de la lamina desaparece"], answer: 0, feedback: "Un minimo numerico grande no es cero fisico. Hay que reportar que no existe en la ventana visible." },
+      { level: "avanzado", scenario: "zeroPotentialLine", text: "Dos cargas +2 uC y -1 uC separadas. En un punto donde V=0, ¿que condicion algebraica se cumple?", options: ["2/r_+ = 1/r_-", "2/r_+^2 = 1/r_-^2 siempre", "r_+ = r_-", "E = 0 automaticamente"], answer: 0, feedback: "V = k(2/r_+ - 1/r_-). Para V=0: 2/r_+ = 1/r_-." }
+    ];
+
+    function worldToScreen(p) {
+      const w = canvas.width;
+      const h = canvas.height;
+      const scale = Math.min(w / 7.4, h / 5.1) * state.zoom;
+      return { x: w / 2 + p.x * scale, y: h / 2 - p.y * scale, scale };
+    }
+
+    function screenToWorld(x, y) {
+      const rect = canvas.getBoundingClientRect();
+      const sx = (x - rect.left) * canvas.width / rect.width;
+      const sy = (y - rect.top) * canvas.height / rect.height;
+      const scale = Math.min(canvas.width / 7.4, canvas.height / 5.1) * state.zoom;
+      return { x: (sx - canvas.width / 2) / scale, y: -(sy - canvas.height / 2) / scale };
+    }
+
+    function clampWorld(p) {
+      p.x = Math.max(-3.45, Math.min(3.45, p.x));
+      p.y = Math.max(-2.35, Math.min(2.35, p.y));
+      return p;
+    }
+
+    function plateBounds() {
+      const plate = state.plates || {};
+      return {
+        leftX: plate.leftX ?? -2.7,
+        rightX: plate.rightX ?? 2.7,
+        topY: plate.topY ?? 2.0,
+        bottomY: plate.bottomY ?? -2.0
+      };
+    }
+
+    function loadScenario(key) {
+      const s = scenarios[key];
+      state.scenario = key;
+      state.charges = s.charges.map(c => ({ ...c }));
+      state.plates = s.plates ? { ...s.plates } : null;
+      state.finiteSources = s.finiteSources ? s.finiteSources.map(src => ({ ...src })) : null;
+      state.finitePlateAngle = s.finitePlateAngle ?? (s.finiteSources && s.finiteSources.some(src => src.type === "line") ? 90 : 65);
+      state.finitePlateSide = s.finitePlateSide || "right";
+      state.conductor = s.conductor ? { ...s.conductor } : null;
+      state.graph = s.graph ? { ...s.graph } : null;
+      state.arc = s.arc ? { ...s.arc } : null;
+      state.probe = { ...s.probe };
+      state.originProbe = { x: -2.25, y: 1.85 };
+      state.testTarget = null;
+      state.searchNote = "";
+      renderControls();
+      updateTexts();
+      draw();
+    }
+
+    function fieldAt(p) {
+      if (state.graph) {
+        const slope = graphSlopeAt(p.x);
+        return { ex: -slope / CM, ey: 0 };
+      }
+      if (state.arc) {
+        return fieldFromCharges(p, arcElements());
+      }
+      if (state.finiteSources) {
+        return fieldFromCharges(p, finiteSourceElements());
+      }
+      if (state.plates) {
+        const b = plateBounds();
+        if (p.x < Math.min(b.leftX, b.rightX) || p.x > Math.max(b.leftX, b.rightX)) return { ex: 0, ey: 0 };
+        return { ex: (state.plates.leftV - state.plates.rightV) / ((b.rightX - b.leftX) * CM), ey: 0 };
+      }
+      if (state.conductor) {
+        const r = Math.hypot(p.x, p.y);
+        if (state.conductor.dielectric) {
+          const eRadial = dielectricShellFieldMagnitude(r, state.conductor) + centralFieldMagnitude(r, state.conductor.centralQ || 0);
+          if (r < 0.001) return { ex: 0, ey: 0 };
+          return { ex: eRadial * p.x / r, ey: eRadial * p.y / r };
+        }
+        if (state.conductor.hollow && state.conductor.centralQ) {
+          if (r < state.conductor.innerR) {
+            const eRadial = centralFieldMagnitude(r, state.conductor.centralQ);
+            if (r < 0.001) return { ex: 0, ey: 0 };
+            return { ex: eRadial * p.x / r, ey: eRadial * p.y / r };
+          }
+          if (r < state.conductor.r) return { ex: 0, ey: 0 };
+          const netQ = state.conductor.q + state.conductor.centralQ;
+          const eRadial = pointFieldMagnitude(r, netQ);
+          return { ex: eRadial * p.x / r, ey: eRadial * p.y / r };
+        }
+        if (r < state.conductor.r) return { ex: 0, ey: 0 };
+        const eRadial = pointFieldMagnitude(r, state.conductor.q);
+        return { ex: eRadial * p.x / r, ey: eRadial * p.y / r };
+      }
+      return fieldFromCharges(p, state.charges);
+    }
+
+    function fieldFromCharges(p, charges) {
+      let ex = 0;
+      let ey = 0;
+      for (const c of charges) {
+        const dx = p.x - c.x;
+        const dy = p.y - c.y;
+        const dxM = dx * CM;
+        const dyM = dy * CM;
+        const rM = Math.max(Math.hypot(dxM, dyM), MIN_R_M);
+        const f = K_COULOMB * c.q * MICRO / Math.pow(rM, 3);
+        ex += f * dxM;
+        ey += f * dyM;
+      }
+      return { ex, ey };
+    }
+
+    function cmToM(rCm) {
+      return Math.max(Math.abs(rCm) * CM, MIN_R_M);
+    }
+
+    function pointFieldMagnitude(rCm, qMicroC) {
+      if (!qMicroC) return 0;
+      const rM = cmToM(rCm);
+      return K_COULOMB * qMicroC * MICRO / (rM * rM);
+    }
+
+    function pointPotential(rCm, qMicroC) {
+      if (!qMicroC) return 0;
+      return K_COULOMB * qMicroC * MICRO / cmToM(rCm);
+    }
+
+    function potentialAt(p) {
+      if (state.graph) {
+        return graphPotentialAt(p.x);
+      }
+      if (state.arc) {
+        return potentialFromCharges(p, arcElements());
+      }
+      if (state.finiteSources) {
+        return potentialFromCharges(p, finiteSourceElements());
+      }
+      if (state.plates) {
+        const b = plateBounds();
+        const t = Math.max(0, Math.min(1, (p.x - b.leftX) / (b.rightX - b.leftX)));
+        return state.plates.leftV + (state.plates.rightV - state.plates.leftV) * t;
+      }
+      if (state.conductor) {
+        const r = Math.hypot(p.x, p.y);
+        if (state.conductor.dielectric) {
+          return dielectricShellPotential(r, state.conductor) + centralPotential(r, state.conductor.centralQ || 0);
+        }
+        if (state.conductor.hollow && state.conductor.centralQ) {
+          if (r < state.conductor.innerR) {
+            const shellConstant = pointPotential(state.conductor.r, state.conductor.q + state.conductor.centralQ) - pointPotential(state.conductor.innerR, state.conductor.centralQ);
+            return centralPotential(r, state.conductor.centralQ) + shellConstant;
+          }
+          const rr = Math.max(r, state.conductor.r);
+          return pointPotential(rr, state.conductor.q + state.conductor.centralQ);
+        }
+        const rr = Math.max(r, state.conductor.r);
+        return pointPotential(rr, state.conductor.q);
+      }
+      return potentialFromCharges(p, state.charges);
+    }
+
+    function dielectricShellFieldMagnitude(r, shell) {
+      const a = shell.innerR;
+      const b = shell.r;
+      const q = shell.q;
+      if (r < a) return 0;
+      const aM = a * CM;
+      const bM = b * CM;
+      const rM = cmToM(r);
+      if (r <= b) {
+        const enclosedMicroC = q * (Math.pow(rM, 3) - Math.pow(aM, 3)) / (Math.pow(bM, 3) - Math.pow(aM, 3));
+        return K_COULOMB * enclosedMicroC * MICRO / (rM * rM);
+      }
+      return pointFieldMagnitude(r, q);
+    }
+
+    function centralFieldMagnitude(r, q) {
+      if (!q || r < 0.001) return 0;
+      return pointFieldMagnitude(r, q);
+    }
+
+    function centralPotential(r, q) {
+      if (!q) return 0;
+      return pointPotential(r, q);
+    }
+
+    function dielectricShellPotential(r, shell) {
+      const a = shell.innerR;
+      const b = shell.r;
+      const q = shell.q;
+      const aM = a * CM;
+      const bM = b * CM;
+      const rM = cmToM(r);
+      const qC = q * MICRO;
+      if (r >= b) return K_COULOMB * qC / rM;
+      const d = Math.pow(bM, 3) - Math.pow(aM, 3);
+      const vAtB = K_COULOMB * qC / bM;
+      const shellDropFromBTo = (radiusM) => K_COULOMB * qC / d *
+        ((bM * bM - radiusM * radiusM) / 2 + Math.pow(aM, 3) * (1 / bM - 1 / radiusM));
+      if (r >= a) return vAtB + shellDropFromBTo(rM);
+      return vAtB + shellDropFromBTo(aM);
+    }
+
+    function potentialFromCharges(p, charges) {
+      let v = 0;
+      for (const c of charges) {
+        const rM = Math.max(Math.hypot((p.x - c.x) * CM, (p.y - c.y) * CM), MIN_R_M);
+        v += K_COULOMB * c.q * MICRO / rM;
+      }
+      return v;
+    }
+
+    function finiteSourceElements() {
+      if (!state.finiteSources) return [];
+      const charges = [];
+      for (const src of state.finiteSources) {
+        if (src.type === "point") {
+          charges.push({ q: src.q, x: src.x, y: src.y });
+        } else if (src.type === "line") {
+          const samples = src.samples || 32;
+          const angle = sourceAngle(src) * Math.PI / 180;
+          const ux = Math.cos(angle);
+          const uy = Math.sin(angle);
+          for (let i = 0; i < samples; i++) {
+            const t = samples === 1 ? 0 : -0.5 + i / (samples - 1);
+            charges.push({
+              q: src.q / samples,
+              x: src.x + ux * src.length * t,
+              y: src.y + uy * src.length * t
+            });
+          }
+        } else if (src.type === "ring") {
+          const samples = src.samples || 48;
+          for (let i = 0; i < samples; i++) {
+            const a = 2 * Math.PI * i / samples;
+            charges.push({
+              q: src.q / samples,
+              x: src.x + src.radius * Math.cos(a),
+              y: src.y + src.radius * Math.sin(a)
+            });
+          }
+        }
+      }
+      return charges;
+    }
+
+    function hasFiniteLines() {
+      return !!(state.finiteSources && state.finiteSources.some(src => src.type === "line"));
+    }
+
+    function movableLineCount() {
+      return state.finiteSources ? state.finiteSources.filter(src => src.type === "line").length : 0;
+    }
+
+    function sourceAngle(src) {
+      if (src.type !== "line") return 0;
+      if (movableLineCount() === 1) return state.finitePlateAngle;
+      if (src.side) return src.side === state.finitePlateSide ? state.finitePlateAngle : 90;
+      return src.angle === "state" ? state.finitePlateAngle : (src.angle || 0);
+    }
+
+    function arcElements() {
+      if (!state.arc) return [];
+      const start = Number(state.arc.startDeg);
+      let end = Number(state.arc.endDeg);
+      if (end <= start) end += 360;
+      const span = Math.max(1, end - start);
+      const n = Math.max(8, Math.min(144, Math.ceil(span / 5)));
+      const charges = [];
+      for (let i = 0; i < n; i++) {
+        const deg = start + span * (i + 0.5) / n;
+        const rad = deg * Math.PI / 180;
+        let q = state.arc.totalQ / n;
+        if (state.arc.pattern === "negative") q *= -1;
+        if (state.arc.pattern === "alternating") q *= i % 2 === 0 ? 1 : -1;
+        charges.push({ q, x: state.arc.radius * Math.cos(rad), y: state.arc.radius * Math.sin(rad) });
+      }
+      return charges;
+    }
+
+    function graphPotentialAt(x) {
+      if (x < -2.2) return 70;
+      if (x < -0.8) return 70 - (x + 2.2) * 35;
+      if (x < 0.8) return 21;
+      if (x < 2.15) return 21 + (x - 0.8) * 55;
+      return 95;
+    }
+
+    function graphSlopeAt(x) {
+      if (x < -2.2) return 0;
+      if (x < -0.8) return -35;
+      if (x < 0.8) return 0;
+      if (x < 2.15) return 55;
+      return 0;
+    }
+
+    function drawPotentialMap() {
+      if (state.graph) {
+        ctx.fillStyle = "rgba(245, 249, 250, 0.65)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        return;
+      }
+      if (state.plates) {
+        const b = plateBounds();
+        const left = worldToScreen({ x: b.leftX, y: 0 }).x;
+        const right = worldToScreen({ x: b.rightX, y: 0 }).x;
+        const top = 0;
+        const bottom = canvas.height;
+        const grad = ctx.createLinearGradient(left, 0, right, 0);
+        grad.addColorStop(0, "rgba(218, 60, 60, 0.28)");
+        grad.addColorStop(0.5, "rgba(245, 249, 250, 0.18)");
+        grad.addColorStop(1, "rgba(35, 105, 205, 0.26)");
+        ctx.fillStyle = graphPanelFill();
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "rgba(218, 60, 60, 0.08)";
+        ctx.fillRect(0, top, left, bottom - top);
+        ctx.fillStyle = "rgba(35, 105, 205, 0.08)";
+        ctx.fillRect(right, top, canvas.width - right, bottom - top);
+        ctx.fillStyle = grad;
+        ctx.fillRect(left, top, right - left, bottom - top);
+        return;
+      }
+      const step = 10;
+      const vScale = potentialColorScale();
+      for (let y = 0; y < canvas.height; y += step) {
+        for (let x = 0; x < canvas.width; x += step) {
+          const p = screenToWorldFromCanvas(x + step / 2, y + step / 2);
+          const v = potentialAt(p);
+          const t = Math.max(-1, Math.min(1, v / vScale));
+          if (t >= 0) {
+            ctx.fillStyle = `rgba(218, 60, 60, ${0.06 + t * 0.22})`;
+          } else {
+            ctx.fillStyle = `rgba(35, 105, 205, ${0.06 + -t * 0.22})`;
+          }
+          ctx.fillRect(x, y, step, step);
+        }
+      }
+    }
+
+    function potentialColorScale() {
+      if (state.plates) return Math.max(1, Math.abs(state.plates.leftV - state.plates.rightV));
+      if (state.graph) return 100;
+      if (state.conductor) return 900000;
+      return 700000;
+    }
+
+    function screenToWorldFromCanvas(sx, sy) {
+      const scale = Math.min(canvas.width / 7.4, canvas.height / 5.1) * state.zoom;
+      return { x: (sx - canvas.width / 2) / scale, y: -(sy - canvas.height / 2) / scale };
+    }
+
+    function drawGrid() {
+      ctx.fillStyle = cssVar("--canvas-bg") || "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      if (!state.showGrid) return;
+      ctx.strokeStyle = cssVar("--grid") || "#e6eef1";
+      ctx.lineWidth = 1;
+      const scale = Math.min(canvas.width / 7.4, canvas.height / 5.1);
+      const origin = worldToScreen({ x: 0, y: 0 });
+      for (let x = origin.x % scale; x < canvas.width; x += scale) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+      for (let y = origin.y % scale; y < canvas.height; y += scale) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+      ctx.strokeStyle = cssVar("--axis") || "#c7d5da";
+      ctx.beginPath();
+      ctx.moveTo(origin.x, 0);
+      ctx.lineTo(origin.x, canvas.height);
+      ctx.moveTo(0, origin.y);
+      ctx.lineTo(canvas.width, origin.y);
+      ctx.stroke();
+      ctx.fillStyle = canvasMuted();
+      ctx.font = "700 11px system-ui";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      for (let x = -3; x <= 3; x++) {
+        const s = worldToScreen({ x, y: 0 });
+        if (x !== 0) ctx.fillText(`${x} cm`, s.x, origin.y + 5);
+      }
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
+      for (let y = -2; y <= 2; y++) {
+        const s = worldToScreen({ x: 0, y });
+        if (y !== 0) ctx.fillText(`${y}`, origin.x + 5, s.y);
+      }
+    }
+
+    function drawEquipotentials() {
+      if (state.graph) {
+        drawPotentialGraph();
+        return;
+      }
+      if (state.plates) {
+        const b = plateBounds();
+        const left = worldToScreen({ x: b.leftX, y: 0 }).x;
+        const right = worldToScreen({ x: b.rightX, y: 0 }).x;
+        const top = 0;
+        const bottom = canvas.height;
+        ctx.save();
+        ctx.setLineDash([7, 6]);
+        ctx.lineWidth = 1.7;
+        for (let i = 1; i < 8; i++) {
+          const x = left + (right - left) * i / 8;
+          const v = state.plates.leftV + (state.plates.rightV - state.plates.leftV) * i / 8;
+          ctx.strokeStyle = "rgba(42, 51, 58, 0.44)";
+          ctx.beginPath();
+          ctx.moveTo(x, top + 10);
+          ctx.lineTo(x, bottom - 10);
+          ctx.stroke();
+          ctx.fillStyle = canvasInk();
+          ctx.font = "700 12px system-ui";
+          ctx.textAlign = "center";
+          if (state.showFigureText) ctx.fillText(`${Math.round(v)} V`, x, top + 24);
+        }
+        if (state.showFigureText) {
+          ctx.setLineDash([]);
+          ctx.fillStyle = graphPanelFill();
+          ctx.strokeStyle = cssVar("--line") || "#ccd7dc";
+          ctx.lineWidth = 1;
+          const labelY = top + 44;
+          drawThemeLabel("E = 0 fuera", Math.max(60, left / 2), labelY);
+          drawThemeLabel("E uniforme", (left + right) / 2, labelY);
+          drawThemeLabel("E = 0 fuera", Math.min(canvas.width - 60, right + (canvas.width - right) / 2), labelY);
+          drawThemeLabel("fuera: +sigma/2e0 y -sigma/2e0 se cancelan", canvas.width / 2, canvas.height - 28);
+        }
+        ctx.restore();
+        return;
+      }
+      const cols = 74;
+      const rows = 48;
+      const values = [];
+      const flat = [];
+      for (let j = 0; j <= rows; j++) {
+        values[j] = [];
+        for (let i = 0; i <= cols; i++) {
+          const sx = i * canvas.width / cols;
+          const sy = j * canvas.height / rows;
+          const v = potentialAt(screenToWorldFromCanvas(sx, sy));
+          values[j][i] = v;
+          if (Number.isFinite(v)) flat.push(v);
+        }
+      }
+      const levels = equipotentialLevels(flat);
+      for (const level of levels) {
+        ctx.strokeStyle = level === 0 ? "rgba(42, 51, 58, 0.55)" : (level > 0 ? "rgba(170, 45, 45, 0.45)" : "rgba(35, 90, 180, 0.45)");
+        ctx.lineWidth = level === 0 ? 2 : 1;
+        for (let j = 0; j < rows; j++) {
+          for (let i = 0; i < cols; i++) {
+            const v00 = values[j][i], v10 = values[j][i + 1], v11 = values[j + 1][i + 1], v01 = values[j + 1][i];
+            const pts = [];
+            addCross(pts, v00, v10, i, j, i + 1, j, level, cols, rows);
+            addCross(pts, v10, v11, i + 1, j, i + 1, j + 1, level, cols, rows);
+            addCross(pts, v11, v01, i + 1, j + 1, i, j + 1, level, cols, rows);
+            addCross(pts, v01, v00, i, j + 1, i, j, level, cols, rows);
+            if (pts.length >= 2) {
+              ctx.beginPath();
+              ctx.moveTo(pts[0].x, pts[0].y);
+              ctx.lineTo(pts[1].x, pts[1].y);
+              ctx.stroke();
+            }
+          }
+        }
+      }
+    }
+
+    function equipotentialLevels(values) {
+      if (!values.length) return [-70, -45, -25, -12, 0, 12, 25, 45, 70];
+      const sorted = [...values].sort((a, b) => a - b);
+      const pick = (p) => sorted[Math.max(0, Math.min(sorted.length - 1, Math.round((sorted.length - 1) * p)))];
+      const lo = pick(0.08);
+      const hi = pick(0.92);
+      if (!Number.isFinite(lo) || !Number.isFinite(hi) || Math.abs(hi - lo) < 1e-9) return [0];
+      const levels = [];
+      for (let i = 1; i <= 8; i++) levels.push(lo + (hi - lo) * i / 9);
+      if (lo < 0 && hi > 0) levels.push(0);
+      return [...new Set(levels.map(v => Math.round(v)))].sort((a, b) => a - b);
+    }
+
+    function addCross(pts, a, b, i1, j1, i2, j2, level, cols, rows) {
+      if ((a < level && b >= level) || (a >= level && b < level)) {
+        const t = (level - a) / (b - a);
+        pts.push({
+          x: (i1 + (i2 - i1) * t) * canvas.width / cols,
+          y: (j1 + (j2 - j1) * t) * canvas.height / rows
+        });
+      }
+    }
+
+    function drawPotentialGraph() {
+      const left = worldToScreen({ x: -3.05, y: 0 }).x;
+      const right = worldToScreen({ x: 3.05, y: 0 }).x;
+      const top = worldToScreen({ x: 0, y: 1.95 }).y;
+      const bottom = worldToScreen({ x: 0, y: -1.95 }).y;
+      const zero = bottom - 30;
+      const vScale = (bottom - top - 55) / 110;
+
+      ctx.save();
+      ctx.fillStyle = graphPanelFill();
+      ctx.fillRect(left - 18, top - 12, right - left + 36, bottom - top + 24);
+      ctx.strokeStyle = cssVar("--line") || "#9fb4bd";
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(left - 18, top - 12, right - left + 36, bottom - top + 24);
+
+      ctx.strokeStyle = cssVar("--grid") || "#d8e3e7";
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= 6; i++) {
+        const x = left + (right - left) * i / 6;
+        ctx.beginPath();
+        ctx.moveTo(x, top);
+        ctx.lineTo(x, bottom);
+        ctx.stroke();
+      }
+      for (let i = 0; i <= 5; i++) {
+        const y = top + (bottom - top) * i / 5;
+        ctx.beginPath();
+        ctx.moveTo(left, y);
+        ctx.lineTo(right, y);
+        ctx.stroke();
+      }
+
+      ctx.strokeStyle = canvasInk();
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(left, zero);
+      ctx.lineTo(right, zero);
+      ctx.moveTo(left, bottom);
+      ctx.lineTo(left, top);
+      ctx.stroke();
+
+      ctx.strokeStyle = cssVar("--brand") || "#006d77";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      for (let i = 0; i <= 180; i++) {
+        const xw = -3.05 + 6.1 * i / 180;
+        const s = worldToScreen({ x: xw, y: 0 });
+        const y = zero - graphPotentialAt(xw) * vScale;
+        if (i === 0) ctx.moveTo(s.x, y);
+        else ctx.lineTo(s.x, y);
+      }
+      ctx.stroke();
+
+      const p = worldToScreen(state.probe);
+      const pv = graphPotentialAt(state.probe.x);
+      const py = zero - pv * vScale;
+      ctx.strokeStyle = cssVar("--brand-2") || "#b76e00";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.moveTo(p.x, zero);
+      ctx.lineTo(p.x, py);
+      ctx.lineTo(left, py);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = canvasInk();
+      ctx.beginPath();
+      ctx.arc(p.x, py, 7, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = canvasInk();
+      ctx.font = "700 13px system-ui";
+      ctx.textAlign = "left";
+      if (state.showFigureText) ctx.fillText("V(x)", left + 8, top + 20);
+      ctx.textAlign = "right";
+      if (state.showFigureText) ctx.fillText("x", right - 8, zero - 8);
+      ctx.restore();
+    }
+
+    function drawField() {
+      if (state.graph) {
+        const top = worldToScreen({ x: 0, y: 1.6 }).y;
+        const bottom = worldToScreen({ x: 0, y: -1.7 }).y;
+        for (let x = -3.0; x <= 3.0; x += 0.42) {
+          const e = fieldAt({ x, y: 0 });
+          if (Math.abs(e.ex) < 0.1) continue;
+          const s = worldToScreen({ x, y: 0 });
+          const dir = e.ex > 0 ? 1 : -1;
+          for (let y = top; y <= bottom; y += 58) {
+            drawArrow(s.x - dir * 18, y, s.x + dir * 18, y, "rgba(26, 72, 83, 0.72)");
+          }
+        }
+        return;
+      }
+      if (state.plates) {
+        const b = plateBounds();
+        const left = worldToScreen({ x: b.leftX, y: 0 }).x + 22;
+        const right = worldToScreen({ x: b.rightX, y: 0 }).x - 22;
+        const top = 0;
+        const bottom = canvas.height;
+        const lines = 8;
+        for (let i = 1; i <= lines; i++) {
+          const y = top + (bottom - top) * i / (lines + 1);
+          ctx.strokeStyle = "rgba(26, 72, 83, 0.36)";
+          ctx.lineWidth = 1.4;
+          ctx.beginPath();
+          ctx.moveTo(left, y);
+          ctx.lineTo(right, y);
+          ctx.stroke();
+          drawArrow(left + 36, y, right - 36, y, "rgba(26, 72, 83, 0.76)");
+        }
+        return;
+      }
+      if (state.finiteSources) {
+        drawFiniteFieldLines();
+      }
+      const cols = 18;
+      const rows = 12;
+      for (let j = 1; j < rows; j++) {
+        for (let i = 1; i < cols; i++) {
+          const sx = i * canvas.width / cols;
+          const sy = j * canvas.height / rows;
+          const p = screenToWorldFromCanvas(sx, sy);
+          if (state.charges.some(c => Math.hypot(p.x - c.x, p.y - c.y) < 0.28)) continue;
+          if (state.finiteSources && finiteSourceElements().some(c => Math.hypot(p.x - c.x, p.y - c.y) < 0.18)) continue;
+          if (state.conductor && Math.hypot(p.x, p.y) < state.conductor.r) continue;
+          const e = fieldAt(p);
+          const m = Math.hypot(e.ex, e.ey);
+          if (m < 0.02) continue;
+          const len = Math.min(34, 9 + Math.log(1 + m) * 9);
+          const ux = e.ex / m;
+          const uy = -e.ey / m;
+          drawArrow(sx - ux * len * 0.5, sy - uy * len * 0.5, sx + ux * len * 0.5, sy + uy * len * 0.5, "rgba(26, 72, 83, 0.72)");
+        }
+      }
+    }
+
+    function drawContinuousFieldLines() {
+      const seeds = fieldLineSeeds();
+      if (!seeds.length) return;
+      ctx.save();
+      ctx.strokeStyle = fieldLineColor();
+      ctx.lineWidth = 0.58;
+      ctx.globalAlpha = 0.76;
+      for (const seed of seeds) {
+        const seedDirection = seed.direction || 1;
+        traceFieldLine(seed, seedDirection);
+        if (!seed.oneWay) traceFieldLine(seed, -seedDirection);
+      }
+      ctx.restore();
+    }
+
+    function fieldLineSeeds() {
+      if (state.graph) {
+        const seeds = [];
+        for (let x = -3.2; x <= 3.2; x += 0.28) seeds.push({ x, y: 0, oneWay: true });
+        return seeds;
+      }
+      if (state.plates) {
+        const b = plateBounds();
+        const seeds = [];
+        for (let y = -2.35; y <= 2.35; y += 0.18) seeds.push({ x: b.leftX + 0.12, y, oneWay: true, idealPlate: true });
+        return seeds;
+      }
+      const sourceCharges = state.finiteSources ? finiteSourceElements() : state.arc ? arcElements() : state.charges;
+      const positives = sourceCharges.filter(c => c.q > 0);
+      const negatives = sourceCharges.filter(c => c.q < 0);
+      if (positives.length || negatives.length) {
+        const sourcePool = balancedFieldSources(positives, negatives, fieldSourceLimitPerSign());
+        const seeds = [];
+        for (let i = 0; i < sourcePool.length; i++) {
+          const c = sourcePool[i];
+          const angleCount = fieldSeedAngleCount(sourcePool.length);
+          const angles = [];
+          for (let j = 0; j < angleCount; j++) angles.push(j * Math.PI * 2 / angleCount);
+          for (const a of angles) {
+            seeds.push({
+              x: c.x + 0.13 * Math.cos(a),
+              y: c.y + 0.13 * Math.sin(a),
+              oneWay: false,
+              direction: c.q >= 0 ? 1 : -1
+            });
+          }
+        }
+        addFieldGridSeeds(seeds, sourceCharges, 0.82, 0.68, 190);
+        return seeds.slice(0, 190);
+      }
+      if (state.conductor) {
+        const seeds = [];
+        if (state.conductor.hollow && state.conductor.centralQ) {
+          for (let i = 0; i < 24; i++) {
+            const a = i * Math.PI * 2 / 24;
+            seeds.push({
+              x: 0.14 * Math.cos(a),
+              y: 0.14 * Math.sin(a),
+              oneWay: false,
+              direction: state.conductor.centralQ >= 0 ? 1 : -1
+            });
+          }
+        }
+        const r = state.conductor.r + 0.08;
+        for (let i = 0; i < 40; i++) {
+          const a = i * Math.PI * 2 / 40;
+          seeds.push({ x: r * Math.cos(a), y: r * Math.sin(a), oneWay: false, direction: state.conductor.q >= 0 ? 1 : -1 });
+        }
+        return seeds;
+      }
+      const seeds = [];
+      for (let x = -3.2; x <= 3.2; x += 0.55) {
+        for (let y = -2.2; y <= 2.2; y += 0.5) seeds.push({ x, y });
+      }
+      return seeds;
+    }
+
+    function balancedFieldSources(positives, negatives, maxPerSign) {
+      const sample = (items) => {
+        if (items.length <= maxPerSign) return items;
+        const picked = [];
+        const used = new Set();
+        for (let i = 0; i < maxPerSign; i++) {
+          const idx = Math.round(i * (items.length - 1) / (maxPerSign - 1));
+          if (!used.has(idx)) {
+            used.add(idx);
+            picked.push(items[idx]);
+          }
+        }
+        return picked;
+      };
+      const pos = sample(positives);
+      const neg = sample(negatives);
+      if (!pos.length) return neg;
+      if (!neg.length) return pos;
+      const mixed = [];
+      const count = Math.max(pos.length, neg.length);
+      for (let i = 0; i < count; i++) {
+        if (pos[i]) mixed.push(pos[i]);
+        if (neg[i]) mixed.push(neg[i]);
+      }
+      return mixed;
+    }
+
+    function fieldSourceLimitPerSign() {
+      if (state.finiteSources || state.arc) return 10;
+      return 14;
+    }
+
+    function fieldSeedAngleCount(sourceCount) {
+      if (sourceCount > 24) return 4;
+      if (sourceCount > 12) return 6;
+      return 8;
+    }
+
+    function addFieldGridSeeds(seeds, sourceCharges, dx, dy, limit) {
+      for (let x = -3.2; x <= 3.2 && seeds.length < limit; x += dx) {
+        for (let y = -2.2; y <= 2.2 && seeds.length < limit; y += dy) {
+          const nearSource = sourceCharges.some(c => Math.hypot(x - c.x, y - c.y) < 0.24);
+          if (!nearSource) seeds.push({ x: Number(x.toFixed(3)), y: Number(y.toFixed(3)), oneWay: false });
+        }
+      }
+    }
+
+    function traceFieldLine(seed, direction) {
+      let p = { x: seed.x, y: seed.y };
+      ctx.beginPath();
+      let started = false;
+      for (let step = 0; step < 220; step++) {
+        if (p.x < -3.7 || p.x > 3.7 || p.y < -2.55 || p.y > 2.55) break;
+        if (seed.idealPlate && !insideIdealPlateX(p)) break;
+        if (isInsideFieldSource(p, step)) break;
+        const s = worldToScreen(p);
+        if (!started) {
+          ctx.moveTo(s.x, s.y);
+          started = true;
+        } else {
+          ctx.lineTo(s.x, s.y);
+        }
+        const e = fieldAt(p);
+        const m = Math.hypot(e.ex, e.ey);
+        if (!Number.isFinite(m) || m < 1e-6) break;
+        p = { x: p.x + direction * (e.ex / m) * 0.038, y: p.y + direction * (e.ey / m) * 0.038 };
+      }
+      if (started) ctx.stroke();
+    }
+
+    function isInsideFieldSource(p, step) {
+      if (step < 4) return false;
+      if (state.charges.some(c => Math.hypot(p.x - c.x, p.y - c.y) < 0.12)) return true;
+      if (state.finiteSources && finiteSourceElements().some(c => Math.hypot(p.x - c.x, p.y - c.y) < 0.09)) return true;
+      if (state.arc && arcElements().some(c => Math.hypot(p.x - c.x, p.y - c.y) < 0.09)) return true;
+      if (state.conductor) {
+        const r = Math.hypot(p.x, p.y);
+        if (state.conductor.dielectric) return false;
+        if (state.conductor.hollow) return r >= state.conductor.innerR && r < state.conductor.r;
+        return r < state.conductor.r;
+      }
+      return false;
+    }
+
+    function fieldLineColor() {
+      if (document.body.classList.contains("theme-chalk-green") || document.body.classList.contains("theme-chalk-gray") || document.body.classList.contains("theme-dark")) {
+        return "rgba(238, 246, 225, 0.68)";
+      }
+      return "rgba(20, 69, 82, 0.5)";
+    }
+
+    function insideIdealPlateX(p) {
+      if (!state.plates) return false;
+      const b = plateBounds();
+      return p.x >= Math.min(b.leftX, b.rightX) + 0.02 && p.x <= Math.max(b.leftX, b.rightX) - 0.02;
+    }
+
+    function drawFiniteFieldLines() {
+      const elements = finiteSourceElements();
+      const positives = elements.filter(c => c.q > 0);
+      const seeds = positives.length ? positives : elements.filter(c => c.q < 0);
+      const stride = Math.max(1, Math.ceil(seeds.length / 18));
+      ctx.save();
+      ctx.strokeStyle = "rgba(26, 72, 83, 0.38)";
+      ctx.lineWidth = 1.25;
+      for (let i = 0; i < seeds.length; i += stride) {
+        const seed = seeds[i];
+        const sign = seed.q > 0 ? 1 : -1;
+        const base = { x: seed.x, y: seed.y };
+        const nudges = [{ x: 0.12, y: 0 }, { x: -0.12, y: 0 }, { x: 0, y: 0.12 }, { x: 0, y: -0.12 }];
+        for (const nudge of nudges.slice(0, 2)) {
+          let p = { x: base.x + nudge.x, y: base.y + nudge.y };
+          ctx.beginPath();
+          const s0 = worldToScreen(p);
+          ctx.moveTo(s0.x, s0.y);
+          for (let step = 0; step < 130; step++) {
+            const e = fieldAt(p);
+            const m = Math.hypot(e.ex, e.ey);
+            if (m < 1e-6) break;
+            p = { x: p.x + sign * (e.ex / m) * 0.055, y: p.y + sign * (e.ey / m) * 0.055 };
+            if (p.x < -3.7 || p.x > 3.7 || p.y < -2.55 || p.y > 2.55) break;
+            if (step > 8 && elements.some(c => Math.hypot(p.x - c.x, p.y - c.y) < 0.1)) break;
+            const s = worldToScreen(p);
+            ctx.lineTo(s.x, s.y);
+          }
+          ctx.stroke();
+        }
+      }
+      ctx.restore();
+    }
+
+    function drawArrow(x1, y1, x2, y2, color) {
+      const ang = Math.atan2(y2 - y1, x2 - x1);
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = 1.7;
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x2, y2);
+      ctx.lineTo(x2 - 7 * Math.cos(ang - 0.55), y2 - 7 * Math.sin(ang - 0.55));
+      ctx.lineTo(x2 - 7 * Math.cos(ang + 0.55), y2 - 7 * Math.sin(ang + 0.55));
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function drawCharges() {
+      if (state.arc) {
+        drawArcSource();
+      }
+      if (state.finiteSources) {
+        drawFiniteSources();
+      }
+      if (state.plates) {
+        const b = plateBounds();
+        const left = worldToScreen({ x: b.leftX, y: 0 });
+        const right = worldToScreen({ x: b.rightX, y: 0 });
+        const top = 0;
+        const bottom = canvas.height;
+        ctx.fillStyle = cssVar("--pos") || "#d73737";
+        ctx.fillRect(left.x - 14, top, 28, bottom - top);
+        ctx.fillStyle = cssVar("--neg") || "#2468c9";
+        ctx.fillRect(right.x - 14, top, 28, bottom - top);
+        ctx.fillStyle = "white";
+        ctx.font = "700 22px system-ui";
+        ctx.textAlign = "center";
+        ctx.fillText("+", left.x, top + 32);
+        ctx.fillText("-", right.x, top + 32);
+      }
+      if (state.conductor) {
+        const c = worldToScreen({ x: 0, y: 0 });
+        const r = state.conductor.r * c.scale;
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, r, 0, Math.PI * 2);
+        ctx.fillStyle = state.conductor.dielectric ? (cssVar("--dielectric-fill") || "rgba(126, 205, 176, 0.26)") : (cssVar("--shell-fill") || "rgba(226, 238, 240, 0.92)");
+        ctx.fill();
+        ctx.strokeStyle = state.conductor.dielectric ? (cssVar("--shell-stroke") || "#2e7d5b") : (cssVar("--shell-stroke") || "#607d87");
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        if (state.conductor.hollow) {
+          const inner = state.conductor.innerR * c.scale;
+          ctx.beginPath();
+          ctx.arc(c.x, c.y, inner, 0, Math.PI * 2);
+          ctx.fillStyle = cssVar("--cavity") || cssVar("--canvas-bg") || "#eef6f8";
+          ctx.fill();
+          ctx.strokeStyle = state.conductor.dielectric ? "#64a884" : "#9fb4bd";
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+        ctx.fillStyle = cssVar("--ink") || "#334950";
+        ctx.font = "700 15px system-ui";
+        ctx.textAlign = "center";
+        if (state.showFigureText) ctx.fillText(state.conductor.dielectric ? "dielectrico" : (state.conductor.hollow ? "cavidad" : "conductor"), c.x, c.y + 5);
+        if (state.conductor.dielectric) {
+          drawDielectricVolumeCharges(state.conductor);
+        } else {
+          const marks = 16;
+          for (let i = 0; i < marks; i++) {
+            const a = i * Math.PI * 2 / marks;
+            drawChargeSymbol({ x: Math.cos(a) * state.conductor.r, y: Math.sin(a) * state.conductor.r }, state.conductor.q / marks, 11);
+          }
+          if (state.conductor.hollow && state.conductor.centralQ) {
+            for (let i = 0; i < 12; i++) {
+              const a = i * Math.PI * 2 / 12;
+              drawChargeSymbol({ x: Math.cos(a) * state.conductor.innerR, y: Math.sin(a) * state.conductor.innerR }, -state.conductor.centralQ / 12, 9);
+            }
+          }
+        }
+        if (state.conductor.centralQ) {
+          drawChargeSymbol({ x: 0, y: 0 }, state.conductor.centralQ, 18);
+        }
+      }
+      for (const c of state.charges) drawChargeSymbol(c, c.q, 22);
+    }
+
+    function drawFiniteSources() {
+      for (const src of state.finiteSources || []) {
+        if (src.type === "line") {
+          const angle = sourceAngle(src) * Math.PI / 180;
+          const ux = Math.cos(angle);
+          const uy = Math.sin(angle);
+          const a = worldToScreen({ x: src.x - ux * src.length / 2, y: src.y - uy * src.length / 2 });
+          const b = worldToScreen({ x: src.x + ux * src.length / 2, y: src.y + uy * src.length / 2 });
+          ctx.strokeStyle = src.q >= 0 ? cssVar("--pos") || "#d73737" : cssVar("--neg") || "#2468c9";
+          ctx.lineWidth = 13;
+          ctx.lineCap = "round";
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+          ctx.lineCap = "butt";
+        ctx.fillStyle = canvasInk();
+          ctx.font = "900 18px system-ui";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          const mid = worldToScreen({ x: src.x, y: src.y });
+          ctx.fillText(src.q >= 0 ? "+" : "-", mid.x, mid.y);
+        } else if (src.type === "point") {
+          drawChargeSymbol(src, src.q, 22);
+        } else if (src.type === "ring") {
+          const c = worldToScreen(src);
+          ctx.beginPath();
+          ctx.arc(c.x, c.y, src.radius * c.scale, 0, Math.PI * 2);
+          ctx.strokeStyle = src.q >= 0 ? cssVar("--pos") || "#d73737" : cssVar("--neg") || "#2468c9";
+          ctx.lineWidth = 8;
+          ctx.stroke();
+          ctx.fillStyle = src.q >= 0 ? cssVar("--pos") || "#d73737" : cssVar("--neg") || "#2468c9";
+          ctx.font = "900 18px system-ui";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(src.q >= 0 ? "+" : "-", c.x, c.y);
+        }
+      }
+    }
+
+    function drawDielectricVolumeCharges(shell) {
+      const rings = [
+        { r: shell.innerR + (shell.r - shell.innerR) * 0.25, n: 10 },
+        { r: shell.innerR + (shell.r - shell.innerR) * 0.55, n: 14 },
+        { r: shell.innerR + (shell.r - shell.innerR) * 0.82, n: 18 }
+      ];
+      const total = rings.reduce((sum, ring) => sum + ring.n, 0);
+      let offset = 0;
+      for (const ring of rings) {
+        for (let i = 0; i < ring.n; i++) {
+          const angle = (i / ring.n) * Math.PI * 2 + offset;
+          drawChargeSymbol({ x: ring.r * Math.cos(angle), y: ring.r * Math.sin(angle) }, shell.q / total, 7);
+        }
+        offset += Math.PI / 13;
+      }
+    }
+
+    function drawArcSource() {
+      const arc = state.arc;
+      const center = worldToScreen({ x: 0, y: 0 });
+      const radius = arc.radius * center.scale;
+      const start = arc.startDeg * Math.PI / 180;
+      const endRaw = arc.endDeg <= arc.startDeg ? arc.endDeg + 360 : arc.endDeg;
+      const end = endRaw * Math.PI / 180;
+      ctx.save();
+      ctx.lineWidth = 7;
+      ctx.strokeStyle = arc.pattern === "negative" ? cssVar("--neg") : arc.pattern === "alternating" ? cssVar("--brand-2") : cssVar("--pos");
+      ctx.beginPath();
+      ctx.arc(center.x, center.y, radius, -start, -end, true);
+      ctx.stroke();
+      for (const c of arcElements()) drawChargeSymbol(c, c.q, 8);
+      ctx.strokeStyle = "rgba(51, 73, 80, 0.5)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(center.x, center.y, radius, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.fillStyle = cssVar("--ink") || "#172026";
+      ctx.font = "700 13px system-ui";
+      ctx.textAlign = "center";
+      if (state.showFigureText) ctx.fillText(`${arc.startDeg}° a ${arc.endDeg}°`, center.x, center.y + radius + 22);
+      ctx.restore();
+    }
+
+    function drawChargeSymbol(p, q, radius) {
+      const s = worldToScreen(p);
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, radius, 0, Math.PI * 2);
+      ctx.fillStyle = q >= 0 ? (cssVar("--pos") || "#d73737") : (cssVar("--neg") || "#2468c9");
+      ctx.fill();
+      ctx.strokeStyle = "white";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      ctx.fillStyle = "white";
+      ctx.font = `800 ${radius + 2}px system-ui`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(q >= 0 ? "+" : "-", s.x, s.y - 1);
+      if (state.showFigureText && radius >= 18) {
+        const label = `${q > 0 ? "+" : ""}${formatNum(q)} uC`;
+        drawThemeLabel(label, s.x, s.y + radius + 16);
+      }
+    }
+
+    function drawProbe() {
+      const p = worldToScreen(state.probe);
+      const e = fieldAt(state.probe);
+      const m = Math.hypot(e.ex, e.ey);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
+      ctx.fillStyle = canvasInk();
+      ctx.fill();
+      ctx.strokeStyle = "white";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      ctx.fillStyle = canvasInk();
+      ctx.font = "700 13px system-ui";
+      ctx.textAlign = "left";
+      if (state.showFigureText) ctx.fillText("P", p.x + 12, p.y - 12);
+      const coord = `(${formatNum(state.probe.x)}, ${formatNum(state.probe.y)}) cm`;
+      if (state.showFigureText) {
+        ctx.font = "700 12px system-ui";
+        ctx.fillStyle = graphPanelFill();
+        ctx.fillRect(p.x + 12, p.y + 9, Math.max(92, coord.length * 7), 22);
+        ctx.strokeStyle = cssVar("--line") || "rgba(51, 73, 80, 0.18)";
+        ctx.strokeRect(p.x + 12, p.y + 9, Math.max(92, coord.length * 7), 22);
+        ctx.fillStyle = canvasInk();
+        ctx.fillText(coord, p.x + 18, p.y + 24);
+      }
+      if (m > 0.02) {
+        const ux = e.ex / m;
+        const uy = -e.ey / m;
+        drawArrow(p.x, p.y, p.x + ux * 62, p.y + uy * 62, "#111820");
+      }
+      if (state.showEnergy) {
+        const v = potentialAt(state.probe);
+        const u = state.probeQ * MICRO * v;
+        const color = u >= 0 ? "rgba(183, 110, 0, 0.18)" : "rgba(0, 109, 119, 0.18)";
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, Math.min(60, 18 + Math.log10(1 + Math.abs(u) * 1000000) * 14), 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.fill();
+      }
+      if (state.testTarget) {
+        const t = worldToScreen(state.testTarget);
+        ctx.beginPath();
+        ctx.arc(t.x, t.y, 12, 0, Math.PI * 2);
+        ctx.strokeStyle = cssVar("--brand-2") || "#b76e00";
+        ctx.lineWidth = 3;
+        ctx.setLineDash([6, 5]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    }
+
+    function updateReadouts() {
+      const e = fieldAt(state.probe);
+      const eMag = Math.hypot(e.ex, e.ey);
+      const v = potentialAt(state.probe);
+      const probeC = state.probeQ * MICRO;
+      const f = Math.abs(probeC) * eMag;
+      const u = probeC * v;
+      const w = probeC * (potentialAt(state.originProbe) - v);
+      const nearest = nearestChargeDistance();
+      document.getElementById("eRead").textContent = `${formatNum(eMag)} N/C`;
+      document.getElementById("fRead").textContent = `${formatNum(f)} N`;
+      document.getElementById("vRead").textContent = `${formatNum(v)} V`;
+      document.getElementById("uRead").textContent = `${formatNum(u)} J`;
+      document.getElementById("sysURead").textContent = systemEnergyText();
+      document.getElementById("wRead").textContent = `${formatNum(w)} J`;
+      document.getElementById("posRead").textContent = `(${formatNum(state.probe.x)}, ${formatNum(state.probe.y)}) cm`;
+      document.getElementById("dRead").textContent = nearest === null ? "-" : `${formatNum(nearest)} cm`;
+      syncProbeInputs();
+      renderMeasurements();
+    }
+
+    function syncProbeInputs() {
+      const xInput = document.getElementById("probeX");
+      const yInput = document.getElementById("probeY");
+      if (!xInput || !yInput) return;
+      if (document.activeElement !== xInput) xInput.value = state.probe.x.toFixed(2);
+      if (document.activeElement !== yInput) yInput.value = state.probe.y.toFixed(2);
+    }
+
+    function setProbeFromInputs() {
+      const x = Number(document.getElementById("probeX").value);
+      const y = Number(document.getElementById("probeY").value);
+      state.probe = clampWorld({
+        x: Number.isFinite(x) ? x : state.probe.x,
+        y: Number.isFinite(y) ? y : state.probe.y
+      });
+      draw();
+    }
+
+    function systemEnergy() {
+      const charges = state.arc ? arcElements() : state.charges;
+      if (state.plates || state.conductor || state.graph || !charges || charges.length < 2) return null;
+      let u = 0;
+      for (let i = 0; i < charges.length; i++) {
+        for (let j = i + 1; j < charges.length; j++) {
+          const a = charges[i];
+          const b = charges[j];
+          const rM = Math.max(Math.hypot((a.x - b.x) * CM, (a.y - b.y) * CM), MIN_R_M);
+          u += K_COULOMB * (a.q * MICRO) * (b.q * MICRO) / rM;
+        }
+      }
+      return u;
+    }
+
+    function systemEnergyText() {
+      const u = systemEnergy();
+      return u === null ? "N/A" : `${formatNum(u)} J`;
+    }
+
+    function nearestChargeDistance() {
+      if (!state.charges.length) return null;
+      return Math.min(...state.charges.map(c => Math.hypot(state.probe.x - c.x, state.probe.y - c.y)));
+    }
+
+    function renderMeasurements() {
+      const box = document.getElementById("measurementList");
+      if (!box) return;
+      const rows = [];
+      state.charges.forEach((c, idx) => {
+        rows.push(`<div><span>P-C${idx + 1}</span><strong>${formatNum(Math.hypot(state.probe.x - c.x, state.probe.y - c.y))} cm</strong></div>`);
+      });
+      const many = state.charges.length > 5;
+      for (let i = 0; i < state.charges.length; i++) {
+        for (let j = i + 1; j < state.charges.length; j++) {
+          const isNeighbor = j === i + 1 || (i === 0 && j === state.charges.length - 1);
+          if (many && !isNeighbor) continue;
+          const a = state.charges[i];
+          const b = state.charges[j];
+          rows.push(`<div><span>C${i + 1}-C${j + 1}${many ? " vecina" : ""}</span><strong>${formatNum(Math.hypot(a.x - b.x, a.y - b.y))} cm</strong></div>`);
+        }
+      }
+      box.innerHTML = rows.length ? rows.join("") : `<div><span>Sin cargas</span><strong>-</strong></div>`;
+    }
+
+    function formatNum(n) {
+      if (!Number.isFinite(n)) return "0";
+      const a = Math.abs(n);
+      if (a < 1e-12) return "0";
+      if (a >= 10000 || a < 0.01) {
+        const [mantissa, exponent] = n.toExponential(2).split("e");
+        return `${mantissa} x 10^${Number(exponent)}`;
+      }
+      return n.toFixed(2);
+    }
+
+    function cssVar(name) {
+      return getComputedStyle(document.body).getPropertyValue(name).trim();
+    }
+
+    function draw() {
+      drawGrid();
+      if (state.showPotential) drawPotentialMap();
+      if (state.showEquip) drawEquipotentials();
+      if (state.showFieldLines) drawContinuousFieldLines();
+      if (state.showField) drawField();
+      drawDistanceGuides();
+      drawCharges();
+      drawProbe();
+      drawSearchNote();
+      drawRadialGraphs(ctx, canvas);
+      drawExternalRadialGraphs();
+      updateFormulaPanel();
+      updateReadouts();
+      updateSolutionView();
+    }
+
+    function drawSearchNote() {
+      if (!state.searchNote || !state.showFigureText) return;
+      ctx.save();
+      ctx.font = "800 11px system-ui";
+      const text = state.searchNote.length > 86 ? state.searchNote.slice(0, 83) + "..." : state.searchNote;
+      const width = Math.min(canvas.width - 40, Math.max(260, text.length * 6.4));
+      const x = canvas.width / 2;
+      const y = canvas.height - 24;
+      ctx.fillStyle = graphPanelFill();
+      ctx.strokeStyle = cssVar("--line") || "#ccd7dc";
+      ctx.beginPath();
+      ctx.roundRect(x - width / 2, y - 16, width, 26, 8);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = canvasInk();
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(text, x, y - 3);
+      ctx.restore();
+    }
+
+    function radialSource() {
+      if (state.plates) {
+        const b = plateBounds();
+        return { type: "plates", leftX: b.leftX, rightX: b.rightX, maxR: Math.max(0.5, b.rightX - b.leftX), label: "placas paralelas" };
+      }
+      if (state.conductor) return { type: "sphere", center: { x: 0, y: 0 }, maxR: Math.max(3.2, state.conductor.r * 1.8), shell: state.conductor, label: state.conductor.dielectric ? "esfera dielectrica" : "esfera conductora" };
+      if (state.charges.length === 1) return { type: "charge", center: { x: state.charges[0].x, y: state.charges[0].y }, maxR: 3.2, charge: state.charges[0], label: "carga puntual" };
+      return null;
+    }
+
+    function drawRadialGraphs(targetCtx = ctx, targetCanvas = canvas) {
+      if (!state.showErGraph && !state.showVrGraph) return;
+      if (state.radialGraphPlace === "outside" && targetCanvas === canvas) return;
+      const source = radialSource();
+      const graphCount = (state.showErGraph ? 1 : 0) + (state.showVrGraph ? 1 : 0);
+      const sizeMap = {
+        small: { width: 320, one: 104, two: 172, graph: 56, step: 68 },
+        medium: { width: 430, one: 150, two: 250, graph: 90, step: 112 },
+        large: { width: 560, one: 210, two: 360, graph: 145, step: 170 }
+      };
+      const cfg = sizeMap[state.radialGraphSize] || sizeMap.medium;
+      const width = Math.min(cfg.width, targetCanvas.width - 36);
+      const height = graphCount === 2 ? Math.min(cfg.two, targetCanvas.height - 30) : Math.min(cfg.one, targetCanvas.height - 30);
+      const x = targetCanvas.width - width - 18;
+      const y = 18;
+      targetCtx.save();
+      targetCtx.fillStyle = graphPanelFill();
+      targetCtx.strokeStyle = cssVar("--line") || "#ccd7dc";
+      targetCtx.lineWidth = 1.5;
+      targetCtx.beginPath();
+      targetCtx.roundRect(x, y, width, height, 8);
+      targetCtx.fill();
+      targetCtx.stroke();
+      targetCtx.fillStyle = cssVar("--ink") || "#172026";
+      targetCtx.font = "800 13px system-ui";
+      targetCtx.textAlign = "left";
+      if (state.showFigureText) targetCtx.fillText(source?.type === "plates" ? "Graficas en placas" : "Graficas radiales", x + 12, y + 20);
+      if (!source) {
+        targetCtx.font = "700 12px system-ui";
+        targetCtx.fillStyle = cssVar("--muted") || "#5f6f79";
+        if (state.showFigureText) targetCtx.fillText("Disponible para carga sola, esferas o placas.", x + 12, y + 47);
+        targetCtx.restore();
+        return;
+      }
+      let top = y + 32;
+      if (state.showErGraph) {
+        drawOneRadialGraph({ ctx: targetCtx, x: x + 12, y: top, width: width - 24, height: graphCount === 2 ? cfg.graph : height - 48, kind: "E", source });
+        top += graphCount === 2 ? cfg.step : 0;
+      }
+      if (state.showVrGraph) {
+        drawOneRadialGraph({ ctx: targetCtx, x: x + 12, y: top, width: width - 24, height: graphCount === 2 ? cfg.graph : height - 48, kind: "V", source });
+      }
+      targetCtx.restore();
+    }
+
+    function graphPanelFill() {
+      const cls = document.body.classList;
+      if (cls.contains("theme-dark")) return "rgba(12, 23, 28, 0.94)";
+      if (cls.contains("theme-chalk-green")) return "rgba(28, 51, 40, 0.94)";
+      if (cls.contains("theme-chalk-gray")) return "rgba(46, 48, 51, 0.94)";
+      if (cls.contains("theme-davinci")) return "rgba(244, 230, 197, 0.94)";
+      if (cls.contains("theme-pixar")) return "rgba(255, 242, 168, 0.94)";
+      if (cls.contains("theme-rainbow")) return "rgba(240, 251, 255, 0.94)";
+      return "rgba(255, 255, 255, 0.9)";
+    }
+
+    function canvasInk() {
+      return cssVar("--ink") || "#172026";
+    }
+
+    function canvasMuted() {
+      return cssVar("--muted") || "#5f6f79";
+    }
+
+    function drawThemeLabel(text, x, y) {
+      const width = Math.max(76, text.length * 7.2);
+      ctx.save();
+      ctx.fillStyle = graphPanelFill();
+      ctx.strokeStyle = cssVar("--line") || "#ccd7dc";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(x - width / 2, y - 13, width, 24, 7);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = canvasInk();
+      ctx.font = "800 11px system-ui";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(text, x, y);
+      ctx.restore();
+    }
+
+    function drawOneRadialGraph({ ctx, x, y, width, height, kind, source }) {
+      const maxR = source.maxR;
+      const segments = radialGraphSegments(kind, source);
+      const samples = segments.flat();
+      const minV = kind === "V" ? Math.min(...samples.map(s => s.value), 0) : 0;
+      const maxV = Math.max(...samples.map(s => s.value), 0.001);
+      const span = Math.max(0.001, maxV - minV);
+      ctx.strokeStyle = cssVar("--grid") || "#e6eef1";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x, y, width, height);
+      ctx.fillStyle = cssVar("--muted") || "#5f6f79";
+      ctx.font = "700 11px system-ui";
+      ctx.textAlign = "left";
+      if (state.showFigureText) ctx.fillText(`${kind === "E" ? "|E|" : "V"}(${source.type === "plates" ? "d" : "r"})`, x + 4, y + 12);
+      ctx.textAlign = "right";
+      if (state.showFigureText) {
+        ctx.fillText(`${formatNum(maxV)}`, x + width - 4, y + 12);
+        ctx.fillText(source.type === "plates" ? "d" : "r", x + width - 4, y + height - 4);
+      }
+      ctx.strokeStyle = kind === "E" ? (cssVar("--brand") || "#006d77") : (cssVar("--brand-2") || "#7a4f01");
+      ctx.lineWidth = 2;
+      segments.forEach(segment => {
+        ctx.beginPath();
+        segment.forEach((s, i) => {
+          const px = x + (s.r / maxR) * width;
+          const py = y + height - ((s.value - minV) / span) * height;
+          if (i === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        });
+        ctx.stroke();
+      });
+      drawRadialBoundaries(ctx, x, y, width, height, source);
+      const rProbe = source.type === "plates"
+        ? Math.max(0, Math.min(maxR, state.probe.x - source.leftX))
+        : Math.min(maxR, Math.hypot(state.probe.x - source.center.x, state.probe.y - source.center.y));
+      const valueProbe = radialGraphValue(kind, rProbe, source);
+      const mx = x + (rProbe / maxR) * width;
+      const my = y + height - ((valueProbe - minV) / span) * height;
+      ctx.strokeStyle = cssVar("--brand-2") || "#b76e00";
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(mx, y);
+      ctx.lineTo(mx, y + height);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = cssVar("--brand-2") || "#b76e00";
+      ctx.beginPath();
+      ctx.arc(mx, my, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = cssVar("--ink") || "#172026";
+      ctx.font = "700 11px system-ui";
+      ctx.textAlign = "left";
+      if (state.showFigureText) ctx.fillText(`${source.type === "plates" ? "d" : "r"}=${formatNum(rProbe)} cm`, x + 4, y + height - 4);
+    }
+
+    function radialGraphSegments(kind, source) {
+      const ranges = radialRanges(source);
+      return ranges.map(([start, end]) => {
+        const samples = [];
+        const n = 60;
+        for (let i = 0; i <= n; i++) {
+          const r = start + (end - start) * i / n;
+          samples.push({ r, value: radialGraphValue(kind, r, source) });
+        }
+        return samples;
+      });
+    }
+
+    function radialRanges(source) {
+      if (source.type === "plates") return [[0, source.maxR]];
+      const start = sourceHasCentralCharge(source) ? 0.1 : 0;
+      if (source.type !== "sphere") return [[Math.max(start, 0.05), source.maxR]];
+      const shell = source.shell;
+      const ranges = [];
+      if (shell.innerR) ranges.push([start, shell.innerR]);
+      if (shell.innerR) ranges.push([shell.innerR, shell.r]);
+      else ranges.push([start, shell.r]);
+      ranges.push([shell.r, source.maxR]);
+      return ranges.filter(([a, b]) => b > a);
+    }
+
+    function sourceHasCentralCharge(source) {
+      return source.type === "sphere" && !!source.shell.centralQ;
+    }
+
+    function radialGraphValue(kind, r, source) {
+      if (source.type === "plates") {
+        const p = { x: source.leftX + r, y: 0 };
+        const e = fieldAt(p);
+        return kind === "E" ? Math.hypot(e.ex, e.ey) : potentialAt(p);
+      }
+      if (source.type === "charge") {
+        const rr = Math.max(r, 0.05);
+        return kind === "E" ? Math.abs(pointFieldMagnitude(rr, source.charge.q)) : pointPotential(rr, source.charge.q);
+      }
+      const shell = source.shell;
+      if (shell.dielectric) {
+        const e = dielectricShellFieldMagnitude(r, shell) + centralFieldMagnitude(r, shell.centralQ || 0);
+        return kind === "E" ? Math.abs(e) : dielectricShellPotential(r, shell) + centralPotential(r, shell.centralQ || 0);
+      }
+      if (shell.hollow && shell.centralQ) {
+        if (kind === "E") {
+          if (r < shell.innerR) return Math.abs(centralFieldMagnitude(r, shell.centralQ));
+          if (r < shell.r) return 0;
+          return Math.abs(pointFieldMagnitude(r, shell.q + shell.centralQ));
+        }
+        if (r < shell.innerR) {
+          const shellConstant = pointPotential(shell.r, shell.q + shell.centralQ) - pointPotential(shell.innerR, shell.centralQ);
+          return centralPotential(r, shell.centralQ) + shellConstant;
+        }
+        return pointPotential(Math.max(shell.r, r), shell.q + shell.centralQ);
+      }
+      if (kind === "E") return r < shell.r ? 0 : Math.abs(pointFieldMagnitude(r, shell.q));
+      return pointPotential(Math.max(shell.r, r), shell.q);
+    }
+
+    function drawRadialBoundaries(ctx, x, y, width, height, source) {
+      if (source.type !== "sphere") return;
+      const marks = [];
+      if (source.shell.innerR) marks.push({ r: source.shell.innerR, label: "a" });
+      marks.push({ r: source.shell.r, label: "b" });
+      ctx.save();
+      ctx.strokeStyle = "rgba(183, 110, 0, 0.55)";
+      ctx.fillStyle = cssVar("--brand-2") || "#b76e00";
+      ctx.font = "800 10px system-ui";
+      ctx.setLineDash([4, 4]);
+      marks.forEach(mark => {
+        const mx = x + (mark.r / source.maxR) * width;
+        ctx.beginPath();
+        ctx.moveTo(mx, y);
+        ctx.lineTo(mx, y + height);
+        ctx.stroke();
+        if (state.showFigureText) ctx.fillText(mark.label, mx + 3, y + 11);
+      });
+      ctx.restore();
+    }
+
+    function drawExternalRadialGraphs() {
+      const panel = document.getElementById("radialPanel");
+      const visible = state.radialGraphPlace === "outside" && (state.showErGraph || state.showVrGraph);
+      panel.hidden = !visible;
+      if (!visible) return;
+      const rect = panel.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      radialCanvas.width = Math.max(620, Math.floor(rect.width * dpr));
+      const h = state.radialGraphSize === "large" ? 420 : state.radialGraphSize === "medium" ? 300 : 220;
+      radialCanvas.height = h;
+      radialCtx.fillStyle = cssVar("--canvas-bg") || "#ffffff";
+      radialCtx.fillRect(0, 0, radialCanvas.width, radialCanvas.height);
+      drawRadialGraphs(radialCtx, radialCanvas);
+    }
+
+    function drawDistanceGuides() {
+      if (!state.showGrid || !state.showFigureText || state.charges.length === 0 || state.charges.length > 5) return;
+      ctx.save();
+      ctx.font = "700 12px system-ui";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      for (let i = 0; i < state.charges.length; i++) {
+        const a = worldToScreen(state.probe);
+        const b = worldToScreen(state.charges[i]);
+        const d = Math.hypot(state.probe.x - state.charges[i].x, state.probe.y - state.charges[i].y);
+        ctx.strokeStyle = "rgba(183, 110, 0, 0.42)";
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = graphPanelFill();
+        const mx = (a.x + b.x) / 2;
+        const my = (a.y + b.y) / 2;
+        ctx.fillRect(mx - 26, my - 10, 52, 20);
+        ctx.fillStyle = cssVar("--brand-2") || "#7a4f01";
+        ctx.fillText(`${formatNum(d)} cm`, mx, my);
+      }
+      if (state.charges.length <= 4) {
+        for (let i = 0; i < state.charges.length; i++) {
+          for (let j = i + 1; j < state.charges.length; j++) {
+            const a = worldToScreen(state.charges[i]);
+            const b = worldToScreen(state.charges[j]);
+            const d = Math.hypot(state.charges[i].x - state.charges[j].x, state.charges[i].y - state.charges[j].y);
+            ctx.strokeStyle = "rgba(51, 73, 80, 0.28)";
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+            const mx = (a.x + b.x) / 2;
+            const my = (a.y + b.y) / 2;
+            ctx.fillStyle = graphPanelFill();
+            ctx.fillRect(mx - 24, my - 10, 48, 20);
+            ctx.fillStyle = canvasInk();
+            ctx.fillText(`${formatNum(d)}`, mx, my);
+          }
+        }
+      }
+      ctx.restore();
+    }
+
+    function resizeCanvas() {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.max(640, Math.floor(rect.width * dpr));
+      canvas.height = Math.max(420, Math.floor(rect.height * dpr));
+      draw();
+    }
+
+    function renderControls() {
+      const arcControls = document.getElementById("arcControls");
+      if (arcControls) arcControls.hidden = !state.arc;
+      const finitePlateControls = document.getElementById("finitePlateControls");
+      if (finitePlateControls) finitePlateControls.hidden = !hasFiniteLines();
+      updatePanelVisibility();
+      document.getElementById("moveSourcesBtn").classList.toggle("active", state.dragMode === "charges");
+      const scenarioSelect = document.getElementById("scenarioSelect");
+      scenarioSelect.innerHTML = "";
+      Object.entries(scenarios).forEach(([key, sc], idx) => {
+        const option = document.createElement("option");
+        option.value = key;
+        option.textContent = `${idx + 1}. ${sc.label}`;
+        option.selected = key === state.scenario;
+        scenarioSelect.appendChild(option);
+      });
+      document.getElementById("scenarioHint").textContent = scenarios[state.scenario]?.prompt || "Elige un tema para cargar su simulacion.";
+
+      const chargeList = document.getElementById("chargeList");
+      chargeList.innerHTML = "";
+      if (!state.charges.length) {
+        chargeList.innerHTML = `<div class="hint">Este escenario usa una fuente ideal. Puedes agregar cargas para experimentar.</div>`;
+      }
+      state.charges.forEach((c, idx) => {
+        const row = document.createElement("div");
+        row.className = "charge-row";
+        const dist = Math.hypot(state.probe.x - c.x, state.probe.y - c.y);
+        row.innerHTML = `
+          <div class="charge-head">
+            <div><strong>C${idx + 1}: ${c.q > 0 ? "+" : ""}${c.q.toFixed(1)} uC</strong><span>r(P,C${idx + 1})=${formatNum(dist)} cm</span></div>
+            <button class="icon-btn danger" title="Eliminar carga" data-delete-charge="${idx}">x</button>
+          </div>
+          <div class="mini-grid">
+            <label>q<input type="number" step="0.5" min="-8" max="8" value="${c.q}" data-charge="${idx}" data-field="q"></label>
+            <label>x<input type="number" step="0.01" min="-12" max="12" value="${c.x.toFixed(2)}" data-charge="${idx}" data-field="x"></label>
+            <label>y<input type="number" step="0.01" min="-12" max="12" value="${c.y.toFixed(2)}" data-charge="${idx}" data-field="y"></label>
+            <button class="icon-btn" title="Seleccionar para borrar con Delete" data-select-charge="${idx}">C${idx + 1}</button>
+          </div>`;
+        row.querySelectorAll("input[data-charge]").forEach(input => {
+          input.addEventListener("change", () => {
+            const charge = state.charges[Number(input.dataset.charge)];
+            charge[input.dataset.field] = Number(input.value);
+            if (input.dataset.field === "x" || input.dataset.field === "y") {
+              charge[input.dataset.field] = Math.max(-12, Math.min(12, charge[input.dataset.field]));
+            }
+            renderControls();
+            draw();
+          });
+        });
+        row.querySelector("[data-delete-charge]").addEventListener("click", () => deleteCharge(idx));
+        row.querySelector("[data-select-charge]").addEventListener("click", () => {
+          state.lastChargeIndex = idx;
+          renderControls();
+          draw();
+        });
+        chargeList.appendChild(row);
+      });
+    }
+
+    function updatePanelVisibility() {
+      const mappings = [
+        ["probePanel", "probePanelBtn", "panelProbe"],
+        ["geometryPanel", "geometryPanelBtn", "panelGeometry"],
+        ["chargesPanel", "chargesPanelBtn", "panelCharges"],
+        ["measurePanel", "measurePanelBtn", "panelMeasurements"]
+      ];
+      for (const [panelId, btnId, key] of mappings) {
+        const panel = document.getElementById(panelId);
+        const btn = document.getElementById(btnId);
+        if (panel) panel.hidden = !state[key];
+        if (btn) btn.classList.toggle("active", !!state[key]);
+      }
+      const finitePlateControls = document.getElementById("finitePlateControls");
+      if (finitePlateControls) finitePlateControls.hidden = !hasFiniteLines();
+      const arcControls = document.getElementById("arcControls");
+      if (arcControls) arcControls.hidden = !state.arc;
+      document.body.classList.toggle("hide-test", !state.panelTest);
+      document.body.classList.toggle("presentation-mode", state.presentationMode);
+      const testBtn = document.getElementById("testPanelBtn");
+      if (testBtn) {
+        testBtn.classList.toggle("active", state.panelTest);
+        testBtn.textContent = state.panelTest ? "Autotest ON" : "Autotest OFF";
+      }
+      const presentationBtn = document.getElementById("presentationModeBtn");
+      if (presentationBtn) {
+        presentationBtn.classList.toggle("active", state.presentationMode);
+        presentationBtn.textContent = state.presentationMode ? "Modo presentacion ON" : "Modo presentacion OFF";
+      }
+      document.querySelectorAll(".source-panel").forEach(panel => {
+        panel.hidden = !state.panelSources;
+      });
+      const sourcesBtn = document.getElementById("sourcesPanelBtn");
+      if (sourcesBtn) {
+        sourcesBtn.classList.toggle("active", state.panelSources);
+        sourcesBtn.textContent = state.panelSources ? "Fuentes y modelo fisico ON" : "Fuentes y modelo fisico OFF";
+      }
+    }
+
+    function updateTexts() {
+      const s = scenarios[state.scenario];
+      document.getElementById("scenarioName").textContent = s.label;
+      document.getElementById("scenarioPrompt").textContent = s.prompt;
+      updateSearchNote();
+      document.getElementById("lessonTitle").textContent = "Idea clave: " + s.label;
+      document.getElementById("lessonText").textContent = s.lesson;
+      updatePanelVisibility();
+      const arcControls = document.getElementById("arcControls");
+      const finitePlateControls = document.getElementById("finitePlateControls");
+      if (!finitePlateControls.hidden) {
+        const sideSelect = document.getElementById("plateSideSelect");
+        sideSelect.value = state.finitePlateSide;
+        sideSelect.disabled = movableLineCount() < 2;
+        document.getElementById("plateAngle").value = state.finitePlateAngle;
+        document.getElementById("plateAngleNumber").value = state.finitePlateAngle;
+      }
+      if (state.arc) {
+        document.getElementById("arcStart").value = state.arc.startDeg;
+        document.getElementById("arcEnd").value = state.arc.endDeg;
+        document.getElementById("arcRadius").value = state.arc.radius;
+        document.getElementById("arcPattern").value = state.arc.pattern;
+      }
+    }
+
+    function updateSearchNote() {
+      const note = document.getElementById("searchNote");
+      if (!note) return;
+      note.textContent = state.searchNote;
+      note.classList.toggle("show", !!state.searchNote);
+    }
+
+    function updateFormulaPanel() {
+      const panel = document.getElementById("formulaPanel");
+      const list = document.getElementById("formulaList");
+      if (!panel || !list) return;
+      panel.classList.toggle("show", state.showFormulas);
+      if (!state.showFormulas) return;
+      list.innerHTML = formulaItems().map(item => `
+        <div class="formula-chip">
+          <strong>${item.title}</strong>
+          <code>${item.expr}</code>
+        </div>
+      `).join("");
+    }
+
+    function formulaItems() {
+      const common = [
+        { title: "Constante", expr: "k = 8.99 x 10<sup>9</sup> N m<sup>2</sup>/C<sup>2</sup>; r en metros" },
+        { title: "Energia de prueba", expr: "U = q<sub>0</sub> V(P)" },
+        { title: "Trabajo", expr: "W<sub>A->P</sub> = q<sub>0</sub>[V(A) - V(P)]" }
+      ];
+      if (state.graph) {
+        return [
+          { title: "Campo desde potencial", expr: "E<sub>x</sub> = -dV/dx" },
+          { title: "Potencial", expr: "V = V(x)" },
+          ...common
+        ];
+      }
+      if (state.plates) {
+        return [
+          { title: "Placas ideales", expr: "E<sub>fuera</sub> = 0; E<sub>dentro</sub> = sigma/epsilon<sub>0</sub> = Delta V/d" },
+          { title: "Potencial entre laminas", expr: "V(x) = V<sub>+</sub> - E(x - x<sub>+</sub>)" },
+          { title: "Una lamina sola", expr: "E = sigma/(2epsilon<sub>0</sub>)" },
+          ...common
+        ];
+      }
+      if (state.conductor) {
+        if (state.conductor.dielectric) {
+          return [
+            { title: "Cavidad dielectrica", expr: "E(r&lt;a) = kQ<sub>centro</sub>/r<sup>2</sup>" },
+            { title: "Material cargado", expr: "E(r) = kQ<sub>enc</sub>(r)/r<sup>2</sup>" },
+            { title: "Potencial", expr: "V(r) = -integral E(r) dr, con V(infinito)=0" },
+            ...common
+          ];
+        }
+        return [
+          { title: "Conductor", expr: "E = 0 dentro del material conductor" },
+          { title: "Exterior esferico", expr: "E(r) = kQ<sub>neto</sub>/r<sup>2</sup>; V(r) = kQ<sub>neto</sub>/r" },
+          { title: "Cavidad con carga", expr: "E(r&lt;a) = kQ<sub>centro</sub>/r<sup>2</sup>" },
+          ...common
+        ];
+      }
+      if (state.arc) {
+        return [
+          { title: "Elemento de arco", expr: "dE = k dq/r<sup>2</sup>; dV = k dq/r" },
+          { title: "Suma / integral", expr: "E = integral k dq r_hat/r<sup>2</sup>; V = integral k dq/r" },
+          ...common
+        ];
+      }
+      if (state.finiteSources) {
+        return [
+          { title: "Fuentes finitas", expr: "E(P) = sum k q<sub>i</sub> r_hat<sub>i</sub>/r<sub>i</sub><sup>2</sup>" },
+          { title: "Potencial", expr: "V(P) = sum k q<sub>i</sub>/r<sub>i</sub>" },
+          { title: "Linea cargada", expr: "dq = lambda dl; se aproxima con muchas cargas pequenas" },
+          ...common
+        ];
+      }
+      if (state.charges.length === 1) {
+        return [
+          { title: "Carga puntual", expr: "E = k|q|/r<sup>2</sup>" },
+          { title: "Potencial", expr: "V = kq/r" },
+          { title: "Fuerza", expr: "F = q<sub>0</sub>E" },
+          ...common
+        ];
+      }
+      return [
+        { title: "Campo total", expr: "E(P) = sum k q<sub>i</sub> r_hat<sub>i</sub>/r<sub>i</sub><sup>2</sup>" },
+        { title: "Potencial total", expr: "V(P) = sum k q<sub>i</sub>/r<sub>i</sub>" },
+        { title: "Energia del sistema", expr: "U<sub>sist</sub> = sum<sub>i&lt;j</sub> k q<sub>i</sub>q<sub>j</sub>/r<sub>ij</sub>" },
+        ...common
+      ];
+    }
+
+    function nearestCharge(p) {
+      let best = null;
+      let dist = 0.25;
+      for (let i = 0; i < state.charges.length; i++) {
+        const c = state.charges[i];
+        const d = Math.hypot(p.x - c.x, p.y - c.y);
+        if (d < dist) {
+          best = i;
+          dist = d;
+        }
+      }
+      return best;
+    }
+
+    function pointSegmentDistance(p, a, b) {
+      const vx = b.x - a.x;
+      const vy = b.y - a.y;
+      const len2 = vx * vx + vy * vy || 1;
+      const t = Math.max(0, Math.min(1, ((p.x - a.x) * vx + (p.y - a.y) * vy) / len2));
+      const x = a.x + vx * t;
+      const y = a.y + vy * t;
+      return Math.hypot(p.x - x, p.y - y);
+    }
+
+    function lineSourceEnds(src) {
+      const angle = sourceAngle(src) * Math.PI / 180;
+      const ux = Math.cos(angle);
+      const uy = Math.sin(angle);
+      return {
+        a: { x: src.x - ux * src.length / 2, y: src.y - uy * src.length / 2 },
+        b: { x: src.x + ux * src.length / 2, y: src.y + uy * src.length / 2 }
+      };
+    }
+
+    function nearestFiniteSource(p) {
+      if (!state.finiteSources) return null;
+      let best = null;
+      let dist = 0.28;
+      for (let i = 0; i < state.finiteSources.length; i++) {
+        const src = state.finiteSources[i];
+        let d = Infinity;
+        if (src.type === "line") {
+          const ends = lineSourceEnds(src);
+          d = pointSegmentDistance(p, ends.a, ends.b);
+        } else if (src.type === "ring") {
+          d = Math.abs(Math.hypot(p.x - src.x, p.y - src.y) - src.radius);
+        } else {
+          d = Math.hypot(p.x - src.x, p.y - src.y);
+        }
+        if (d < dist) {
+          best = i;
+          dist = d;
+        }
+      }
+      return best;
+    }
+
+    function nearestPlate(p) {
+      if (!state.plates) return null;
+      const b = plateBounds();
+      if (p.y < b.bottomY - 0.25 || p.y > b.topY + 0.25) return null;
+      const left = Math.abs(p.x - b.leftX);
+      const right = Math.abs(p.x - b.rightX);
+      if (left < 0.3 && left <= right) return "left";
+      if (right < 0.3) return "right";
+      return null;
+    }
+
+    canvas.addEventListener("pointerdown", (ev) => {
+      const p = screenToWorld(ev.clientX, ev.clientY);
+      const ni = nearestCharge(p);
+      const fi = nearestFiniteSource(p);
+      const pi = nearestPlate(p);
+      if (ni !== null) state.lastChargeIndex = ni;
+      if (state.dragMode === "charges" && ni !== null) {
+        state.lastChargeIndex = ni;
+        state.dragging = { type: "charge", index: ni };
+      } else if (state.dragMode === "charges" && fi !== null) {
+        const src = state.finiteSources[fi];
+        state.dragging = { type: "finiteSource", index: fi, dx: src.x - p.x, dy: src.y - p.y };
+      } else if (state.dragMode === "charges" && pi !== null) {
+        const b = plateBounds();
+        state.dragging = { type: "plate", side: pi, dx: (pi === "left" ? b.leftX : b.rightX) - p.x };
+      } else {
+        state.dragging = { type: "probe" };
+        state.probe = clampWorld(p);
+      }
+      draw();
+    });
+
+    function deleteCharge(idx) {
+      if (idx < 0 || idx >= state.charges.length) return;
+      state.charges.splice(idx, 1);
+      state.lastChargeIndex = null;
+      renderControls();
+      draw();
+    }
+
+    window.addEventListener("keydown", (ev) => {
+      if (ev.key !== "Delete" && ev.key !== "Backspace") return;
+      const active = document.activeElement;
+      if (active && ["INPUT", "SELECT", "TEXTAREA"].includes(active.tagName)) return;
+      if (state.lastChargeIndex !== null) {
+        deleteCharge(state.lastChargeIndex);
+      }
+    });
+
+    canvas.addEventListener("pointermove", (ev) => {
+      if (!state.dragging) return;
+      const p = clampWorld(screenToWorld(ev.clientX, ev.clientY));
+      if (state.dragging.type === "charge") {
+        state.charges[state.dragging.index].x = p.x;
+        state.charges[state.dragging.index].y = p.y;
+        renderControls();
+      } else if (state.dragging.type === "finiteSource") {
+        const src = state.finiteSources[state.dragging.index];
+        src.x = p.x + state.dragging.dx;
+        src.y = p.y + state.dragging.dy;
+      } else if (state.dragging.type === "plate") {
+        const side = state.dragging.side;
+        const nextX = Math.max(-3.35, Math.min(3.35, p.x + state.dragging.dx));
+        state.plates.leftX = state.plates.leftX ?? -2.7;
+        state.plates.rightX = state.plates.rightX ?? 2.7;
+        if (side === "left") state.plates.leftX = Math.min(nextX, state.plates.rightX - 0.5);
+        else state.plates.rightX = Math.max(nextX, state.plates.leftX + 0.5);
+      } else {
+        state.probe = p;
+      }
+      draw();
+    });
+
+    window.addEventListener("pointerup", () => {
+      state.dragging = null;
+    });
+
+    function findByGrid(scoreFn, action = "general") {
+      let best = { p: { x: 0, y: 0 }, score: Infinity, tie: Infinity };
+      const consider = (p) => {
+        if (!searchAllowed(p, action)) return;
+        const score = scoreFn(p);
+        const tie = searchTie(p, action);
+        if (!Number.isFinite(score)) return;
+        if (score < best.score - 1e-9 || (Math.abs(score - best.score) <= 1e-9 && tie < best.tie)) {
+          best = { p: { ...p }, score, tie };
+        }
+      };
+      const scan = (cx, cy, radius, step) => {
+        for (let x = cx - radius; x <= cx + radius; x += step) {
+          for (let y = cy - radius; y <= cy + radius; y += step) {
+            const p = { x: Math.max(-3.25, Math.min(3.25, x)), y: Math.max(-2.1, Math.min(2.1, y)) };
+            consider(p);
+          }
+        }
+      };
+      [{ x: 0, y: 0 }, state.probe].forEach(consider);
+      for (let y = -2.1; y <= 2.1; y += 0.1) consider({ x: 0, y: Number(y.toFixed(3)) });
+      for (let x = -3.25; x <= 3.25; x += 0.1) consider({ x: Number(x.toFixed(3)), y: 0 });
+      scan(0, 0, 3.3, 0.08);
+      for (const step of [0.035, 0.012, 0.004]) {
+        scan(best.p.x, best.p.y, step * 5, step);
+      }
+      return { x: Number(best.p.x.toFixed(4)), y: Number(best.p.y.toFixed(4)), score: best.score };
+    }
+
+    function searchTie(p, action) {
+      if ((action === "maxV" || action === "minV") && (state.plates || hasTwoFiniteLaminae())) return Math.abs(p.y);
+      return Math.hypot(p.x, p.y);
+    }
+
+    function searchAllowed(p, action) {
+      if (state.charges.some(c => Math.hypot(p.x - c.x, p.y - c.y) < 0.25)) return false;
+      if (state.finiteSources && finiteSourceElements().some(c => Math.hypot(p.x - c.x, p.y - c.y) < 0.18)) return false;
+      if (state.conductor && action !== "zeroE" && Math.hypot(p.x, p.y) < state.conductor.r) return false;
+      if ((action === "maxV" || action === "minV") && state.plates) return insideIdealPlateRegion(p);
+      if ((action === "maxV" || action === "minV") && hasTwoFiniteLaminae()) return insideFinitePlateRegion(p);
+      return true;
+    }
+
+    function insideIdealPlateRegion(p) {
+      const b = plateBounds();
+      return p.x >= Math.min(b.leftX, b.rightX) + 0.08 &&
+        p.x <= Math.max(b.leftX, b.rightX) - 0.08 &&
+        p.y >= b.bottomY + 0.08 &&
+        p.y <= b.topY - 0.08;
+    }
+
+    function hasTwoFiniteLaminae() {
+      return state.finiteSources && state.finiteSources.filter(src => src.type === "line").length >= 2;
+    }
+
+    function insideFinitePlateRegion(p) {
+      const lines = state.finiteSources.filter(src => src.type === "line");
+      const pts = lines.flatMap(src => {
+        const ends = lineSourceEnds(src);
+        return [ends.a, ends.b];
+      });
+      const minX = Math.min(...pts.map(pt => pt.x));
+      const maxX = Math.max(...pts.map(pt => pt.x));
+      const minY = Math.min(...pts.map(pt => pt.y));
+      const maxY = Math.max(...pts.map(pt => pt.y));
+      return p.x >= minX + 0.08 && p.x <= maxX - 0.08 && p.y >= minY + 0.08 && p.y <= maxY - 0.08;
+    }
+
+    function effectiveSourceCharge() {
+      if (state.plates || state.graph) return 0;
+      if (state.finiteSources) return finiteSourceElements().reduce((sum, c) => sum + c.q, 0);
+      if (state.arc) return arcElements().reduce((sum, c) => sum + c.q, 0);
+      if (state.charges.length) return state.charges.reduce((sum, c) => sum + c.q, 0);
+      if (state.conductor) return (state.conductor.q || 0) + (state.conductor.centralQ || 0);
+      return 0;
+    }
+
+    function minPotentialIsAtInfinity() {
+      return effectiveSourceCharge() > 0.001 && !state.plates && !hasTwoFiniteLaminae();
+    }
+
+    function visibleInfinityPoint() {
+      const candidates = [
+        { x: -3.25, y: -2.1 }, { x: -3.25, y: 2.1 },
+        { x: 3.25, y: -2.1 }, { x: 3.25, y: 2.1 },
+        { x: -3.25, y: 0 }, { x: 3.25, y: 0 },
+        { x: 0, y: -2.1 }, { x: 0, y: 2.1 }
+      ];
+      return candidates
+        .filter(p => searchAllowed(p, "general"))
+        .map(p => ({ p, score: Math.abs(potentialAt(p)) }))
+        .sort((a, b) => a.score - b.score)[0]?.p || { x: 3.25, y: 2.1 };
+    }
+
+    function visibleWeakFieldPoint() {
+      const candidates = [
+        { x: -3.25, y: -2.1 }, { x: -3.25, y: 2.1 },
+        { x: 3.25, y: -2.1 }, { x: 3.25, y: 2.1 },
+        { x: -3.25, y: 0 }, { x: 3.25, y: 0 },
+        { x: 0, y: -2.1 }, { x: 0, y: 2.1 }
+      ];
+      return candidates
+        .filter(p => searchAllowed(p, "general"))
+        .map(p => {
+          const e = fieldAt(p);
+          return { p, score: Math.hypot(e.ex, e.ey) };
+        })
+        .sort((a, b) => a.score - b.score)[0] || { p: { x: 3.25, y: 2.1 }, score: Infinity };
+    }
+
+    function zeroETolerance() {
+      return state.plates ? 1e-6 : 1e4;
+    }
+
+    function zeroVTolerance() {
+      return 0.5;
+    }
+
+    document.getElementById("fieldBtn").addEventListener("click", (e) => toggle("showField", e.currentTarget));
+    document.getElementById("fieldLinesBtn").addEventListener("click", (e) => toggle("showFieldLines", e.currentTarget));
+    document.getElementById("potentialBtn").addEventListener("click", (e) => toggle("showPotential", e.currentTarget));
+    document.getElementById("equipBtn").addEventListener("click", (e) => toggle("showEquip", e.currentTarget));
+    document.getElementById("energyBtn").addEventListener("click", (e) => toggle("showEnergy", e.currentTarget));
+    document.getElementById("gridBtn").addEventListener("click", (e) => toggle("showGrid", e.currentTarget));
+    document.getElementById("figureTextBtn").addEventListener("click", (e) => toggle("showFigureText", e.currentTarget));
+    document.getElementById("erGraphBtn").addEventListener("click", (e) => toggle("showErGraph", e.currentTarget));
+    document.getElementById("vrGraphBtn").addEventListener("click", (e) => toggle("showVrGraph", e.currentTarget));
+    document.getElementById("formulaBtn").addEventListener("click", (e) => toggle("showFormulas", e.currentTarget));
+    document.getElementById("probePanelBtn").addEventListener("click", (e) => togglePanel("panelProbe", e.currentTarget));
+    document.getElementById("geometryPanelBtn").addEventListener("click", (e) => togglePanel("panelGeometry", e.currentTarget));
+    document.getElementById("chargesPanelBtn").addEventListener("click", (e) => togglePanel("panelCharges", e.currentTarget));
+    document.getElementById("measurePanelBtn").addEventListener("click", (e) => togglePanel("panelMeasurements", e.currentTarget));
+    document.getElementById("testPanelBtn").addEventListener("click", (e) => togglePanel("panelTest", e.currentTarget));
+    document.getElementById("presentationModeBtn").addEventListener("click", (e) => togglePanel("presentationMode", e.currentTarget));
+    document.getElementById("sourcesPanelBtn").addEventListener("click", (e) => togglePanel("panelSources", e.currentTarget));
+    document.getElementById("solutionBtn").addEventListener("click", (e) => {
+      toggle("showSolution", e.currentTarget);
+      updateSolutionView();
+      syncSolutionButtons();
+    });
+    document.getElementById("printSolutionsBtn").addEventListener("click", (e) => {
+      state.printSolutions = !state.printSolutions;
+      e.currentTarget.classList.toggle("active", state.printSolutions);
+      updateSolutionView();
+      syncSolutionButtons();
+    });
+    document.getElementById("scenarioSelect").addEventListener("change", (e) => loadScenario(e.target.value));
+    document.getElementById("themeSelect").addEventListener("change", (e) => {
+      document.body.classList.remove("theme-dark", "theme-geogebra", "theme-phet", "theme-mit", "theme-minimal", "theme-pixar", "theme-rainbow", "theme-chalk-green", "theme-chalk-gray", "theme-davinci");
+      if (e.target.value) document.body.classList.add(e.target.value);
+      draw();
+    });
+    ["arcStart", "arcEnd", "arcRadius", "arcPattern"].forEach(id => {
+      document.getElementById(id).addEventListener("change", () => {
+        if (!state.arc) return;
+        state.arc.startDeg = Math.max(0, Math.min(360, Number(document.getElementById("arcStart").value) || 0));
+        state.arc.endDeg = Math.max(0, Math.min(360, Number(document.getElementById("arcEnd").value) || 360));
+        state.arc.radius = Math.max(0.5, Math.min(3, Number(document.getElementById("arcRadius").value) || 1.6));
+        state.arc.pattern = document.getElementById("arcPattern").value;
+        draw();
+      });
+    });
+    function setFinitePlateAngle(value) {
+      state.finitePlateAngle = Math.max(0, Math.min(90, Number(value) || 0));
+      document.getElementById("plateAngle").value = state.finitePlateAngle;
+      document.getElementById("plateAngleNumber").value = state.finitePlateAngle;
+      draw();
+    }
+    document.getElementById("plateAngle").addEventListener("input", (e) => setFinitePlateAngle(e.target.value));
+    document.getElementById("plateAngleNumber").addEventListener("input", (e) => setFinitePlateAngle(e.target.value));
+    document.getElementById("plateSideSelect").addEventListener("change", (e) => {
+      state.finitePlateSide = e.target.value;
+      draw();
+    });
+    document.getElementById("probeCharge").addEventListener("change", (e) => { state.probeQ = Number(e.target.value); draw(); });
+    ["probeX", "probeY"].forEach(id => {
+      const input = document.getElementById(id);
+      input.addEventListener("change", setProbeFromInputs);
+      input.addEventListener("input", () => {
+        if (input.value === "" || input.value === "-" || input.value === ".") return;
+        setProbeFromInputs();
+      });
+    });
+    function setDragMode(mode) {
+      state.dragMode = mode;
+      document.getElementById("dragMode").value = mode;
+      document.getElementById("moveSourcesBtn").classList.toggle("active", mode === "charges");
+    }
+    document.getElementById("dragMode").addEventListener("change", (e) => setDragMode(e.target.value));
+    document.getElementById("moveSourcesBtn").addEventListener("click", () => setDragMode(state.dragMode === "charges" ? "probe" : "charges"));
+    document.getElementById("centerProbe").addEventListener("click", () => { state.probe = { x: 0, y: 0 }; draw(); });
+    function setZoom(nextZoom) {
+      state.zoom = Math.max(0.25, Math.min(2, nextZoom));
+      document.getElementById("zoomRead").textContent = `Zoom ${Math.round(state.zoom * 100)}%`;
+      draw();
+    }
+    document.getElementById("zoomOut").addEventListener("click", () => setZoom(state.zoom - 0.1));
+    document.getElementById("zoomIn").addEventListener("click", () => setZoom(state.zoom + 0.1));
+    document.getElementById("zoomReset").addEventListener("click", () => setZoom(1));
+    document.getElementById("radialGraphSize").addEventListener("change", (e) => {
+      state.radialGraphSize = e.target.value;
+      radialCanvas.style.height = state.radialGraphSize === "large" ? "420px" : state.radialGraphSize === "medium" ? "300px" : "220px";
+      draw();
+    });
+    document.getElementById("radialGraphPlace").addEventListener("change", (e) => {
+      state.radialGraphPlace = e.target.value;
+      draw();
+    });
+    document.getElementById("findZeroE").addEventListener("click", () => {
+      state.searchNote = "";
+      if (state.plates) {
+        const b = plateBounds();
+        state.probe = clampWorld({ x: Math.max(b.leftX, b.rightX) + 0.35, y: 0 });
+        state.searchNote = "En placas ideales E = 0 fuera del par por cancelacion. P se coloca fuera de las placas.";
+        state.testTarget = { ...state.probe };
+        updateSearchNote();
+        draw();
+        return;
+      }
+      const found = findByGrid(p => {
+        const e = fieldAt(p);
+        return Math.hypot(e.ex, e.ey);
+      }, "zeroE");
+      if (found.score <= zeroETolerance()) {
+        state.probe = found;
+      } else {
+        const weak = visibleWeakFieldPoint();
+        state.probe = weak.p;
+        state.searchNote = `E = 0 exacto no esta dentro del grafico; puede estar fuera del area visible o en x,y -> infinito. Se muestra el borde con menor |E|: ${formatNum(weak.score)} N/C.`;
+      }
+      state.testTarget = { ...state.probe };
+      updateSearchNote();
+      draw();
+    });
+    document.getElementById("findZeroV").addEventListener("click", () => {
+      state.searchNote = "";
+      const found = findByGrid(p => Math.abs(potentialAt(p)), "zeroV");
+      if (Math.abs(potentialAt(found)) <= zeroVTolerance()) {
+        state.probe = found;
+      } else {
+        const weak = visibleInfinityPoint();
+        state.probe = weak;
+        state.searchNote = `V = 0 exacto no esta dentro del grafico; puede estar fuera del area visible o en infinito. Se muestra el borde con |V| mas cercano a cero: ${formatNum(Math.abs(potentialAt(weak)))} V.`;
+      }
+      state.testTarget = { ...state.probe };
+      updateSearchNote();
+      draw();
+    });
+    document.getElementById("findMaxV").addEventListener("click", () => {
+      state.searchNote = "";
+      state.probe = findByGrid(p => -potentialAt(p), "maxV");
+      state.testTarget = { ...state.probe };
+      updateSearchNote();
+      draw();
+    });
+    document.getElementById("findMinV").addEventListener("click", () => {
+      if (minPotentialIsAtInfinity()) {
+        state.probe = visibleInfinityPoint();
+        state.searchNote = "V menor teorico: V(infinito) tiende a 0. Se muestra el extremo visible mas cercano a cero.";
+      } else {
+        state.searchNote = "";
+        state.probe = findByGrid(p => potentialAt(p), "minV");
+      }
+      state.testTarget = { ...state.probe };
+      updateSearchNote();
+      draw();
+    });
+    function geometrySpacing() {
+      return Math.max(0.5, Math.min(6, Number(document.getElementById("spacingInput").value) || 4));
+    }
+
+    function clearIdealSources() {
+      state.plates = null;
+      state.finiteSources = null;
+      state.conductor = null;
+      state.graph = null;
+      state.arc = null;
+    }
+
+    function fitGeometryZoom(points) {
+      const maxX = Math.max(0.1, ...points.map(p => Math.abs(p.x)));
+      const maxY = Math.max(0.1, ...points.map(p => Math.abs(p.y)));
+      const needed = Math.max(maxX / 3.25, maxY / 2.15);
+      if (needed > 1) setZoom(Math.max(0.25, 1 / needed));
+      else setZoom(1);
+    }
+
+    function setDipoleGeometry() {
+      const d = geometrySpacing();
+      clearIdealSources();
+      state.charges = [{ q: 2, x: -d / 2, y: 0 }, { q: -2, x: d / 2, y: 0 }].map(clampWorld);
+      state.probe = { x: 0, y: 0 };
+      state.scenario = "dipole";
+      updateTexts();
+      renderControls();
+      draw();
+    }
+
+    function setSquareGeometry() {
+      document.getElementById("polygonCount").value = 4;
+      document.getElementById("polygonPattern").value = "positive";
+      setPolygonGeometry();
+    }
+
+    function setTriangleGeometry() {
+      document.getElementById("polygonCount").value = 3;
+      document.getElementById("polygonPattern").value = "positive";
+      setPolygonGeometry();
+    }
+
+    function polygonCount() {
+      return Math.max(3, Math.min(12, Math.round(Number(document.getElementById("polygonCount").value) || 5)));
+    }
+
+    function polygonCharge(index) {
+      const pattern = document.getElementById("polygonPattern").value;
+      if (pattern === "negative") return -2;
+      if (pattern === "alternating") return index % 2 === 0 ? 2 : -2;
+      return 2;
+    }
+
+    function setPolygonGeometry() {
+      const n = polygonCount();
+      const side = geometrySpacing();
+      clearIdealSources();
+      const radius = side / (2 * Math.sin(Math.PI / n));
+      state.charges = [];
+      for (let i = 0; i < n; i++) {
+        const angle = -Math.PI / 2 + i * 2 * Math.PI / n;
+        state.charges.push({
+          q: polygonCharge(i),
+          x: radius * Math.cos(angle),
+          y: radius * Math.sin(angle)
+        });
+      }
+      state.probe = { x: 0, y: 0 };
+      state.scenario = n === 3 ? "triangleCharges" : n === 4 ? "squareCharges" : "equipotential";
+      fitGeometryZoom(state.charges);
+      updateTexts();
+      renderControls();
+      draw();
+    }
+
+    document.getElementById("makeDipole").addEventListener("click", setDipoleGeometry);
+    document.getElementById("makeSquare").addEventListener("click", setSquareGeometry);
+    document.getElementById("makeTriangle").addEventListener("click", setTriangleGeometry);
+    document.getElementById("makePolygon").addEventListener("click", setPolygonGeometry);
+    document.getElementById("addPositive").addEventListener("click", () => {
+      clearIdealSources();
+      state.charges.push({ q: 2, x: -0.6 + Math.random() * 1.2, y: -0.6 + Math.random() * 1.2 });
+      renderControls();
+      draw();
+    });
+    document.getElementById("addNegative").addEventListener("click", () => {
+      clearIdealSources();
+      state.charges.push({ q: -2, x: -0.6 + Math.random() * 1.2, y: -0.6 + Math.random() * 1.2 });
+      renderControls();
+      draw();
+    });
+    document.getElementById("resetScenario").addEventListener("click", () => loadScenario(state.scenario));
+    document.getElementById("printTestBtn").addEventListener("click", () => {
+      if (!test.order.length) preparePrintableTest();
+      updateSolutionView();
+      syncSolutionButtons();
+      buildPrintSheet();
+      document.body.classList.toggle("print-solutions", state.printSolutions);
+      window.print();
+    });
+    document.getElementById("printResultBtn").addEventListener("click", () => {
+      if (!test.ended) return;
+      buildResultSheet();
+      document.body.classList.remove("print-solutions");
+      window.print();
+    });
+    document.getElementById("copyTestBtn").addEventListener("click", preparePrintableTest);
+
+    function toggle(key, btn) {
+      state[key] = !state[key];
+      btn.classList.toggle("active", state[key]);
+      draw();
+    }
+
+    function togglePanel(key, btn) {
+      state[key] = !state[key];
+      btn.classList.toggle("active", state[key]);
+      updatePanelVisibility();
+    }
+
+    function syncSolutionButtons() {
+      const solutionBtn = document.getElementById("solutionBtn");
+      if (solutionBtn) {
+        solutionBtn.classList.toggle("active", state.showSolution);
+        solutionBtn.textContent = state.showSolution ? "Solucion ON" : "Solucion OFF";
+      }
+      const printBtn = document.getElementById("printSolutionsBtn");
+      if (printBtn) {
+        printBtn.classList.toggle("active", state.printSolutions);
+        printBtn.textContent = state.printSolutions ? "Clave impresa ON" : "Clave impresa OFF";
+      }
+    }
+
+    function filteredQuestions() {
+      const level = document.getElementById("level").value;
+      return examQuestions.filter(q => q.level === level).slice(0, 10);
+    }
+
+    function isExamMode() {
+      return document.getElementById("examMode")?.checked !== false;
+    }
+
+    function startTest() {
+      const exam = isExamMode();
+      test = {
+        active: true,
+        index: 0,
+        score: 0,
+        selected: null,
+        startedAt: Date.now(),
+        ended: false,
+        order: shuffle(filteredQuestions()).slice(0, 10),
+        currentOptions: [],
+        currentAnswer: 0,
+        answered: false,
+        records: []
+      };
+      if (!exam) {
+        practiceStats.count++;
+        practiceStats.activeStart = Date.now();
+      }
+      document.getElementById("resultBox").classList.remove("show");
+      document.getElementById("printResultBtn").disabled = true;
+      if (exam) {
+        state.showSolution = false;
+        syncSolutionButtons();
+      }
+      showQuestion();
+      tickClock();
+    }
+
+    function shuffle(arr) {
+      const a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function showQuestion() {
+      const q = test.order[test.index];
+      test.selected = null;
+      test.answered = false;
+      loadScenario(q.scenario);
+      document.getElementById("qCounter").textContent = `Pregunta ${test.index + 1}/10`;
+      document.getElementById("qLevel").textContent = `Nivel: ${q.level}`;
+      document.getElementById("questionText").textContent = q.text;
+      document.getElementById("testFeedback").textContent = isExamMode() ? "Modo examen: al marcar una opcion queda registrada." : "";
+      document.getElementById("submitAnswer").disabled = isExamMode();
+      document.getElementById("nextQuestion").disabled = true;
+      document.getElementById("solutionKey").classList.remove("show");
+      document.getElementById("solutionKey").textContent = "";
+      const canvasTask = document.getElementById("canvasTask");
+      canvasTask.hidden = !q.task;
+      canvasTask.textContent = q.task || "";
+      const answers = document.getElementById("answers");
+      answers.innerHTML = "";
+      const mixed = shuffle(q.options.map((text, idx) => ({ text, original: idx })));
+      test.currentOptions = mixed;
+      test.currentAnswer = mixed.findIndex(opt => opt.original === q.answer);
+      mixed.forEach((opt, idx) => {
+        const label = document.createElement("label");
+        label.dataset.answerIndex = String(idx);
+        label.innerHTML = `<input type="radio" name="answer" value="${idx}"><span>${String.fromCharCode(65 + idx)}. ${opt.text}</span>`;
+        label.addEventListener("change", () => {
+          if (test.answered) return;
+          test.selected = idx;
+          if (isExamMode()) recordCurrentAnswer(false);
+          else document.getElementById("submitAnswer").disabled = false;
+        });
+        answers.appendChild(label);
+      });
+      if (isExamMode()) updateSolutionView();
+    }
+
+    function updateSolutionView() {
+      const box = document.getElementById("solutionKey");
+      const scenarioBox = document.getElementById("scenarioSolution");
+      const allowSolution = state.showSolution && !(test.active && isExamMode());
+      const readoutsPanel = document.getElementById("readoutsPanel");
+      if (readoutsPanel) {
+        readoutsPanel.hidden = false;
+        readoutsPanel.classList.toggle("hide-values", !allowSolution);
+      }
+      updateScenarioSolution(scenarioBox, allowSolution);
+      if (!box) return;
+      if (test.active && !isExamMode()) {
+        document.querySelectorAll(".answers label").forEach(label => label.classList.remove("correct-answer"));
+        return;
+      }
+      document.querySelectorAll(".answers label").forEach(label => {
+        label.classList.toggle("correct-answer", allowSolution && Number(label.dataset.answerIndex) === test.currentAnswer);
+      });
+      if (!test.order.length || test.currentAnswer === undefined) {
+        box.classList.remove("show");
+        box.textContent = "";
+        return;
+      }
+      const q = test.order[test.index];
+      const correct = test.currentOptions[test.currentAnswer];
+      box.textContent = correct ? `Solucion: ${String.fromCharCode(65 + test.currentAnswer)}. ${correct.text}` : `Solucion: ${String.fromCharCode(65 + q.answer)}`;
+      box.classList.toggle("show", allowSolution);
+    }
+
+    function updateScenarioSolution(box, allowSolution) {
+      if (!box) return;
+      if (!allowSolution) {
+        box.classList.remove("show");
+        box.innerHTML = "";
+        return;
+      }
+      const e = fieldAt(state.probe);
+      const eMag = Math.hypot(e.ex, e.ey);
+      const v = potentialAt(state.probe);
+      const probeC = state.probeQ * MICRO;
+      const f = Math.abs(probeC) * eMag;
+      const u = probeC * v;
+      const sys = systemEnergy();
+      box.innerHTML = `
+        <strong>Solucion del escenario</strong>
+        <div>|E(P)| = ${formatNum(eMag)} N/C</div>
+        <div>|F| = |q0 E| = ${formatNum(f)} N</div>
+        <div>V(P) = ${formatNum(v)} V</div>
+        <div>U = q0 V = ${formatNum(u)} J</div>
+        <div>U sistema = ${sys === null ? "N/A" : `${formatNum(sys)} J`}</div>
+        <div>${scenarioSolutionNote()}</div>
+      `;
+      box.classList.add("show");
+    }
+
+    function scenarioSolutionNote() {
+      if (state.plates) return "Placas ideales: dentro E = Delta V/d y fuera E = 0 por cancelacion.";
+      if (state.graph) return "Grafica: E_x = -dV/dx; donde V es constante, E = 0.";
+      if (state.conductor?.dielectric) return "Dielectrico: usa Gauss con carga encerrada; en cavidad sin carga central E = 0.";
+      if (state.conductor) return "Conductor: E = 0 dentro del material; afuera depende de la carga neta encerrada.";
+      if (state.arc) return "Arco/espira: E y V se obtienen sumando pequenos elementos dq.";
+      if (state.finiteSources) return "Fuente finita: el resultado se calcula por superposicion de muchas cargas pequenas.";
+      return "Cargas puntuales: V se suma como escalar; E se suma como vector.";
+    }
+
+    function preparePrintableTest() {
+      const wasActive = test.active;
+      if (!test.order.length || test.ended) {
+        test = {
+          active: false,
+          index: 0,
+          score: 0,
+          selected: null,
+          startedAt: Date.now(),
+          ended: false,
+          order: shuffle(filteredQuestions()).slice(0, 10),
+          currentOptions: [],
+          currentAnswer: 0,
+          answered: false,
+          records: []
+        };
+      }
+      test.active = wasActive;
+      test.index = Math.min(test.index, test.order.length - 1);
+      showQuestion();
+      buildPrintSheet();
+      document.getElementById("testFeedback").textContent = "Test listo para imprimir. Usa 'Clave impresa ON' si quieres incluir respuestas.";
+    }
+
+    function buildPrintSheet() {
+      const sheet = document.getElementById("printSheet");
+      const name = document.getElementById("studentName").value.trim() || "________________";
+      const level = document.getElementById("level").value;
+      const order = test.order.length ? test.order : shuffle(filteredQuestions()).slice(0, 10);
+      sheet.innerHTML = `
+        <h2>Autotest de campo electrico, potencial y energia</h2>
+        <p><strong>Estudiante:</strong> ${escapeHtml(name)} &nbsp; <strong>Nivel:</strong> ${escapeHtml(level)} &nbsp; <strong>Tiempo:</strong> 20 min</p>
+        ${order.map((q, i) => `
+          <div class="print-question">
+            <strong>${i + 1}. ${escapeHtml(q.text)}</strong>
+            ${q.task ? `<p>${escapeHtml(q.task)}</p>` : ""}
+            <ol type="A">
+              ${q.options.map(opt => `<li>${escapeHtml(opt)}</li>`).join("")}
+            </ol>
+            <div class="print-answer">Solucion: ${String.fromCharCode(65 + q.answer)}. ${escapeHtml(q.options[q.answer])}</div>
+          </div>
+        `).join("")}`;
+    }
+
+    function formatDuration(ms) {
+      const total = Math.max(0, Math.round(ms / 1000));
+      const min = Math.floor(total / 60);
+      const sec = total % 60;
+      return `${min} min ${sec} s`;
+    }
+
+    function buildResultSheet() {
+      const sheet = document.getElementById("printSheet");
+      const name = document.getElementById("studentName").value.trim() || "xxxxxxxxx";
+      const email = document.getElementById("studentEmail").value.trim();
+      const level = document.getElementById("level").value;
+      const now = new Date();
+      const elapsedMs = test.startedAt ? Date.now() - test.startedAt : 0;
+      const missed = test.records.filter(r => !r.ok);
+      const practiceMs = practiceStats.totalMs + (practiceStats.activeStart ? Date.now() - practiceStats.activeStart : 0);
+      sheet.innerHTML = `
+        <h2>Resultados de examen / autotest</h2>
+        <p><strong>Estudiante:</strong> ${escapeHtml(name)}</p>
+        ${email ? `<p><strong>Correo:</strong> ${escapeHtml(email)}</p>` : ""}
+        <p><strong>Fecha y hora:</strong> ${escapeHtml(now.toLocaleString())}</p>
+        <p><strong>Nivel:</strong> ${escapeHtml(level)} &nbsp; <strong>Nota:</strong> ${test.score}/10 &nbsp; <strong>Tiempo:</strong> ${formatDuration(elapsedMs)}</p>
+        <p><strong>Autotests de practica:</strong> ${practiceStats.count} &nbsp; <strong>Tiempo de practica:</strong> ${formatDuration(practiceMs)}</p>
+        ${test.score === 10 ? "<p><strong>Felicitaciones: 10/10. Dominio excelente.</strong></p>" : ""}
+        <h3>Retroalimentacion</h3>
+        ${missed.length ? `<ol>${missed.map(r => `
+          <li>
+            <strong>${escapeHtml(r.text)}</strong><br>
+            Tu respuesta: ${escapeHtml(r.chosen || "sin respuesta")}<br>
+            Correcta: ${escapeHtml(r.correct)}<br>
+            ${escapeHtml(r.feedback)}
+          </li>`).join("")}</ol>` : "<p>No hubo errores en este intento.</p>"}
+      `;
+    }
+
+    function submitAnswer() {
+      if (test.selected === null || test.ended || test.answered) return;
+      if (!isExamMode() && test.selected !== test.currentAnswer) {
+        document.getElementById("testFeedback").textContent = "Incorrecto. Intenta otra opcion antes de avanzar.";
+        test.selected = null;
+        document.querySelectorAll(".answers input").forEach(input => {
+          input.checked = false;
+          input.disabled = false;
+        });
+        document.getElementById("submitAnswer").disabled = true;
+        document.getElementById("nextQuestion").disabled = true;
+        return;
+      }
+      recordCurrentAnswer(true);
+    }
+
+    function recordCurrentAnswer(showImmediateFeedback) {
+      if (test.selected === null || test.ended || test.answered) return;
+      test.answered = true;
+      const ok = test.selected === test.currentAnswer;
+      if (ok) test.score++;
+      const q = test.order[test.index];
+      const chosen = test.currentOptions[test.selected];
+      const correct = test.currentOptions[test.currentAnswer];
+      test.records.push({
+        number: test.index + 1,
+        level: q.level,
+        text: q.text,
+        ok,
+        chosen: chosen ? chosen.text : "",
+        correct: correct ? correct.text : "",
+        feedback: q.feedback || "Revisa la simulacion y compara la formula con la respuesta correcta."
+      });
+      document.querySelectorAll(".answers input").forEach(input => input.disabled = true);
+      if (showImmediateFeedback) {
+        document.getElementById("testFeedback").textContent = ok
+          ? `Correcto. Solucion: ${String.fromCharCode(65 + test.currentAnswer)}. ${correct.text}`
+          : `Respuesta registrada. La correcta era ${String.fromCharCode(65 + test.currentAnswer)}.`;
+      } else {
+        document.getElementById("testFeedback").textContent = "Respuesta registrada. Pulsa Siguiente.";
+      }
+      if (!isExamMode() && ok) {
+        const box = document.getElementById("solutionKey");
+        if (box) {
+          box.textContent = `Solucion: ${String.fromCharCode(65 + test.currentAnswer)}. ${correct.text}`;
+          box.classList.add("show");
+        }
+      }
+      document.getElementById("submitAnswer").disabled = true;
+      document.getElementById("nextQuestion").disabled = false;
+    }
+
+    function nextQuestion() {
+      if (test.active && !test.answered) {
+        document.getElementById("testFeedback").textContent = "Marca una opcion antes de continuar.";
+        return;
+      }
+      if (test.index >= 9) {
+        finishTest();
+        return;
+      }
+      test.index++;
+      showQuestion();
+    }
+
+    function finishTest() {
+      test.ended = true;
+      test.active = false;
+      const elapsedMs = Date.now() - test.startedAt;
+      if (!isExamMode() && practiceStats.activeStart) {
+        practiceStats.totalMs += Date.now() - practiceStats.activeStart;
+        practiceStats.activeStart = null;
+      }
+      const minutes = Math.floor(elapsedMs / 60000);
+      const seconds = Math.floor((elapsedMs % 60000) / 1000);
+      const name = document.getElementById("studentName").value.trim() || "xxxxxxxxx";
+      const level = document.getElementById("level").value;
+      const result = document.getElementById("resultBox");
+      const percent = test.score / 10;
+      const band = percent >= 0.85 ? "dominio alto" : percent >= 0.65 ? "dominio medio" : "repaso necesario";
+      const congrats = test.score === 10 ? "<br><strong>Felicitaciones: 10/10. Dominio excelente.</strong>" : "";
+      const missed = test.records.filter(r => !r.ok);
+      const feedbackHtml = missed.length
+        ? `<br><br><strong>Retroalimentacion en lo que fallo:</strong>
+          <ol>${missed.map(r => `
+            <li>
+              <strong>Pregunta ${r.number}:</strong> ${escapeHtml(r.text)}<br>
+              Tu respuesta: ${escapeHtml(r.chosen || "sin respuesta")}<br>
+              Correcta: ${escapeHtml(r.correct)}<br>
+              ${escapeHtml(r.feedback)}
+            </li>`).join("")}</ol>`
+        : "<br><br><strong>Retroalimentacion:</strong> Excelente, no hubo errores en este intento.";
+      result.innerHTML = `<strong>Estudiante ${escapeHtml(name)}: ${test.score}/10</strong><br>Tiempo: ${minutes} min ${seconds} s<br>Nivel: ${level}<br>Resultado: ${band}${congrats}${feedbackHtml}`;
+      result.classList.add("show");
+      document.getElementById("printResultBtn").disabled = false;
+      document.getElementById("qCounter").textContent = "Autotest finalizado";
+      document.getElementById("nextQuestion").disabled = true;
+      document.getElementById("submitAnswer").disabled = true;
+      tickClock();
+    }
+
+    function escapeHtml(text) {
+      return text.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[c]));
+    }
+
+    function tickClock() {
+      if (!test.active || !test.startedAt) {
+        document.getElementById("clock").textContent = "Autotest: 20:00";
+        return;
+      }
+      const left = Math.max(0, 20 * 60 * 1000 - (Date.now() - test.startedAt));
+      const m = Math.floor(left / 60000);
+      const s = Math.floor((left % 60000) / 1000);
+      document.getElementById("clock").textContent = `Autotest: ${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+      if (left <= 0) {
+        finishTest();
+      }
+    }
+
+    document.getElementById("startTestBtn").addEventListener("click", startTest);
+    document.getElementById("startTestBtn2").addEventListener("click", startTest);
+    document.getElementById("resetTestBtn").addEventListener("click", () => {
+      if (test.active && !isExamMode() && practiceStats.activeStart) {
+        practiceStats.totalMs += Date.now() - practiceStats.activeStart;
+        practiceStats.activeStart = null;
+      }
+      test.active = false;
+      test.ended = false;
+      test.records = [];
+      test.answered = false;
+      document.getElementById("printResultBtn").disabled = true;
+      document.getElementById("resultBox").classList.remove("show");
+      document.getElementById("questionText").textContent = "Inicia el autotest para practicar con preguntas de campo, potencial, trabajo y energia.";
+      document.getElementById("answers").innerHTML = "";
+      document.getElementById("canvasTask").hidden = true;
+      document.getElementById("qCounter").textContent = "Pregunta 0/10";
+      document.getElementById("testFeedback").textContent = "";
+      document.getElementById("submitAnswer").disabled = true;
+      document.getElementById("nextQuestion").disabled = true;
+      tickClock();
+    });
+    document.getElementById("submitAnswer").addEventListener("click", submitAnswer);
+    document.getElementById("nextQuestion").addEventListener("click", nextQuestion);
+    window.addEventListener("beforeprint", () => {
+      if (!test.order.length) preparePrintableTest();
+      buildPrintSheet();
+      document.body.classList.toggle("print-solutions", state.printSolutions);
+    });
+    setInterval(tickClock, 500);
+    window.addEventListener("resize", resizeCanvas);
+
+    loadScenario("dipole");
+    syncSolutionButtons();
+    requestAnimationFrame(resizeCanvas);
+  </script>
+</body>
+</html>
