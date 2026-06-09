@@ -2123,6 +2123,7 @@
       totalMs: 0,
       activeStart: null
     };
+    let printMode = "test";
 
     const examQuestions = [
       { level: "basico", scenario: "singlePositive", text: "Para una carga puntual positiva, ¿como cambia el potencial V al aumentar la distancia r?", options: ["Disminuye como kq/r", "Aumenta como r^2", "Permanece constante", "Se hace siempre negativo"], answer: 0, feedback: "Para una carga puntual, V = kq/r. Si r aumenta, V disminuye." },
@@ -4408,6 +4409,7 @@
     });
     document.getElementById("resetScenario").addEventListener("click", () => loadScenario(state.scenario));
     document.getElementById("printTestBtn").addEventListener("click", () => {
+      printMode = "test";
       if (!test.order.length) preparePrintableTest();
       updateSolutionView();
       syncSolutionButtons();
@@ -4417,6 +4419,7 @@
     });
     document.getElementById("printResultBtn").addEventListener("click", () => {
       if (!test.ended) return;
+      printMode = "result";
       buildResultSheet();
       document.body.classList.remove("print-solutions");
       window.print();
@@ -4779,17 +4782,17 @@
       const percent = test.score / 10;
       const band = percent >= 0.85 ? "dominio alto" : percent >= 0.65 ? "dominio medio" : "repaso necesario";
       const congrats = test.score === 10 ? "<br><strong>Felicitaciones: 10/10. Dominio excelente.</strong>" : "";
-      const missed = test.records.filter(r => !r.ok);
-      const feedbackHtml = missed.length
-        ? `<br><br><strong>Retroalimentacion en lo que fallo:</strong>
-          <ol>${missed.map(r => `
+      const feedbackHtml = test.records.length
+        ? `<br><br><strong>Retroalimentacion completa:</strong>
+          <ol>${test.records.map(r => `
             <li>
+              <strong>${r.ok ? "Correcta" : "Incorrecta"}.</strong><br>
               <strong>Pregunta ${r.number}:</strong> ${escapeHtml(r.text)}<br>
               Tu respuesta: ${escapeHtml(r.chosen || "sin respuesta")}<br>
               Correcta: ${escapeHtml(r.correct)}<br>
               ${escapeHtml(r.feedback)}
             </li>`).join("")}</ol>`
-        : "<br><br><strong>Retroalimentacion:</strong> Excelente, no hubo errores en este intento.";
+        : "<br><br><strong>Retroalimentacion:</strong> No hay respuestas registradas.";
       const observation = level === "avanzado"
         ? "<br>Observacion: examen universitario valido solo con hoja fisica de dibujos, formulas, unidades y calculos revisada por el docente."
         : "";
@@ -4845,9 +4848,14 @@
     document.getElementById("submitAnswer").addEventListener("click", submitAnswer);
     document.getElementById("nextQuestion").addEventListener("click", nextQuestion);
     window.addEventListener("beforeprint", () => {
-      if (!test.order.length) preparePrintableTest();
-      buildPrintSheet();
-      document.body.classList.toggle("print-solutions", state.printSolutions);
+      if (printMode === "result" && test.ended) {
+        buildResultSheet();
+        document.body.classList.remove("print-solutions");
+      } else {
+        if (!test.order.length) preparePrintableTest();
+        buildPrintSheet();
+        document.body.classList.toggle("print-solutions", state.printSolutions);
+      }
     });
     setInterval(tickClock, 500);
     window.addEventListener("resize", resizeCanvas);
