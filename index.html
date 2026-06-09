@@ -1550,11 +1550,11 @@
           </div>
           <div class="grid-2">
             <label>
-              Radio externo r2
+              <span id="modelRadiusLabel">Radio externo r2</span>
               <input id="modelRadius" type="number" min="0.4" max="5" step="0.1" value="3">
             </label>
             <label>
-              Radio interno r1
+              <span id="modelInnerLabel">Radio interno r1</span>
               <input id="modelInnerRadius" type="number" min="0" max="4.9" step="0.1" value="0">
             </label>
           </div>
@@ -1614,10 +1614,10 @@
               <label class="mini-label">Q
                 <input id="modelTopCharge" type="number" min="-20" max="20" step="0.001" value="0.012">
               </label>
-              <label class="mini-label">r2
+              <label class="mini-label"><span id="modelTopRadiusLabel">r2</span>
                 <input id="modelTopRadius" type="number" min="0.4" max="5" step="0.1" value="3">
               </label>
-              <label class="mini-label">r1
+              <label class="mini-label"><span id="modelTopInnerLabel">r1</span>
                 <input id="modelTopInnerRadius" type="number" min="0" max="4.9" step="0.1" value="0">
               </label>
               <span class="pill">cm</span>
@@ -1717,7 +1717,7 @@
 
         <section class="lesson-card source-panel">
           <strong>Temas cubiertos</strong>
-          <p>Cargas puntuales, dipolo, cargas iguales y desiguales, placas ideales y reales, placa inclinada, lamina con carga o circulo, conductor solido y hueco, cuatro cargas en cuadrado, grafica V(x), anillo fino, disco/anillo ancho, esfera solida uniforme, energia, trabajo y equipotenciales.</p>
+          <p>Cargas puntuales, dipolo, cargas iguales y desiguales, placas ideales y reales, placa inclinada, lamina con carga o circulo, conductor solido y hueco, cuatro cargas en cuadrado, cubo de 8 cargas, grafica V(x), anillo fino, disco/anillo ancho, esfera solida uniforme, energia, trabajo y equipotenciales.</p>
         </section>
 
         <section class="lesson-card source-panel">
@@ -1878,6 +1878,22 @@
         charges: [],
         model: { type: "solidSphere", q: 4, radius: 1.45 },
         probe: { x: 0.7, y: 0.35 }
+      },
+      cubePositive: {
+        label: "Desarrollo: cubo 8 cargas +Q",
+        prompt: "Ocho cargas +Q en los vertices de un cubo. En el centro E = 0, pero V y U son positivos.",
+        lesson: "En el centro todas las cargas estan a la misma distancia r=a√3/2. El campo se cancela por simetria, pero el potencial se suma: Vc=8kQ/r.",
+        charges: [],
+        model: { type: "cubeCharges", q: 1, radius: 4, pattern: "positive" },
+        probe: { x: 0, y: 0 }
+      },
+      cubeAlternating: {
+        label: "Desarrollo: cubo alternado +Q/-Q",
+        prompt: "Cubo con cargas alternadas +Q y -Q. Compara V centro y U sistema con el cubo todo positivo.",
+        lesson: "Si hay cuatro +Q y cuatro -Q a la misma distancia del centro, el potencial central se cancela. La energia del sistema depende de pares por arista, diagonal de cara y diagonal del cuerpo.",
+        charges: [],
+        model: { type: "cubeCharges", q: 1, radius: 4, pattern: "alternating" },
+        probe: { x: 0, y: 0 }
       },
       plates: {
         label: "Placas paralelas",
@@ -2294,6 +2310,7 @@
       { level: "basico", scenario: "plates", text: "Las superficies equipotenciales entre placas paralelas ideales son:", options: ["Paralelas a las placas", "Paralelas al campo", "Solo puntos", "Circunferencias"], answer: 0, feedback: "Las equipotenciales son perpendiculares al campo y paralelas a las placas." },
       { level: "basico", scenario: "equipotential", text: "Si una carga se mueve sobre una superficie equipotencial, el trabajo del campo electrico es:", options: ["Cero", "Maximo", "Siempre positivo", "Siempre negativo"], answer: 0, feedback: "W = q Delta V. En una equipotencial Delta V = 0, entonces W = 0." },
       { level: "basico", scenario: "squareCharges", text: "Cuatro cargas positivas iguales equidistantes del centro producen en el centro:", options: ["E = 0 por simetria", "V = 0 por simetria", "E maximo", "Carga neta cero"], answer: 0, feedback: "Los vectores campo se cancelan por simetria; el potencial positivo se suma." },
+      { level: "basico", scenario: "cubePositive", text: "Ocho cargas +Q en los vertices de un cubo producen en el centro:", options: ["E = 0, pero V es positivo", "E maximo y V = 0", "E y V son cero", "V negativo"], answer: 0, feedback: "El campo se cancela por simetria vectorial; el potencial escalar de ocho cargas positivas se suma." },
 
       { level: "medio", scenario: "singlePositive", text: "Una carga puntual +2 uC esta a 2 cm de P. ¿Cual es el potencial aproximado en P?", options: ["8.99 x 10^5 V", "8.99 x 10^3 V", "4.49 x 10^5 V", "1.80 x 10^6 V"], answer: 0, feedback: "V = kq/r = (8.99 x 10^9)(2 x 10^-6)/(0.02) = 8.99 x 10^5 V." },
       { level: "medio", scenario: "singlePositive", text: "Una carga de prueba +1 uC esta en un campo E = 3.0 x 10^6 N/C. ¿Que fuerza siente?", options: ["3.0 N", "3.0 x 10^6 N", "3.0 x 10^-6 N", "0.003 N"], answer: 0, feedback: "F = qE = (1 x 10^-6 C)(3.0 x 10^6 N/C) = 3.0 N." },
@@ -2310,6 +2327,9 @@
       { level: "medio", scenario: "diskFieldFromV", text: "Para obtener E_z a partir del potencial V(z) del disco se usa:", options: ["E_z = -dV/dz", "E_z = Vz", "E_z = d^2V/dz^2 siempre", "E_z = qV"], answer: 0, feedback: "El campo electrico es el negativo del gradiente del potencial; en el eje, E_z=-dV/dz." },
       { level: "medio", scenario: "ringAxisEnergy", text: "Un anillo fino tiene Q=8.0 nC y a=2.2 cm. ¿Cual es V en z=3.0 cm sobre el eje?", options: ["1.93 x 10^3 V", "19.3 V", "1.44 x 10^3 V", "0 V"], answer: 0, feedback: "V=kQ/sqrt(z^2+a^2)=(8.99e9)(8e-9)/0.0372=1.93e3 V." },
       { level: "medio", scenario: "diskPotential", text: "Un disco tiene Q=12 nC, R=3.0 cm y z=2.0 cm. ¿Cual es V(z) aproximadamente?", options: ["3.85 x 10^3 V", "3.85 x 10^2 V", "1.08 x 10^3 V", "0 V"], answer: 0, feedback: "V=2kQ/R^2[sqrt(z^2+R^2)-|z|]=3.85e3 V aproximadamente." },
+      { level: "medio", scenario: "cubePositive", text: "En un cubo con ocho cargas +Q, si se coloca una carga +q0 en el centro, la energia potencial:", options: ["Aumenta, porque V_centro es positivo", "Disminuye siempre", "No cambia porque E = 0", "Se vuelve cero"], answer: 0, feedback: "Aunque E=0 en el centro, V es positivo. El cambio es Delta U=q0 V_centro, positivo para q0 positiva." },
+      { level: "medio", scenario: "cubeAlternating", text: "En un cubo alternado con cuatro +Q y cuatro -Q a igual distancia del centro, el potencial en el centro es:", options: ["0 V", "Maximo positivo", "Maximo negativo", "Infinito"], answer: 0, feedback: "Los cuatro aportes positivos y cuatro negativos tienen la misma distancia al centro, por eso V_c=0." },
+      { level: "medio", scenario: "cubePositive", text: "Para un cubo de lado a, la distancia del centro a cualquier vertice es:", options: ["a sqrt(3)/2", "a/2", "a sqrt(2)", "2a/sqrt(3)"], answer: 0, feedback: "La diagonal del cuerpo mide a sqrt(3); del centro al vertice es la mitad." },
 
       { level: "avanzado", scenario: "dipole", text: "Dipolo +2 uC y -2 uC separados 2.4 cm. En el centro, ¿cual es |E| aproximado?", options: ["2.50 x 10^8 N/C", "1.25 x 10^8 N/C", "0 N/C", "2.50 x 10^6 N/C"], answer: 0, feedback: "Cada carga aporta kq/r^2 con r=0.012 m; se suman dos aportes: 2kq/r^2 = 2.50 x 10^8 N/C." },
       { level: "avanzado", scenario: "dipole", text: "Para el mismo dipolo +2 uC y -2 uC separados 2.4 cm, el potencial electrico en el centro es:", options: ["0 V", "2.50 x 10^8 V", "1.50 J", "-1.50 V"], answer: 0, feedback: "El potencial es escalar: k(+q)/r + k(-q)/r = 0 en el centro." },
@@ -2335,7 +2355,12 @@
       { level: "avanzado", scenario: "diskPotential", text: "Para un disco uniformemente cargado de radio R y densidad sigma, ¿cual es V(z) sobre el eje?", options: ["V=2pi k sigma[sqrt(z^2+R^2)-|z|]", "V=kQ/z^2", "V=2pi k sigma z/R", "V=0 en todo el eje"], answer: 0, feedback: "El disco se integra como anillos: dV=k sigma 2pi a da/sqrt(z^2+a^2)." },
       { level: "avanzado", scenario: "solidSpherePotential", text: "Para una esfera solida uniformemente cargada, ¿cual es V(r) dentro de la esfera con V(infinito)=0?", options: ["V=kQ/(2R)(3-r^2/R^2)", "V=kQ/r", "V=kQr/R^3", "V=0"], answer: 0, feedback: "Dentro se integra E=kQr/R^3 y se exige continuidad con V(R)=kQ/R." },
       { level: "avanzado", scenario: "ringAxisEnergy", text: "Anillo fino: a=2.2 cm, Q=8.0 nC. Particula: q=5.0 nC, m=6.0 mg, z_i=3.0 cm, parte del reposo. ¿Rapidez al infinito?", options: ["1.8 m/s", "0.18 m/s", "18 m/s", "2.4 m/s"], answer: 0, feedback: "1/2 mv^2=qkQ/sqrt(z_i^2+a^2). Con r=0.0372 m resulta v^2=3.22 m^2/s^2 y v=1.79 m/s." },
-      { level: "avanzado", scenario: "diskFieldFromV", text: "Para un disco con Q=12 nC y R=3.0 cm, ¿cual es |E_z| en z=2.0 cm?", options: ["1.07 x 10^5 N/C", "2.40 x 10^3 N/C", "4.79 x 10^4 N/C", "0 N/C"], answer: 0, feedback: "E=2kQ/R^2[1-z/sqrt(z^2+R^2)] = 1.07e5 N/C para z>0." }
+      { level: "avanzado", scenario: "diskFieldFromV", text: "Para un disco con Q=12 nC y R=3.0 cm, ¿cual es |E_z| en z=2.0 cm?", options: ["1.07 x 10^5 N/C", "2.40 x 10^3 N/C", "4.79 x 10^4 N/C", "0 N/C"], answer: 0, feedback: "E=2kQ/R^2[1-z/sqrt(z^2+R^2)] = 1.07e5 N/C para z>0." },
+      { level: "avanzado", scenario: "cubePositive", text: "Cubo con 8 cargas +1 uC y lado a=4.0 cm. ¿Cual es V en el centro?", options: ["2.08 x 10^6 V", "2.08 x 10^4 V", "0 V", "5.12 V"], answer: 0, feedback: "r_c=a sqrt(3)/2=0.0346 m. V_c=8kQ/r_c=2.08e6 V." },
+      { level: "avanzado", scenario: "cubePositive", text: "Para el mismo cubo +Q, ¿que cambio de energia produce colocar +1 uC en el centro?", options: ["+2.08 J", "-2.08 J", "0 J", "+5.12 J"], answer: 0, feedback: "Delta U=q0 V_c=(1e-6)(2.08e6)=+2.08 J." },
+      { level: "avanzado", scenario: "cubePositive", text: "Cubo con 8 cargas +1 uC y lado 4.0 cm. ¿Cual es U_sistema aproximada?", options: ["+5.12 J", "+2.08 J", "-1.31 J", "0 J"], answer: 0, feedback: "U=(kQ^2/a)(12+12/sqrt2+4/sqrt3)=5.12 J." },
+      { level: "avanzado", scenario: "cubeAlternating", text: "Cubo alternado +/-1 uC con lado 4.0 cm. Si se coloca +1 uC en el centro, ¿como cambia la energia?", options: ["No cambia", "Aumenta +2.08 J", "Disminuye -2.08 J", "Se hace infinita"], answer: 0, feedback: "En el centro V_c=0 porque hay cuatro +Q y cuatro -Q a igual distancia. Entonces Delta U=q0V_c=0." },
+      { level: "avanzado", scenario: "cubeAlternating", text: "Para el cubo alternado +/-Q, la energia del sistema es:", options: ["(kQ^2/a)(-12+12/sqrt2-4/sqrt3)", "(kQ^2/a)(12+12/sqrt2+4/sqrt3)", "0 siempre", "8kQ/a"], answer: 0, feedback: "Los pares por arista y diagonal del cuerpo son opuestos; los de diagonal de cara son iguales." }
     ];
 
     function worldToScreen(p) {
@@ -2534,6 +2559,9 @@
         if (rM >= R) return K_COULOMB * qC / rM;
         return K_COULOMB * qC / (2 * R) * (3 - (rM * rM) / (R * R));
       }
+      if (model.type === "cubeCharges") {
+        return potentialFromModelElements(p, model);
+      }
       return 0;
     }
 
@@ -2566,6 +2594,9 @@
         if (rCm < 0.001) return { ex: 0, ey: 0 };
         return { ex: eRadial * p.x / rCm, ey: eRadial * p.y / rCm };
       }
+      if (model.type === "cubeCharges") {
+        return fieldFromModelElements(p, model);
+      }
       return { ex: 0, ey: 0 };
     }
 
@@ -2576,12 +2607,25 @@
     }
 
     function modelElements3D(model) {
-      const cacheKey = `${model.type}|${model.q}|${model.radius}|${model.innerRadius || 0}`;
+      const cacheKey = `${model.type}|${model.q}|${model.radius}|${model.innerRadius || 0}|${model.pattern || ""}`;
       if (modelElementCache.key === cacheKey) return modelElementCache.elements;
       const elements = [];
       const R = model.radius || 1;
       const r1 = Math.max(0, Math.min(model.innerRadius || 0, R * 0.96));
       const q = model.q || 0;
+      if (model.type === "cubeCharges") {
+        const h = R / 2;
+        for (const sx of [-1, 1]) {
+          for (const sy of [-1, 1]) {
+            for (const sz of [-1, 1]) {
+              const sign = model.pattern === "alternating" ? sx * sy * sz : 1;
+              elements.push({ q: q * sign, x: sx * h, y: sy * h, z3: sz * h });
+            }
+          }
+        }
+        modelElementCache = { key: cacheKey, elements };
+        return elements;
+      }
       if (model.type === "ringAxis") {
         const n = 96;
         for (let i = 0; i < n; i++) {
@@ -3431,6 +3475,11 @@
       ctx.moveTo(axisA.x, axisA.y);
       ctx.lineTo(axisB.x, axisB.y);
       ctx.stroke();
+      if (model.type === "cubeCharges") {
+        drawCubeModel(model);
+        ctx.restore();
+        return;
+      }
       if (model.type === "ringAxis" || model.type === "diskAxis" || model.type === "diskField") {
         const ry = model.radius * c.scale;
         const rx = Math.max(18, ry * 0.28);
@@ -3488,6 +3537,54 @@
           ctx.textAlign = "center";
           ctx.fillText("esfera uniforme", c.x, c.y + 5);
         }
+      }
+      ctx.restore();
+    }
+
+    function cubeProject(v) {
+      return { x: v.x + 0.34 * v.z3, y: v.y + 0.24 * v.z3 };
+    }
+
+    function drawCubeModel(model) {
+      const vertices = modelElements3D(model).map(v => ({ ...v, p: cubeProject(v) }));
+      const edges = [];
+      for (let i = 0; i < vertices.length; i++) {
+        for (let j = i + 1; j < vertices.length; j++) {
+          const a = vertices[i];
+          const b = vertices[j];
+          const diff = [Math.abs(a.x - b.x), Math.abs(a.y - b.y), Math.abs(a.z3 - b.z3)].filter(d => d > 0.001);
+          if (diff.length === 1) edges.push([a, b]);
+        }
+      }
+      ctx.save();
+      ctx.strokeStyle = cssVar("--axis") || "#8899a0";
+      ctx.lineWidth = 2;
+      edges.forEach(([a, b]) => {
+        const pa = worldToScreen(a.p);
+        const pb = worldToScreen(b.p);
+        ctx.beginPath();
+        ctx.moveTo(pa.x, pa.y);
+        ctx.lineTo(pb.x, pb.y);
+        ctx.stroke();
+      });
+      vertices
+        .sort((a, b) => a.z3 - b.z3)
+        .forEach(v => drawChargeSymbol(v.p, v.q, 15));
+      const center = worldToScreen({ x: 0, y: 0 });
+      ctx.beginPath();
+      ctx.arc(center.x, center.y, 7, 0, Math.PI * 2);
+      ctx.fillStyle = canvasInk();
+      ctx.fill();
+      ctx.strokeStyle = "white";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      if (state.showFigureText) {
+        drawThemeLabel("centro", center.x, center.y - 18);
+        ctx.fillStyle = canvasInk();
+        ctx.font = "800 13px system-ui";
+        ctx.textAlign = "center";
+        ctx.fillText(model.pattern === "alternating" ? "cubo +Q/-Q" : "cubo 8(+Q)", center.x, center.y - model.radius * worldToScreen({ x: 0, y: 0 }).scale * 0.82);
+        ctx.fillText(`a = ${formatNum(model.radius)} cm`, center.x, center.y + model.radius * worldToScreen({ x: 0, y: 0 }).scale * 0.82);
       }
       ctx.restore();
     }
@@ -3731,6 +3828,7 @@
     }
 
     function systemEnergy() {
+      if (state.model?.type === "cubeCharges") return modelSystemEnergy(state.model);
       const charges = state.arc ? arcElements() : state.charges;
       if (state.plates || state.conductor || state.graph || !charges || charges.length < 2) return null;
       let u = 0;
@@ -3739,6 +3837,23 @@
           const a = charges[i];
           const b = charges[j];
           const rM = Math.max(Math.hypot((a.x - b.x) * CM, (a.y - b.y) * CM), MIN_R_M);
+          u += K_COULOMB * (a.q * MICRO) * (b.q * MICRO) / rM;
+        }
+      }
+      return u;
+    }
+
+    function modelSystemEnergy(model) {
+      const elements = modelElements3D(model);
+      let u = 0;
+      for (let i = 0; i < elements.length; i++) {
+        for (let j = i + 1; j < elements.length; j++) {
+          const a = elements[i];
+          const b = elements[j];
+          const dx = (a.x - b.x) * CM;
+          const dy = (a.y - b.y) * CM;
+          const dz = (a.z3 - b.z3) * CM;
+          const rM = Math.max(Math.hypot(dx, dy, dz), MIN_R_M);
           u += K_COULOMB * (a.q * MICRO) * (b.q * MICRO) / rM;
         }
       }
@@ -3837,7 +3952,7 @@
       }
       if (state.model) {
         if (state.model.type === "solidSphere") return { type: "solidSphere", center: { x: 0, y: 0 }, maxR: Math.max(3.2, state.model.radius * 2.2), model: state.model, label: "esfera solida" };
-        return { type: "axisModel", center: { x: 0, y: 0 }, maxR: 3.4, model: state.model, label: state.model.type === "ringAxis" ? "anillo" : "disco" };
+        return { type: "axisModel", center: { x: 0, y: 0 }, maxR: 3.4, model: state.model, label: state.model.type === "ringAxis" ? "anillo" : state.model.type === "cubeCharges" ? "cubo" : "disco" };
       }
       if (state.conductor) return { type: "sphere", center: { x: 0, y: 0 }, maxR: Math.max(3.2, state.conductor.r * 1.8), shell: state.conductor, label: state.conductor.dielectric ? "esfera dielectrica" : "esfera conductora" };
       if (state.charges.length === 1) return { type: "charge", center: { x: state.charges[0].x, y: state.charges[0].y }, maxR: 3.2, charge: state.charges[0], label: "carga puntual" };
@@ -4325,6 +4440,10 @@
       const qTop = document.getElementById("modelTopCharge");
       const rTop = document.getElementById("modelTopRadius");
       const innerTop = document.getElementById("modelTopInnerRadius");
+      const radiusLabel = document.getElementById("modelRadiusLabel");
+      const innerLabel = document.getElementById("modelInnerLabel");
+      const topRadiusLabel = document.getElementById("modelTopRadiusLabel");
+      const topInnerLabel = document.getElementById("modelTopInnerLabel");
       const hint = document.getElementById("modelHint");
       if (!qInput || !rInput || !innerInput || !hint || !qTop || !rTop || !innerTop) return;
       if (document.activeElement !== qInput) qInput.value = state.model.q;
@@ -4333,13 +4452,20 @@
       if (document.activeElement !== qTop) qTop.value = state.model.q;
       if (document.activeElement !== rTop) rTop.value = state.model.radius;
       if (document.activeElement !== innerTop) innerTop.value = state.model.innerRadius || 0;
-      innerInput.disabled = state.model.type === "ringAxis" || state.model.type === "solidSphere";
+      const innerDisabled = state.model.type === "ringAxis" || state.model.type === "solidSphere" || state.model.type === "cubeCharges";
+      innerInput.disabled = innerDisabled;
       innerTop.disabled = innerInput.disabled;
+      if (radiusLabel) radiusLabel.textContent = state.model.type === "cubeCharges" ? "Lado del cubo a" : "Radio externo r2";
+      if (innerLabel) innerLabel.textContent = state.model.type === "cubeCharges" ? "No usado" : "Radio interno r1";
+      if (topRadiusLabel) topRadiusLabel.textContent = state.model.type === "cubeCharges" ? "a" : "r2";
+      if (topInnerLabel) topInnerLabel.textContent = state.model.type === "cubeCharges" ? "-" : "r1";
       hint.textContent = state.model.type === "ringAxis"
         ? "Anillo fino: cambia r2 para modificar el radio del anillo."
         : state.model.type === "solidSphere"
           ? "Esfera solida uniforme: cambia r2 para modificar el radio R."
-          : "r1 = 0 representa disco solido; r1 > 0 representa anillo ancho real.";
+          : state.model.type === "cubeCharges"
+            ? "Cubo: cambia a para modificar el lado. Q es la magnitud de cada carga en los vertices."
+            : "r1 = 0 representa disco solido; r1 > 0 representa anillo ancho real.";
     }
 
     function updateSearchNote() {
@@ -4386,6 +4512,16 @@
         ];
       }
       if (state.model) {
+        if (state.model.type === "cubeCharges") {
+          const alternating = state.model.pattern === "alternating";
+          return [
+            { title: "Distancia centro-vertice", expr: "r<sub>c</sub> = a sqrt(3)/2" },
+            { title: "Potencial centro", expr: alternating ? "V<sub>c</sub> = 0, si hay 4(+Q) y 4(-Q)" : "V<sub>c</sub> = 8kQ/r<sub>c</sub> = 16kQ/(a sqrt(3))" },
+            { title: "Energia sistema", expr: alternating ? "U = (kQ<sup>2</sup>/a)(-12 + 12/sqrt(2) - 4/sqrt(3))" : "U = (kQ<sup>2</sup>/a)(12 + 12/sqrt(2) + 4/sqrt(3))" },
+            { title: "Carga en centro", expr: "Delta U = q<sub>0</sub> V<sub>c</sub>" },
+            ...common
+          ];
+        }
         if (state.model.type === "ringAxis") {
           return [
             { title: "Anillo cargado", expr: "V(z) = kQ/sqrt(z<sup>2</sup> + a<sup>2</sup>)" },
@@ -4475,6 +4611,48 @@
     }
 
     function developmentItems() {
+      if (state.scenario === "cubePositive") {
+        return [
+          "Dibuja un cubo de lado a.",
+          "Coloca una carga +Q en cada uno de los 8 vertices.",
+          "Ubica el punto P en el centro geometrico del cubo.",
+          "La distancia del centro a cada vertice es la mitad de la diagonal del cuerpo.",
+          "La diagonal del cuerpo mide a sqrt(3).",
+          "Por tanto, r_c=a sqrt(3)/2.",
+          "El campo electrico en el centro es cero por simetria vectorial.",
+          "El potencial no es vectorial: cada vertice aporta kQ/r_c.",
+          "Suma los ocho aportes: V_c=8kQ/r_c.",
+          "Sustituye r_c: V_c=16kQ/(a sqrt(3)).",
+          "Para la energia del sistema, cuenta pares de cargas una sola vez.",
+          "Hay 12 pares sobre aristas, cada uno separado por a.",
+          "Hay 12 pares sobre diagonales de cara, cada uno separado por a sqrt(2).",
+          "Hay 4 pares sobre diagonales del cuerpo, cada uno separado por a sqrt(3).",
+          "Resultado: U=(kQ^2/a)(12+12/sqrt(2)+4/sqrt(3)).",
+          "Si pones una carga q0 en el centro, el cambio de energia es Delta U=q0 V_c.",
+          "Con q0=+Q, la energia aumenta; con q0=-Q, disminuye.",
+          "Rango de uso: cargas puntuales fijas en los vertices y potencial cero en infinito."
+        ];
+      }
+      if (state.scenario === "cubeAlternating") {
+        return [
+          "Dibuja el mismo cubo de lado a.",
+          "Coloca cargas alternadas +Q y -Q en los vertices.",
+          "Usa una distribucion con cuatro +Q y cuatro -Q.",
+          "El punto P esta en el centro geometrico.",
+          "Todos los vertices estan a la misma distancia r_c=a sqrt(3)/2.",
+          "El potencial de cada vertice es kq_i/r_c.",
+          "Como hay cuatro +Q y cuatro -Q a la misma distancia, la suma de cargas ponderadas se cancela.",
+          "Resultado en el centro: V_c=0.",
+          "Una carga q0 en el centro cambia la energia en Delta U=q0 V_c.",
+          "Como V_c=0, poner +Q o -Q en el centro no cambia la energia potencial de interaccion con los vertices.",
+          "La energia propia del cubo se calcula por pares: U=sum k q_i q_j/r_ij.",
+          "En esta distribucion, los 12 pares de arista tienen signos opuestos: contribuyen -12 kQ^2/a.",
+          "Los 12 pares de diagonal de cara tienen signos iguales: contribuyen +12 kQ^2/(a sqrt(2)).",
+          "Los 4 pares de diagonal del cuerpo tienen signos opuestos: contribuyen -4 kQ^2/(a sqrt(3)).",
+          "Resultado: U=(kQ^2/a)(-12+12/sqrt(2)-4/sqrt(3)).",
+          "Rango de uso: cubo ideal de cargas puntuales alternadas y fijas en los vertices."
+        ];
+      }
       if (state.scenario === "axisPointPotential") {
         return [
           "Dibuja el eje x y coloca q1 en x=0.",
@@ -4921,7 +5099,7 @@
       const inner = Number(document.getElementById(`${prefix}InnerRadius`).value);
       state.model.q = Number.isFinite(q) ? Math.max(-20, Math.min(20, q)) : state.model.q;
       state.model.radius = Number.isFinite(radius) ? Math.max(0.4, Math.min(5, radius)) : state.model.radius;
-      if (state.model.type !== "ringAxis" && state.model.type !== "solidSphere") {
+      if (state.model.type !== "ringAxis" && state.model.type !== "solidSphere" && state.model.type !== "cubeCharges") {
         state.model.innerRadius = Number.isFinite(inner) ? Math.max(0, Math.min(state.model.radius * 0.96, inner)) : (state.model.innerRadius || 0);
       }
       modelElementCache = { key: "", elements: [] };
