@@ -3549,6 +3549,8 @@
 
     function drawCubeModel(model) {
       const vertices = modelElements3D(model).map(v => ({ ...v, p: cubeProject(v) }));
+      const byKey = new Map(vertices.map(v => [`${v.x},${v.y},${v.z3}`, v]));
+      const h = (model.radius || 1) / 2;
       const edges = [];
       for (let i = 0; i < vertices.length; i++) {
         for (let j = i + 1; j < vertices.length; j++) {
@@ -3559,6 +3561,7 @@
         }
       }
       ctx.save();
+      drawCubeFaces(byKey, h);
       if (state.showCubeEdges) {
         ctx.strokeStyle = cssVar("--axis") || "#8899a0";
         ctx.lineWidth = 2.4;
@@ -3591,6 +3594,48 @@
         ctx.fillText(`a = ${formatNum(model.radius)} cm`, center.x, center.y + model.radius * worldToScreen({ x: 0, y: 0 }).scale * 0.82);
       }
       ctx.restore();
+    }
+
+    function drawCubeFaces(byKey, h) {
+      const key = (x, y, z) => `${x * h},${y * h},${z * h}`;
+      const faces = [
+        [[-1, -1, -1], [1, -1, -1], [1, 1, -1], [-1, 1, -1]],
+        [[-1, -1, 1], [1, -1, 1], [1, 1, 1], [-1, 1, 1]],
+        [[-1, 1, -1], [1, 1, -1], [1, 1, 1], [-1, 1, 1]],
+        [[1, -1, -1], [1, 1, -1], [1, 1, 1], [1, -1, 1]],
+        [[-1, -1, -1], [1, -1, -1], [1, -1, 1], [-1, -1, 1]],
+        [[-1, -1, -1], [-1, 1, -1], [-1, 1, 1], [-1, -1, 1]]
+      ].map(face => face.map(([x, y, z]) => byKey.get(key(x, y, z))).filter(Boolean));
+      ctx.save();
+      faces
+        .filter(face => face.length === 4)
+        .sort((a, b) => avg(a.map(v => v.z3)) - avg(b.map(v => v.z3)))
+        .forEach((face, idx) => {
+          ctx.beginPath();
+          face.forEach((v, i) => {
+            const p = worldToScreen(v.p);
+            if (i === 0) ctx.moveTo(p.x, p.y);
+            else ctx.lineTo(p.x, p.y);
+          });
+          ctx.closePath();
+          ctx.fillStyle = idx % 2 === 0 ? cubeFaceFill(0.48) : cubeFaceFill(0.34);
+          ctx.fill();
+        });
+      ctx.restore();
+    }
+
+    function avg(values) {
+      return values.reduce((sum, value) => sum + value, 0) / Math.max(1, values.length);
+    }
+
+    function cubeFaceFill(alpha) {
+      const cls = document.body.classList;
+      if (cls.contains("theme-dark")) return `rgba(30, 54, 63, ${alpha})`;
+      if (cls.contains("theme-chalk-green")) return `rgba(37, 78, 57, ${alpha})`;
+      if (cls.contains("theme-chalk-gray")) return `rgba(72, 75, 78, ${alpha})`;
+      if (cls.contains("theme-davinci")) return `rgba(222, 194, 135, ${alpha})`;
+      if (cls.contains("theme-pixar")) return `rgba(255, 225, 112, ${alpha})`;
+      return `rgba(226, 238, 240, ${alpha})`;
     }
 
     function workPointDefinitions() {
