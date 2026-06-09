@@ -3434,34 +3434,42 @@
       if (model.type === "ringAxis" || model.type === "diskAxis" || model.type === "diskField") {
         const ry = model.radius * c.scale;
         const rx = Math.max(18, ry * 0.28);
+        const inner = Math.max(0, Math.min(model.innerRadius || 0, model.radius * 0.96));
+        const innerRy = inner * c.scale;
+        const innerRx = Math.max(8, innerRy * 0.28);
         ctx.beginPath();
         ctx.ellipse(c.x, c.y, rx, ry, 0, 0, Math.PI * 2);
         if (model.type === "diskAxis" || model.type === "diskField") {
           ctx.fillStyle = "rgba(255, 190, 52, 0.22)";
-          ctx.fill();
-          const inner = Math.max(0, Math.min(model.innerRadius || 0, model.radius * 0.96));
           if (inner > 0.03) {
-            ctx.save();
-            ctx.globalCompositeOperation = "destination-out";
             ctx.beginPath();
-            ctx.ellipse(c.x, c.y, Math.max(8, inner * c.scale * 0.28), inner * c.scale, 0, 0, Math.PI * 2);
+            ctx.ellipse(c.x, c.y, rx, ry, 0, 0, Math.PI * 2);
+            ctx.ellipse(c.x, c.y, innerRx, innerRy, 0, 0, Math.PI * 2);
+            ctx.fill("evenodd");
+          } else {
             ctx.fill();
-            ctx.restore();
-            ctx.beginPath();
-            ctx.ellipse(c.x, c.y, Math.max(8, inner * c.scale * 0.28), inner * c.scale, 0, 0, Math.PI * 2);
-            ctx.strokeStyle = cssVar("--brand-2") || "#b76e00";
-            ctx.lineWidth = 2;
-            ctx.stroke();
           }
         }
         ctx.strokeStyle = model.q >= 0 ? cssVar("--pos") || "#d73737" : cssVar("--neg") || "#2468c9";
         ctx.lineWidth = model.type === "ringAxis" ? 8 : 4;
         ctx.stroke();
+        if ((model.type === "diskAxis" || model.type === "diskField") && inner > 0.03) {
+          ctx.beginPath();
+          ctx.ellipse(c.x, c.y, innerRx, innerRy, 0, 0, Math.PI * 2);
+          ctx.fillStyle = cssVar("--canvas-bg") || "#ffffff";
+          ctx.fill();
+          ctx.beginPath();
+          ctx.ellipse(c.x, c.y, innerRx, innerRy, 0, 0, Math.PI * 2);
+          ctx.strokeStyle = cssVar("--brand-2") || "#b76e00";
+          ctx.lineWidth = 3;
+          ctx.stroke();
+        }
         if (state.showFigureText) {
           ctx.fillStyle = canvasInk();
           ctx.font = "800 13px system-ui";
           ctx.textAlign = "center";
-          ctx.fillText(model.type === "ringAxis" ? "anillo Q" : "disco Q", c.x, c.y - ry - 12);
+          const label = model.type === "ringAxis" ? "anillo fino Q" : inner > 0.03 ? "anillo ancho Q" : "disco Q";
+          ctx.fillText(label, c.x, c.y - ry - 12);
           ctx.fillText("eje z", axisB.x - 28, axisB.y - 10);
         }
       } else if (model.type === "solidSphere") {
