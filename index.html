@@ -1621,6 +1621,8 @@
                 <input id="modelTopInnerRadius" type="number" min="0" max="4.9" step="0.1" value="0">
               </label>
               <span class="pill">cm</span>
+              <button class="toggle" id="erGraphTopBtn" title="Mostrar u ocultar grafica E(r)">E(r)</button>
+              <button class="toggle" id="vrGraphTopBtn" title="Mostrar u ocultar grafica V(r)">V(r)</button>
             </div>
             <div class="small-actions search-actions">
               <button id="centerProbe">Punto al centro</button>
@@ -3796,6 +3798,7 @@
       updateDevelopmentPanel();
       updateReadouts();
       updateSolutionView();
+      syncGraphButtons();
     }
 
     function drawSearchNote() {
@@ -4262,6 +4265,20 @@
         sourcesBtn.classList.toggle("active", state.panelSources);
         sourcesBtn.textContent = state.panelSources ? "Fuentes y modelo fisico ON" : "Fuentes y modelo fisico OFF";
       }
+      syncGraphButtons();
+    }
+
+    function syncGraphButtons() {
+      [
+        ["erGraphBtn", "showErGraph"],
+        ["erGraphTopBtn", "showErGraph"],
+        ["vrGraphBtn", "showVrGraph"],
+        ["vrGraphTopBtn", "showVrGraph"]
+      ].forEach(([id, key]) => {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        btn.classList.toggle("active", state[key]);
+      });
     }
 
     function updateTexts() {
@@ -4841,6 +4858,8 @@
     document.getElementById("figureTextBtn").addEventListener("click", (e) => toggle("showFigureText", e.currentTarget));
     document.getElementById("erGraphBtn").addEventListener("click", (e) => toggle("showErGraph", e.currentTarget));
     document.getElementById("vrGraphBtn").addEventListener("click", (e) => toggle("showVrGraph", e.currentTarget));
+    document.getElementById("erGraphTopBtn").addEventListener("click", (e) => toggle("showErGraph", e.currentTarget));
+    document.getElementById("vrGraphTopBtn").addEventListener("click", (e) => toggle("showVrGraph", e.currentTarget));
     document.getElementById("formulaBtn").addEventListener("click", (e) => toggle("showFormulas", e.currentTarget));
     document.getElementById("developmentBtn").addEventListener("click", (e) => toggle("showDevelopment", e.currentTarget));
     document.getElementById("probePanelBtn").addEventListener("click", (e) => togglePanel("panelProbe", e.currentTarget));
