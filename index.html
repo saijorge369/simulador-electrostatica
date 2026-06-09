@@ -2109,6 +2109,7 @@
       score: 0,
       selected: null,
       startedAt: null,
+      version: "",
       ended: false,
       order: [],
       currentOptions: [],
@@ -2147,15 +2148,25 @@
       { level: "medio", scenario: "potentialGraph", text: "Si V cambia de 70 V a 20 V en 2.0 cm de forma lineal, ¿cual es |E|?", options: ["2.5 x 10^3 N/C", "25 N/C", "1.0 x 10^3 N/C", "1.4 x 10^2 N/C"], answer: 0, feedback: "|E| = |Delta V/Delta x| = 50/0.020 = 2.5 x 10^3 N/C." },
 
       { level: "avanzado", scenario: "dipole", text: "Dipolo +2 uC y -2 uC separados 2.4 cm. En el centro, ¿cual es |E| aproximado?", options: ["2.50 x 10^8 N/C", "1.25 x 10^8 N/C", "0 N/C", "2.50 x 10^6 N/C"], answer: 0, feedback: "Cada carga aporta kq/r^2 con r=0.012 m; se suman dos aportes: 2kq/r^2 = 2.50 x 10^8 N/C." },
-      { level: "avanzado", scenario: "dipole", text: "Para el mismo dipolo, la energia del sistema es aproximadamente:", options: ["-1.50 J", "+1.50 J", "-0.75 J", "0 J"], answer: 0, feedback: "U = k q1 q2/r = (8.99 x 10^9)(2e-6)(-2e-6)/0.024 = -1.50 J." },
-      { level: "avanzado", scenario: "plates", text: "Entre placas ideales con E = 1.48 x 10^3 N/C, una carga +2 uC avanza 3.0 cm en direccion de E. ¿Cambio de energia potencial?", options: ["-8.9 x 10^-5 J", "+8.9 x 10^-5 J", "-8.9 x 10^-3 J", "0 J"], answer: 0, feedback: "Delta U = q Delta V = -q E d = -(2e-6)(1.48e3)(0.03) = -8.9e-5 J." },
-      { level: "avanzado", scenario: "dielectricShell", text: "Esfera dielectrica hueca: radio interno a, externo b, carga uniforme en el material. Para a<r<b, Q_enc(r) es proporcional a:", options: ["r^3 - a^3", "r^2 - a^2", "r - a", "b^3 - r^3"], answer: 0, feedback: "La carga encerrada es densidad por volumen de material encerrado: proporcional a r^3 - a^3." },
-      { level: "avanzado", scenario: "dielectricShell", text: "En esa esfera dielectrica hueca sin carga central, para r<a se cumple:", options: ["E = 0 y V es constante", "E = kQ/r^2 y V = 0", "E crece linealmente con r", "V = kQ/r y E no es cero"], answer: 0, feedback: "Dentro de la cavidad no hay carga encerrada y por simetria E = 0; por eso V no cambia con r." },
-      { level: "avanzado", scenario: "dielectricShellCenterNegative", text: "Esfera dielectrica hueca con Q_material = +5 uC y q_centro = -2 uC. Para r>b, el campo externo equivale a:", options: ["Una carga puntual neta +3 uC", "Una carga puntual +5 uC", "Una carga puntual -2 uC", "Campo cero siempre"], answer: 0, feedback: "Fuera de una distribucion esferica simetrica se ve la carga total encerrada: +5 uC - 2 uC = +3 uC." },
-      { level: "avanzado", scenario: "hollowConductorCenterPositive", text: "Conductor hueco con carga total del conductor +5 uC y carga central +2 uC. ¿Cargas inducidas en superficie interna y externa?", options: ["Interna -2 uC, externa +7 uC", "Interna +2 uC, externa +3 uC", "Interna 0, externa +5 uC", "Interna -7 uC, externa +2 uC"], answer: 0, feedback: "La superficie interna debe tener -q_centro. Como el conductor total vale +5 uC, la externa queda +7 uC." },
-      { level: "avanzado", scenario: "potentialGraph", text: "Si V(x) tiene un maximo local suave en x0, ¿que debe ocurrir con E_x en x0?", options: ["E_x = 0 porque dV/dx = 0", "E_x es maximo", "E_x apunta siempre a +x", "E_x = V(x0)/x0"], answer: 0, feedback: "E_x = -dV/dx. En un maximo local diferenciable, la pendiente es cero." },
-      { level: "avanzado", scenario: "platePointOpposite", text: "Lamina positiva finita y carga puntual negativa: si Buscar E=0 no lo encuentra dentro del grafico, la conclusion correcta es:", options: ["No se debe reportar cero; solo el borde con menor |E| o infinito", "Debe forzarse E=0 en el punto mas cercano", "V=0 implica E=0", "El campo de la lamina desaparece"], answer: 0, feedback: "Un minimo numerico grande no es cero fisico. Hay que reportar que no existe en la ventana visible." },
-      { level: "avanzado", scenario: "zeroPotentialLine", text: "Dos cargas +2 uC y -1 uC separadas. En un punto donde V=0, ¿que condicion algebraica se cumple?", options: ["2/r_+ = 1/r_-", "2/r_+^2 = 1/r_-^2 siempre", "r_+ = r_-", "E = 0 automaticamente"], answer: 0, feedback: "V = k(2/r_+ - 1/r_-). Para V=0: 2/r_+ = 1/r_-." }
+      { level: "avanzado", scenario: "dipole", text: "Para el mismo dipolo +2 uC y -2 uC separados 2.4 cm, el potencial electrico en el centro es:", options: ["0 V", "2.50 x 10^8 V", "1.50 J", "-1.50 V"], answer: 0, feedback: "El potencial es escalar: k(+q)/r + k(-q)/r = 0 en el centro." },
+      { level: "avanzado", scenario: "dipole", text: "Un dipolo tiene q1 = +2 uC y q2 = -2 uC separados 2.4 cm. ¿Cual es la energia potencial del sistema?", options: ["-1.50 J", "+1.50 J", "-0.375 J", "0 J"], answer: 0, feedback: "U = k q1 q2/r = (8.99 x 10^9)(2e-6)(-2e-6)/0.024 = -1.50 J." },
+      { level: "avanzado", scenario: "dipole", text: "En un dipolo, los puntos A y B estan sobre la misma superficie equipotencial. Una carga q0 = +1 uC se mueve de A a B. ¿Que trabajo realiza el campo electrico?", options: ["0 J", "+1 J", "-1 J", "Depende de la trayectoria"], answer: 0, feedback: "En una equipotencial Delta V = 0. Entonces Delta U = q Delta V = 0 y W_campo = 0." },
+      { level: "avanzado", scenario: "dipole", text: "Una carga q0 = +2 uC se mueve de B a C, donde V_B = 3.0 x 10^4 V y V_C = 1.0 x 10^4 V. ¿Cual es el trabajo realizado por el campo?", options: ["+4.0 x 10^-2 J", "-4.0 x 10^-2 J", "+2.0 x 10^-2 J", "0 J"], answer: 0, feedback: "Delta U = q(V_C - V_B) = 2e-6(1e4 - 3e4) = -4e-2 J; W_campo = -Delta U." },
+      { level: "avanzado", scenario: "dipole", text: "Una carga q0 = -2 uC se mueve de V_B = 3.0 x 10^4 V a V_C = 1.0 x 10^4 V. ¿Cual es Delta U?", options: ["+4.0 x 10^-2 J", "-4.0 x 10^-2 J", "0 J", "-6.0 x 10^-2 J"], answer: 0, feedback: "Delta U = q Delta V = (-2e-6)(-2e4) = +4e-2 J." },
+      { level: "avanzado", scenario: "plates", text: "Dos placas paralelas ideales tienen Delta V = 120 V y separacion d = 4.0 cm. ¿Cual es |E| entre ellas?", options: ["3.0 x 10^3 N/C", "30 N/C", "4.8 N/C", "1.2 x 10^5 N/C"], answer: 0, feedback: "E = Delta V/d = 120/0.040 = 3.0 x 10^3 N/C." },
+      { level: "avanzado", scenario: "plates", text: "En placas ideales con E = 3.0 x 10^3 N/C, una carga +2 uC se desplaza 3.0 cm en direccion del campo. ¿Cual es Delta U?", options: ["-1.8 x 10^-4 J", "+1.8 x 10^-4 J", "-1.8 x 10^-2 J", "0 J"], answer: 0, feedback: "Delta V = -Ed y Delta U = q Delta V = -(2e-6)(3.0e3)(0.030) = -1.8e-4 J." },
+      { level: "avanzado", scenario: "plates", text: "En el modelo ideal de dos placas paralelas infinitas, una positiva y otra negativa, el campo fuera de las placas es:", options: ["0, porque los campos se cancelan", "Igual al campo interno", "Maximo", "Infinito"], answer: 0, feedback: "Fuera de placas ideales, las contribuciones de las dos laminas tienen sentidos opuestos y se cancelan." },
+      { level: "avanzado", scenario: "realPlates", text: "En placas paralelas reales finitas, cerca de los bordes el campo electrico:", options: ["Se curva y aparecen efectos de borde", "Es exactamente cero en todo punto externo", "Siempre es uniforme como en el centro", "No tiene relacion con el potencial"], answer: 0, feedback: "Las placas finitas tienen fringing: las lineas de campo se abren y el modelo uniforme deja de ser exacto cerca de los bordes." },
+      { level: "avanzado", scenario: "triangleCharges", text: "Tres cargas estan en un triangulo equilatero de lado 3.0 cm: q1=+2 uC, q2=-1 uC, q3=+1 uC. ¿Que expresion calcula U sistema?", options: ["U = k(q1q2/r + q1q3/r + q2q3/r)", "U = k(q1 + q2 + q3)/r^2", "U = q0V", "U = E/q"], answer: 0, feedback: "La energia potencial del sistema de cargas puntuales se suma por pares y cada par se cuenta una sola vez." },
+      { level: "avanzado", scenario: "dipole", text: "Dos cargas +1 uC y -1 uC estan separadas 2.0 cm. ¿Cual es U sistema?", options: ["-0.449 J", "+0.449 J", "-4.49 x 10^-3 J", "0 J"], answer: 0, feedback: "U = k q1 q2/r = (8.99e9)(1e-6)(-1e-6)/0.020 = -0.449 J." },
+      { level: "avanzado", scenario: "hollowConductorCenterNegative", text: "Un conductor hueco tiene carga total +5 uC. En el centro de la cavidad hay una carga -2 uC. ¿Que carga queda en la superficie interna y externa?", options: ["Interna +2 uC, externa +3 uC", "Interna -2 uC, externa +7 uC", "Interna 0 uC, externa +5 uC", "Interna +5 uC, externa -2 uC"], answer: 0, feedback: "La superficie interna debe inducir +2 uC para anular el campo dentro del metal; el resto del conductor queda afuera: +3 uC." },
+      { level: "avanzado", scenario: "hollowConductorCenterPositive", text: "Un conductor hueco tiene carga total +5 uC. En el centro hay una carga +2 uC. ¿Que carga queda inducida?", options: ["Interna -2 uC, externa +7 uC", "Interna +2 uC, externa +3 uC", "Interna 0 uC, externa +5 uC", "Interna -7 uC, externa +2 uC"], answer: 0, feedback: "La superficie interna queda -2 uC. Como el conductor total es +5 uC, la superficie externa debe quedar +7 uC." },
+      { level: "avanzado", scenario: "hollowConductor", text: "En equilibrio electrostatico, dentro del material metalico de un conductor hueco:", options: ["E = 0", "V = 0 siempre", "E es maximo", "La carga permanece en el volumen"], answer: 0, feedback: "En el metal conductor en equilibrio electrostatico el campo interno es cero; el potencial puede ser constante no necesariamente cero." },
+      { level: "avanzado", scenario: "dielectricShell", text: "Una esfera dielectrica hueca tiene carga distribuida uniformemente en el material, sin carga en el centro. En la cavidad ideal r<a:", options: ["E = 0 y V es constante", "E = kQ/r^2", "V = 0 necesariamente", "La carga se va a la superficie"], answer: 0, feedback: "Por simetria esferica y Gauss, en la cavidad sin carga central E = 0; por eso V no cambia con r." },
+      { level: "avanzado", scenario: "dielectricShellCenterNegative", text: "Una esfera dielectrica hueca tiene carga del material +5 uC y una carga central -2 uC. Para r>b, el campo equivale al de:", options: ["Una carga neta +3 uC", "Una carga neta +5 uC", "Una carga neta -2 uC", "Campo cero"], answer: 0, feedback: "Fuera de una distribucion esferica simetrica se ve la carga total encerrada: +5 uC - 2 uC = +3 uC." },
+      { level: "avanzado", scenario: "dielectricShell", text: "Para una esfera dielectrica hueca con radio interno a, radio externo b y carga uniforme en el material, para a<r<b, Q_enc(r) es proporcional a:", options: ["r^3 - a^3", "r^2 - a^2", "r - a", "b^3 - r^3"], answer: 0, feedback: "La carga encerrada es densidad por volumen de material encerrado: proporcional a (4/3)pi(r^3-a^3)." },
+      { level: "avanzado", scenario: "zeroPotentialLine", text: "Dos cargas +2 uC y -1 uC estan separadas. En un punto donde V = 0, se cumple:", options: ["2/r_+ = 1/r_-", "2/r_+^2 = 1/r_-^2", "r_+ = r_-", "E = 0 automaticamente"], answer: 0, feedback: "V = k(2/r_+ - 1/r_-). Para V=0: 2/r_+ = 1/r_-." },
+      { level: "avanzado", scenario: "potentialGraph", text: "Si una grafica V(x) tiene un maximo local suave en x0, entonces la componente E_x en ese punto cumple:", options: ["E_x = 0", "E_x es maximo", "E_x = V/x", "E_x apunta siempre hacia +x"], answer: 0, feedback: "E_x = -dV/dx. En un maximo local diferenciable, la pendiente dV/dx es cero." }
     ];
 
     function worldToScreen(p) {
@@ -4439,11 +4450,24 @@
 
     function filteredQuestions() {
       const level = document.getElementById("level").value;
-      return examQuestions.filter(q => q.level === level).slice(0, 10);
+      return examQuestions.filter(q => q.level === level);
     }
 
     function isExamMode() {
       return document.getElementById("examMode")?.checked !== false;
+    }
+
+    function selectedLevel() {
+      return document.getElementById("level").value;
+    }
+
+    function examDurationMinutes() {
+      return isExamMode() && selectedLevel() === "avanzado" ? 30 : 20;
+    }
+
+    function generateExamVersion() {
+      const prefix = selectedLevel() === "avanzado" ? "A" : selectedLevel() === "medio" ? "M" : "B";
+      return `${prefix}-${Math.floor(1000 + Math.random() * 9000)}`;
     }
 
     function startTest() {
@@ -4454,6 +4478,7 @@
         score: 0,
         selected: null,
         startedAt: Date.now(),
+        version: generateExamVersion(),
         ended: false,
         order: shuffle(filteredQuestions()).slice(0, 10),
         currentOptions: [],
@@ -4490,7 +4515,7 @@
       test.answered = false;
       loadScenario(q.scenario);
       document.getElementById("qCounter").textContent = `Pregunta ${test.index + 1}/10`;
-      document.getElementById("qLevel").textContent = `Nivel: ${q.level}`;
+      document.getElementById("qLevel").textContent = `Nivel: ${q.level} · Version: ${test.version || "N/A"}`;
       document.getElementById("questionText").textContent = q.text;
       document.getElementById("testFeedback").textContent = isExamMode() ? "Modo examen: al marcar una opcion queda registrada." : "";
       document.getElementById("submitAnswer").disabled = isExamMode();
@@ -4594,6 +4619,7 @@
           score: 0,
           selected: null,
           startedAt: Date.now(),
+          version: generateExamVersion(),
           ended: false,
           order: shuffle(filteredQuestions()).slice(0, 10),
           currentOptions: [],
@@ -4612,11 +4638,17 @@
     function buildPrintSheet() {
       const sheet = document.getElementById("printSheet");
       const name = document.getElementById("studentName").value.trim() || "________________";
+      const email = document.getElementById("studentEmail").value.trim() || "________________";
       const level = document.getElementById("level").value;
       const order = test.order.length ? test.order : shuffle(filteredQuestions()).slice(0, 10);
+      if (!test.version) test.version = generateExamVersion();
+      const version = test.version;
       sheet.innerHTML = `
         <h2>Autotest de campo electrico, potencial y energia</h2>
-        <p><strong>Estudiante:</strong> ${escapeHtml(name)} &nbsp; <strong>Nivel:</strong> ${escapeHtml(level)} &nbsp; <strong>Tiempo:</strong> 20 min</p>
+        <p><strong>Version del examen:</strong> ${escapeHtml(version)}</p>
+        <p><strong>Estudiante:</strong> ${escapeHtml(name)} &nbsp; <strong>Correo:</strong> ${escapeHtml(email)}</p>
+        <p><strong>Nivel:</strong> ${escapeHtml(level)} &nbsp; <strong>Tiempo maximo:</strong> ${examDurationMinutes()} min</p>
+        ${level === "avanzado" ? `<p><strong>Observacion:</strong> Para que el examen universitario sea valido, el estudiante debe entregar una hoja fisica con dibujos, datos, formulas, unidades y calculos usados en cada pregunta numerica.</p>` : ""}
         ${order.map((q, i) => `
           <div class="print-question">
             <strong>${i + 1}. ${escapeHtml(q.text)}</strong>
@@ -4643,19 +4675,21 @@
       const level = document.getElementById("level").value;
       const now = new Date();
       const elapsedMs = test.startedAt ? Date.now() - test.startedAt : 0;
-      const missed = test.records.filter(r => !r.ok);
       const practiceMs = practiceStats.totalMs + (practiceStats.activeStart ? Date.now() - practiceStats.activeStart : 0);
       sheet.innerHTML = `
         <h2>Resultados de examen / autotest</h2>
+        <p><strong>Version del examen:</strong> ${escapeHtml(test.version || "N/A")}</p>
         <p><strong>Estudiante:</strong> ${escapeHtml(name)}</p>
         ${email ? `<p><strong>Correo:</strong> ${escapeHtml(email)}</p>` : ""}
         <p><strong>Fecha y hora:</strong> ${escapeHtml(now.toLocaleString())}</p>
         <p><strong>Nivel:</strong> ${escapeHtml(level)} &nbsp; <strong>Nota:</strong> ${test.score}/10 &nbsp; <strong>Tiempo:</strong> ${formatDuration(elapsedMs)}</p>
         <p><strong>Autotests de practica:</strong> ${practiceStats.count} &nbsp; <strong>Tiempo de practica:</strong> ${formatDuration(practiceMs)}</p>
+        ${level === "avanzado" ? `<p><strong>Observacion:</strong> Resultado valido solo con hoja fisica de dibujos, formulas, unidades y calculos revisada por el docente.</p>` : ""}
         ${test.score === 10 ? "<p><strong>Felicitaciones: 10/10. Dominio excelente.</strong></p>" : ""}
         <h3>Retroalimentacion</h3>
-        ${missed.length ? `<ol>${missed.map(r => `
+        ${test.records.length ? `<ol>${test.records.map(r => `
           <li>
+            <strong>${r.ok ? "Correcta" : "Incorrecta"}.</strong><br>
             <strong>${escapeHtml(r.text)}</strong><br>
             Tu respuesta: ${escapeHtml(r.chosen || "sin respuesta")}<br>
             Correcta: ${escapeHtml(r.correct)}<br>
@@ -4756,7 +4790,10 @@
               ${escapeHtml(r.feedback)}
             </li>`).join("")}</ol>`
         : "<br><br><strong>Retroalimentacion:</strong> Excelente, no hubo errores en este intento.";
-      result.innerHTML = `<strong>Estudiante ${escapeHtml(name)}: ${test.score}/10</strong><br>Tiempo: ${minutes} min ${seconds} s<br>Nivel: ${level}<br>Resultado: ${band}${congrats}${feedbackHtml}`;
+      const observation = level === "avanzado"
+        ? "<br>Observacion: examen universitario valido solo con hoja fisica de dibujos, formulas, unidades y calculos revisada por el docente."
+        : "";
+      result.innerHTML = `<strong>Estudiante ${escapeHtml(name)}: ${test.score}/10</strong><br>Version del examen: ${escapeHtml(test.version || "N/A")}<br>Tiempo: ${minutes} min ${seconds} s<br>Nivel: ${level}<br>Resultado: ${band}${observation}${congrats}${feedbackHtml}`;
       result.classList.add("show");
       document.getElementById("printResultBtn").disabled = false;
       document.getElementById("qCounter").textContent = "Autotest finalizado";
@@ -4771,10 +4808,10 @@
 
     function tickClock() {
       if (!test.active || !test.startedAt) {
-        document.getElementById("clock").textContent = "Autotest: 20:00";
+        document.getElementById("clock").textContent = `Autotest: ${String(examDurationMinutes()).padStart(2, "0")}:00`;
         return;
       }
-      const left = Math.max(0, 20 * 60 * 1000 - (Date.now() - test.startedAt));
+      const left = Math.max(0, examDurationMinutes() * 60 * 1000 - (Date.now() - test.startedAt));
       const m = Math.floor(left / 60000);
       const s = Math.floor((left % 60000) / 1000);
       document.getElementById("clock").textContent = `Autotest: ${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
