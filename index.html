@@ -789,6 +789,29 @@
       gap: 0.55rem;
     }
 
+    .development-panel {
+      display: none;
+      border-top: 1px solid var(--line);
+      padding: 0.75rem;
+      background: var(--paper);
+      color: var(--ink);
+    }
+
+    .development-panel.show {
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .development-panel ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      line-height: 1.45;
+    }
+
+    .development-panel li {
+      margin-bottom: 0.25rem;
+    }
+
     .formula-title {
       font-weight: 900;
       color: var(--brand-2);
@@ -1514,6 +1537,7 @@
           <div class="canvas-toolbar">
             <div class="small-actions view-actions">
               <button id="formulaBtn" class="toggle" title="Mostrar u ocultar expresiones matematicas">Formula</button>
+              <button id="developmentBtn" class="toggle" title="Mostrar u ocultar el desarrollo del modelo">Desarrollo</button>
               <button id="zoomOut" title="Alejar la simulacion">-</button>
               <span class="pill" id="zoomRead">Zoom 100%</span>
               <button id="zoomIn" title="Acercar la simulacion">+</button>
@@ -1546,6 +1570,10 @@
         <div class="formula-panel" id="formulaPanel" aria-live="polite">
           <div class="formula-title">Expresiones matematicas</div>
           <div class="formula-list" id="formulaList"></div>
+        </div>
+        <div class="development-panel" id="developmentPanel" aria-live="polite">
+          <div class="formula-title">Desarrollo del modelo</div>
+          <ol id="developmentList"></ol>
         </div>
         <div class="readouts" id="readoutsPanel">
           <div class="readout"><span>|E| en el punto</span><strong id="eRead">0 N/C</strong></div>
@@ -1655,6 +1683,7 @@
       showErGraph: false,
       showVrGraph: false,
       showFormulas: false,
+      showDevelopment: false,
       panelProbe: true,
       panelGeometry: false,
       panelCharges: true,
@@ -1681,6 +1710,7 @@
       conductor: null,
       graph: null,
       arc: null,
+      model: null,
       dragging: null,
       lastChargeIndex: null,
       testTarget: null
@@ -1721,6 +1751,52 @@
         lesson: "El potencial es escalar y se suma con signo. El campo es vectorial, por eso sus cancelaciones dependen de direccion y magnitud.",
         charges: [{ q: 4, x: -1.7, y: 0 }, { q: -2, x: 1.2, y: 0 }],
         probe: { x: 0.1, y: 0.5 }
+      },
+      axisPointPotential: {
+        label: "Tipler: V(x) dos cargas",
+        prompt: "Potencial sobre el eje x: V(x)=kq1/|x| + kq2/|x-a|, con singularidades en las cargas.",
+        lesson: "El potencial de varias cargas puntuales se obtiene sumando potenciales escalares. Sobre el eje x, las distancias son r1=|x| y r2=|x-a|.",
+        charges: [{ q: 2, x: 0, y: 0 }, { q: 2, x: 1.8, y: 0 }],
+        probe: { x: 3.0, y: 0 }
+      },
+      farDipolePotential: {
+        label: "Tipler: dipolo lejano",
+        prompt: "Para x mucho mayor que la separacion, el potencial de un dipolo decae como 1/x^2.",
+        lesson: "En el eje del dipolo, V = kq/(x-l/2) - kq/(x+l/2). Si x >> l, entonces V aproxima kp/x^2, con p=ql.",
+        charges: [{ q: -2, x: -0.8, y: 0 }, { q: 2, x: 0.8, y: 0 }],
+        probe: { x: 2.8, y: 0 }
+      },
+      ringAxisEnergy: {
+        label: "Tipler: anillo y particula",
+        prompt: "Un anillo cargado repele una particula sobre su eje; usa V(z)=kQ/sqrt(z^2+a^2) y conservacion de energia.",
+        lesson: "Sobre el eje de un anillo uniformemente cargado, todos los elementos dq estan a la misma distancia del punto P. Por eso V(z)=kQ/sqrt(z^2+a^2).",
+        charges: [],
+        model: { type: "ringAxis", q: 0.008, radius: 4.0 },
+        probe: { x: 3.0, y: 0 }
+      },
+      diskPotential: {
+        label: "Tipler: V eje de disco",
+        prompt: "Disco uniformemente cargado: integra anillos concentricos para hallar V(z).",
+        lesson: "Un disco cargado se trata como una suma continua de anillos. La integral de dV=k dq/sqrt(z^2+a^2) da V(z)=2pi k sigma[sqrt(z^2+R^2)-|z|].",
+        charges: [],
+        model: { type: "diskAxis", q: 0.012, radius: 3.0 },
+        probe: { x: 2.0, y: 0 }
+      },
+      diskFieldFromV: {
+        label: "Tipler: E desde V del disco",
+        prompt: "Deriva el potencial del disco: E_z = -dV/dz.",
+        lesson: "Para hallar el campo desde el potencial se usa E_z=-dV/dz. La derivada de |z| introduce sign(z), por eso el sentido del campo cambia a ambos lados del disco.",
+        charges: [],
+        model: { type: "diskField", q: 0.012, radius: 3.0 },
+        probe: { x: 2.0, y: 0 }
+      },
+      solidSpherePotential: {
+        label: "Tipler: esfera solida uniforme",
+        prompt: "Esfera solida uniformemente cargada: V exterior como punto; V interior se obtiene integrando E(r).",
+        lesson: "Fuera de una esfera uniformemente cargada, V=kQ/r. Dentro, E=kQr/R^3 y V(r)=kQ/(2R)(3-r^2/R^2).",
+        charges: [],
+        model: { type: "solidSphere", q: 4, radius: 1.45 },
+        probe: { x: 0.7, y: 0.35 }
       },
       plates: {
         label: "Placas paralelas",
@@ -2147,6 +2223,11 @@
       { level: "medio", scenario: "dielectricShell", text: "Esfera dielectrica hueca con carga distribuida en el material y sin carga central. En la cavidad ideal:", options: ["E = 0, pero V no tiene que ser cero", "E y V son siempre cero", "E es maximo", "La carga se va al borde externo"], answer: 0, feedback: "La ley de Gauss da E = 0 en la cavidad por simetria, pero el potencial puede ser constante no nulo." },
       { level: "medio", scenario: "chargedArc", text: "Una espira completa uniforme tiene V distinto de cero en el centro, pero E = 0. ¿Por que?", options: ["V es escalar y E es vectorial", "V y E siempre son iguales", "La carga total es cero", "No hay potencial en una espira"], answer: 0, feedback: "Las contribuciones de E se cancelan por direccion; las de V se suman como escalares." },
       { level: "medio", scenario: "potentialGraph", text: "Si V cambia de 70 V a 20 V en 2.0 cm de forma lineal, ¿cual es |E|?", options: ["2.5 x 10^3 N/C", "25 N/C", "1.0 x 10^3 N/C", "1.4 x 10^2 N/C"], answer: 0, feedback: "|E| = |Delta V/Delta x| = 50/0.020 = 2.5 x 10^3 N/C." },
+      { level: "medio", scenario: "axisPointPotential", text: "En el eje x con q1 en 0 y q2 en a, ¿por que aparecen valores infinitos de V cerca de x=0 y x=a?", options: ["Porque r1 o r2 tienden a cero", "Porque el campo siempre es cero", "Porque q1 y q2 se anulan", "Porque el potencial es vectorial"], answer: 0, feedback: "V=kq/r; si la distancia a una carga puntual tiende a cero, el modelo puntual hace que V diverja." },
+      { level: "medio", scenario: "farDipolePotential", text: "Lejos de un dipolo electrico sobre su eje, el potencial disminuye principalmente como:", options: ["1/x^2", "1/x", "x^2", "Constante"], answer: 0, feedback: "Para un dipolo con carga neta cero, el termino monopolar 1/x se cancela y queda V aproximadamente kp/x^2." },
+      { level: "medio", scenario: "diskFieldFromV", text: "Para obtener E_z a partir del potencial V(z) del disco se usa:", options: ["E_z = -dV/dz", "E_z = Vz", "E_z = d^2V/dz^2 siempre", "E_z = qV"], answer: 0, feedback: "El campo electrico es el negativo del gradiente del potencial; en el eje, E_z=-dV/dz." },
+      { level: "medio", scenario: "ringAxisEnergy", text: "Un anillo tiene Q=8.0 nC y a=4.0 cm. ¿Cual es V en z=3.0 cm sobre el eje?", options: ["1.44 x 10^3 V", "14.4 V", "2.40 x 10^3 V", "0 V"], answer: 0, feedback: "V=kQ/sqrt(z^2+a^2)=(8.99e9)(8e-9)/0.050=1.44e3 V." },
+      { level: "medio", scenario: "diskPotential", text: "Un disco tiene Q=12 nC, R=3.0 cm y z=4.0 cm. ¿Cual es V(z) aproximadamente?", options: ["2.40 x 10^3 V", "2.40 x 10^2 V", "1.08 x 10^3 V", "0 V"], answer: 0, feedback: "V=2kQ/R^2[sqrt(z^2+R^2)-|z|]=2.40e3 V aproximadamente." },
 
       { level: "avanzado", scenario: "dipole", text: "Dipolo +2 uC y -2 uC separados 2.4 cm. En el centro, ¿cual es |E| aproximado?", options: ["2.50 x 10^8 N/C", "1.25 x 10^8 N/C", "0 N/C", "2.50 x 10^6 N/C"], answer: 0, feedback: "Cada carga aporta kq/r^2 con r=0.012 m; se suman dos aportes: 2kq/r^2 = 2.50 x 10^8 N/C." },
       { level: "avanzado", scenario: "dipole", text: "Para el mismo dipolo +2 uC y -2 uC separados 2.4 cm, el potencial electrico en el centro es:", options: ["0 V", "2.50 x 10^8 V", "1.50 J", "-1.50 V"], answer: 0, feedback: "El potencial es escalar: k(+q)/r + k(-q)/r = 0 en el centro." },
@@ -2167,7 +2248,12 @@
       { level: "avanzado", scenario: "dielectricShellCenterNegative", text: "Una esfera dielectrica hueca tiene carga del material +5 uC y una carga central -2 uC. Para r>b, el campo equivale al de:", options: ["Una carga neta +3 uC", "Una carga neta +5 uC", "Una carga neta -2 uC", "Campo cero"], answer: 0, feedback: "Fuera de una distribucion esferica simetrica se ve la carga total encerrada: +5 uC - 2 uC = +3 uC." },
       { level: "avanzado", scenario: "dielectricShell", text: "Para una esfera dielectrica hueca con radio interno a, radio externo b y carga uniforme en el material, para a<r<b, Q_enc(r) es proporcional a:", options: ["r^3 - a^3", "r^2 - a^2", "r - a", "b^3 - r^3"], answer: 0, feedback: "La carga encerrada es densidad por volumen de material encerrado: proporcional a (4/3)pi(r^3-a^3)." },
       { level: "avanzado", scenario: "zeroPotentialLine", text: "Dos cargas +2 uC y -1 uC estan separadas. En un punto donde V = 0, se cumple:", options: ["2/r_+ = 1/r_-", "2/r_+^2 = 1/r_-^2", "r_+ = r_-", "E = 0 automaticamente"], answer: 0, feedback: "V = k(2/r_+ - 1/r_-). Para V=0: 2/r_+ = 1/r_-." },
-      { level: "avanzado", scenario: "potentialGraph", text: "Si una grafica V(x) tiene un maximo local suave en x0, entonces la componente E_x en ese punto cumple:", options: ["E_x = 0", "E_x es maximo", "E_x = V/x", "E_x apunta siempre hacia +x"], answer: 0, feedback: "E_x = -dV/dx. En un maximo local diferenciable, la pendiente dV/dx es cero." }
+      { level: "avanzado", scenario: "potentialGraph", text: "Si una grafica V(x) tiene un maximo local suave en x0, entonces la componente E_x en ese punto cumple:", options: ["E_x = 0", "E_x es maximo", "E_x = V/x", "E_x apunta siempre hacia +x"], answer: 0, feedback: "E_x = -dV/dx. En un maximo local diferenciable, la pendiente dV/dx es cero." },
+      { level: "avanzado", scenario: "axisPointPotential", text: "Para q1 en x=0 y q2 en x=a, ¿cual es la expresion final de V(x) sobre el eje x?", options: ["V(x)=kq1/|x| + kq2/|x-a|", "V(x)=k(q1+q2)/x^2", "V(x)=kq1|x| + kq2|x-a|", "V(x)=0 siempre entre cargas iguales"], answer: 0, feedback: "Se suman potenciales escalares y las distancias sobre el eje son |x| y |x-a|." },
+      { level: "avanzado", scenario: "diskPotential", text: "Para un disco uniformemente cargado de radio R y densidad sigma, ¿cual es V(z) sobre el eje?", options: ["V=2pi k sigma[sqrt(z^2+R^2)-|z|]", "V=kQ/z^2", "V=2pi k sigma z/R", "V=0 en todo el eje"], answer: 0, feedback: "El disco se integra como anillos: dV=k sigma 2pi a da/sqrt(z^2+a^2)." },
+      { level: "avanzado", scenario: "solidSpherePotential", text: "Para una esfera solida uniformemente cargada, ¿cual es V(r) dentro de la esfera con V(infinito)=0?", options: ["V=kQ/(2R)(3-r^2/R^2)", "V=kQ/r", "V=kQr/R^3", "V=0"], answer: 0, feedback: "Dentro se integra E=kQr/R^3 y se exige continuidad con V(R)=kQ/R." },
+      { level: "avanzado", scenario: "ringAxisEnergy", text: "Anillo: a=4.0 cm, Q=8.0 nC. Particula: q=5.0 nC, m=6.0 mg, z_i=3.0 cm, parte del reposo. ¿Rapidez al infinito?", options: ["1.6 m/s", "0.16 m/s", "16 m/s", "2.4 m/s"], answer: 0, feedback: "1/2 mv^2=qkQ/sqrt(z_i^2+a^2). Con r=0.050 m resulta v^2=2.40 m^2/s^2 y v=1.55 m/s." },
+      { level: "avanzado", scenario: "diskFieldFromV", text: "Para un disco con Q=12 nC y R=3.0 cm, ¿cual es |E_z| en z=4.0 cm?", options: ["4.79 x 10^4 N/C", "2.40 x 10^3 N/C", "1.20 x 10^5 N/C", "0 N/C"], answer: 0, feedback: "E=2kQ/R^2[1-z/sqrt(z^2+R^2)] = 4.79e4 N/C para z>0." }
     ];
 
     function worldToScreen(p) {
@@ -2212,6 +2298,7 @@
       state.conductor = s.conductor ? { ...s.conductor } : null;
       state.graph = s.graph ? { ...s.graph } : null;
       state.arc = s.arc ? { ...s.arc } : null;
+      state.model = s.model ? { ...s.model } : null;
       state.probe = { ...s.probe };
       state.originProbe = { x: -2.25, y: 1.85 };
       state.testTarget = null;
@@ -2222,6 +2309,9 @@
     }
 
     function fieldAt(p) {
+      if (state.model) {
+        return fieldFromModel(p, state.model);
+      }
       if (state.graph) {
         const slope = graphSlopeAt(p.x);
         return { ex: -slope / CM, ey: 0 };
@@ -2294,6 +2384,9 @@
     }
 
     function potentialAt(p) {
+      if (state.model) {
+        return potentialFromModel(p, state.model);
+      }
       if (state.graph) {
         return graphPotentialAt(p.x);
       }
@@ -2325,6 +2418,62 @@
         return pointPotential(rr, state.conductor.q);
       }
       return potentialFromCharges(p, state.charges);
+    }
+
+    function signedAxisM(p) {
+      return p.x * CM;
+    }
+
+    function modelChargeC(model) {
+      return (model.q || 0) * MICRO;
+    }
+
+    function modelRadiusM(model) {
+      return Math.max((model.radius || 1) * CM, MIN_R_M);
+    }
+
+    function potentialFromModel(p, model) {
+      const z = signedAxisM(p);
+      const zAbs = Math.abs(z);
+      const qC = modelChargeC(model);
+      const rM = Math.max(Math.hypot(p.x * CM, p.y * CM), MIN_R_M);
+      const R = modelRadiusM(model);
+      if (model.type === "ringAxis") {
+        return K_COULOMB * qC / Math.sqrt(z * z + R * R);
+      }
+      if (model.type === "diskAxis" || model.type === "diskField") {
+        return 2 * K_COULOMB * qC / (R * R) * (Math.sqrt(z * z + R * R) - zAbs);
+      }
+      if (model.type === "solidSphere") {
+        if (rM >= R) return K_COULOMB * qC / rM;
+        return K_COULOMB * qC / (2 * R) * (3 - (rM * rM) / (R * R));
+      }
+      return 0;
+    }
+
+    function fieldFromModel(p, model) {
+      const z = signedAxisM(p);
+      const qC = modelChargeC(model);
+      const R = modelRadiusM(model);
+      if (model.type === "ringAxis") {
+        const denom = Math.pow(z * z + R * R, 1.5);
+        return { ex: K_COULOMB * qC * z / denom, ey: 0 };
+      }
+      if (model.type === "diskAxis" || model.type === "diskField") {
+        const sign = z > 0 ? 1 : z < 0 ? -1 : 0;
+        const ez = 2 * K_COULOMB * qC / (R * R) * (sign - z / Math.sqrt(z * z + R * R));
+        return { ex: ez, ey: 0 };
+      }
+      if (model.type === "solidSphere") {
+        const rCm = Math.hypot(p.x, p.y);
+        const rM = Math.max(rCm * CM, MIN_R_M);
+        const eRadial = rM >= R
+          ? K_COULOMB * qC / (rM * rM)
+          : K_COULOMB * qC * rM / Math.pow(R, 3);
+        if (rCm < 0.001) return { ex: 0, ey: 0 };
+        return { ex: eRadial * p.x / rCm, ey: eRadial * p.y / rCm };
+      }
+      return { ex: 0, ey: 0 };
     }
 
     function dielectricShellFieldMagnitude(r, shell) {
@@ -2956,6 +3105,10 @@
         if (state.conductor.hollow) return r >= state.conductor.innerR && r < state.conductor.r;
         return r < state.conductor.r;
       }
+      if (state.model?.type === "solidSphere") {
+        const r = Math.hypot(p.x, p.y);
+        return r < state.model.radius;
+      }
       return false;
     }
 
@@ -3024,6 +3177,9 @@
     }
 
     function drawCharges() {
+      if (state.model) {
+        drawContinuousModel();
+      }
       if (state.arc) {
         drawArcSource();
       }
@@ -3090,6 +3246,60 @@
         }
       }
       for (const c of state.charges) drawChargeSymbol(c, c.q, 22);
+    }
+
+    function drawContinuousModel() {
+      const model = state.model;
+      const c = worldToScreen({ x: 0, y: 0 });
+      ctx.save();
+      ctx.strokeStyle = cssVar("--brand-2") || "#b76e00";
+      ctx.fillStyle = cssVar("--dielectric-fill") || "rgba(126, 205, 176, 0.26)";
+      ctx.lineWidth = 3;
+      const axisA = worldToScreen({ x: -3.3, y: 0 });
+      const axisB = worldToScreen({ x: 3.3, y: 0 });
+      ctx.strokeStyle = cssVar("--axis") || "#8899a0";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(axisA.x, axisA.y);
+      ctx.lineTo(axisB.x, axisB.y);
+      ctx.stroke();
+      if (model.type === "ringAxis" || model.type === "diskAxis" || model.type === "diskField") {
+        const ry = model.radius * c.scale;
+        const rx = Math.max(18, ry * 0.28);
+        ctx.beginPath();
+        ctx.ellipse(c.x, c.y, rx, ry, 0, 0, Math.PI * 2);
+        if (model.type === "diskAxis" || model.type === "diskField") {
+          ctx.fillStyle = "rgba(255, 190, 52, 0.22)";
+          ctx.fill();
+        }
+        ctx.strokeStyle = model.q >= 0 ? cssVar("--pos") || "#d73737" : cssVar("--neg") || "#2468c9";
+        ctx.lineWidth = model.type === "ringAxis" ? 8 : 4;
+        ctx.stroke();
+        if (state.showFigureText) {
+          ctx.fillStyle = canvasInk();
+          ctx.font = "800 13px system-ui";
+          ctx.textAlign = "center";
+          ctx.fillText(model.type === "ringAxis" ? "anillo Q" : "disco Q", c.x, c.y - ry - 12);
+          ctx.fillText("eje z", axisB.x - 28, axisB.y - 10);
+        }
+      } else if (model.type === "solidSphere") {
+        const r = model.radius * c.scale;
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, r, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(126, 205, 176, 0.30)";
+        ctx.fill();
+        ctx.strokeStyle = cssVar("--shell-stroke") || "#607d87";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        drawDielectricVolumeCharges({ q: model.q, r: model.radius, innerR: 0 });
+        if (state.showFigureText) {
+          ctx.fillStyle = canvasInk();
+          ctx.font = "800 13px system-ui";
+          ctx.textAlign = "center";
+          ctx.fillText("esfera uniforme", c.x, c.y + 5);
+        }
+      }
+      ctx.restore();
     }
 
     function drawFiniteSources() {
@@ -3358,6 +3568,7 @@
       drawRadialGraphs(ctx, canvas);
       drawExternalRadialGraphs();
       updateFormulaPanel();
+      updateDevelopmentPanel();
       updateReadouts();
       updateSolutionView();
     }
@@ -3387,6 +3598,10 @@
       if (state.plates) {
         const b = plateBounds();
         return { type: "plates", leftX: b.leftX, rightX: b.rightX, maxR: Math.max(0.5, b.rightX - b.leftX), label: "placas paralelas" };
+      }
+      if (state.model) {
+        if (state.model.type === "solidSphere") return { type: "solidSphere", center: { x: 0, y: 0 }, maxR: Math.max(3.2, state.model.radius * 2.2), model: state.model, label: "esfera solida" };
+        return { type: "axisModel", center: { x: 0, y: 0 }, maxR: 3.4, model: state.model, label: state.model.type === "ringAxis" ? "anillo" : "disco" };
       }
       if (state.conductor) return { type: "sphere", center: { x: 0, y: 0 }, maxR: Math.max(3.2, state.conductor.r * 1.8), shell: state.conductor, label: state.conductor.dielectric ? "esfera dielectrica" : "esfera conductora" };
       if (state.charges.length === 1) return { type: "charge", center: { x: state.charges[0].x, y: state.charges[0].y }, maxR: 3.2, charge: state.charges[0], label: "carga puntual" };
@@ -3419,7 +3634,7 @@
       targetCtx.fillStyle = cssVar("--ink") || "#172026";
       targetCtx.font = "800 13px system-ui";
       targetCtx.textAlign = "left";
-      if (state.showFigureText) targetCtx.fillText(source?.type === "plates" ? "Graficas en placas" : "Graficas radiales", x + 12, y + 20);
+      if (state.showFigureText) targetCtx.fillText(source?.type === "plates" ? "Graficas en placas" : source?.type === "axisModel" ? "Graficas sobre eje z" : "Graficas radiales", x + 12, y + 20);
       if (!source) {
         targetCtx.font = "700 12px system-ui";
         targetCtx.fillStyle = cssVar("--muted") || "#5f6f79";
@@ -3488,11 +3703,12 @@
       ctx.fillStyle = cssVar("--muted") || "#5f6f79";
       ctx.font = "700 11px system-ui";
       ctx.textAlign = "left";
-      if (state.showFigureText) ctx.fillText(`${kind === "E" ? "|E|" : "V"}(${source.type === "plates" ? "d" : "r"})`, x + 4, y + 12);
+      const axisLabel = source.type === "plates" ? "d" : source.type === "axisModel" ? "z" : "r";
+      if (state.showFigureText) ctx.fillText(`${kind === "E" ? "|E|" : "V"}(${axisLabel})`, x + 4, y + 12);
       ctx.textAlign = "right";
       if (state.showFigureText) {
         ctx.fillText(`${formatNum(maxV)}`, x + width - 4, y + 12);
-        ctx.fillText(source.type === "plates" ? "d" : "r", x + width - 4, y + height - 4);
+        ctx.fillText(axisLabel, x + width - 4, y + height - 4);
       }
       ctx.strokeStyle = kind === "E" ? (cssVar("--brand") || "#006d77") : (cssVar("--brand-2") || "#7a4f01");
       ctx.lineWidth = 2;
@@ -3509,6 +3725,8 @@
       drawRadialBoundaries(ctx, x, y, width, height, source);
       const rProbe = source.type === "plates"
         ? Math.max(0, Math.min(maxR, state.probe.x - source.leftX))
+        : source.type === "axisModel"
+          ? Math.min(maxR, Math.abs(state.probe.x))
         : Math.min(maxR, Math.hypot(state.probe.x - source.center.x, state.probe.y - source.center.y));
       const valueProbe = radialGraphValue(kind, rProbe, source);
       const mx = x + (rProbe / maxR) * width;
@@ -3528,7 +3746,7 @@
       ctx.fillStyle = cssVar("--ink") || "#172026";
       ctx.font = "700 11px system-ui";
       ctx.textAlign = "left";
-      if (state.showFigureText) ctx.fillText(`${source.type === "plates" ? "d" : "r"}=${formatNum(rProbe)} cm`, x + 4, y + height - 4);
+      if (state.showFigureText) ctx.fillText(`${axisLabel}=${formatNum(rProbe)} cm`, x + 4, y + height - 4);
     }
 
     function radialGraphSegments(kind, source) {
@@ -3547,6 +3765,8 @@
     function radialRanges(source) {
       if (source.type === "plates") return [[0, source.maxR]];
       const start = sourceHasCentralCharge(source) ? 0.1 : 0;
+      if (source.type === "axisModel") return [[0, source.maxR]];
+      if (source.type === "solidSphere") return [[0, source.model.radius], [source.model.radius, source.maxR]];
       if (source.type !== "sphere") return [[Math.max(start, 0.05), source.maxR]];
       const shell = source.shell;
       const ranges = [];
@@ -3571,6 +3791,16 @@
         const rr = Math.max(r, 0.05);
         return kind === "E" ? Math.abs(pointFieldMagnitude(rr, source.charge.q)) : pointPotential(rr, source.charge.q);
       }
+      if (source.type === "axisModel") {
+        const p = { x: r, y: 0 };
+        const e = fieldFromModel(p, source.model);
+        return kind === "E" ? Math.abs(e.ex) : potentialFromModel(p, source.model);
+      }
+      if (source.type === "solidSphere") {
+        const p = { x: r, y: 0 };
+        const e = fieldFromModel(p, source.model);
+        return kind === "E" ? Math.hypot(e.ex, e.ey) : potentialFromModel(p, source.model);
+      }
       const shell = source.shell;
       if (shell.dielectric) {
         const e = dielectricShellFieldMagnitude(r, shell) + centralFieldMagnitude(r, shell.centralQ || 0);
@@ -3593,6 +3823,21 @@
     }
 
     function drawRadialBoundaries(ctx, x, y, width, height, source) {
+      if (source.type === "solidSphere") {
+        const mx = x + (source.model.radius / source.maxR) * width;
+        ctx.save();
+        ctx.strokeStyle = "rgba(183, 110, 0, 0.55)";
+        ctx.fillStyle = cssVar("--brand-2") || "#b76e00";
+        ctx.font = "800 10px system-ui";
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(mx, y);
+        ctx.lineTo(mx, y + height);
+        ctx.stroke();
+        if (state.showFigureText) ctx.fillText("R", mx + 3, y + 11);
+        ctx.restore();
+        return;
+      }
       if (source.type !== "sphere") return;
       const marks = [];
       if (source.shell.innerR) marks.push({ r: source.shell.innerR, label: "a" });
@@ -3835,6 +4080,15 @@
       `).join("");
     }
 
+    function updateDevelopmentPanel() {
+      const panel = document.getElementById("developmentPanel");
+      const list = document.getElementById("developmentList");
+      if (!panel || !list) return;
+      panel.classList.toggle("show", state.showDevelopment);
+      if (!state.showDevelopment) return;
+      list.innerHTML = developmentItems().map(item => `<li>${item}</li>`).join("");
+    }
+
     function formulaItems() {
       const common = [
         { title: "Constante", expr: "k = 8.99 x 10<sup>9</sup> N m<sup>2</sup>/C<sup>2</sup>; r en metros" },
@@ -3847,6 +4101,32 @@
           { title: "Potencial", expr: "V = V(x)" },
           ...common
         ];
+      }
+      if (state.model) {
+        if (state.model.type === "ringAxis") {
+          return [
+            { title: "Anillo cargado", expr: "V(z) = kQ/sqrt(z<sup>2</sup> + a<sup>2</sup>)" },
+            { title: "Campo axial", expr: "E<sub>z</sub> = kQz/(z<sup>2</sup> + a<sup>2</sup>)<sup>3/2</sup>" },
+            { title: "Energia", expr: "U = qV; 1/2 mv<sup>2</sup> = qV(z<sub>i</sub>) si V(infinito)=0" },
+            ...common
+          ];
+        }
+        if (state.model.type === "diskAxis" || state.model.type === "diskField") {
+          return [
+            { title: "Disco cargado", expr: "V(z) = 2pi k sigma (sqrt(z<sup>2</sup> + R<sup>2</sup>) - |z|)" },
+            { title: "Con Q total", expr: "V(z) = 2kQ/R<sup>2</sup> [sqrt(z<sup>2</sup> + R<sup>2</sup>) - |z|]" },
+            { title: "Campo desde V", expr: "E<sub>z</sub> = 2pi k sigma [sign(z) - z/sqrt(z<sup>2</sup> + R<sup>2</sup>)]" },
+            ...common
+          ];
+        }
+        if (state.model.type === "solidSphere") {
+          return [
+            { title: "Exterior", expr: "V(r) = kQ/r, r >= R" },
+            { title: "Interior", expr: "V(r) = kQ/(2R) [3 - r<sup>2</sup>/R<sup>2</sup>], r <= R" },
+            { title: "Campo interior", expr: "E(r) = kQr/R<sup>3</sup>" },
+            ...common
+          ];
+        }
       }
       if (state.plates) {
         return [
@@ -3900,6 +4180,66 @@
         { title: "Potencial total", expr: "V(P) = sum k q<sub>i</sub>/r<sub>i</sub>" },
         { title: "Energia del sistema", expr: "U<sub>sist</sub> = sum<sub>i&lt;j</sub> k q<sub>i</sub>q<sub>j</sub>/r<sub>ij</sub>" },
         ...common
+      ];
+    }
+
+    function developmentItems() {
+      if (state.scenario === "axisPointPotential") {
+        return [
+          "Coloca q1 en x=0 y q2 en x=a.",
+          "La distancia desde P(x) a q1 es r1=|x|; la distancia a q2 es r2=|x-a|.",
+          "Suma potenciales escalares: V(x)=kq1/r1+kq2/r2.",
+          "Resultado final: V(x)=kq1/|x|+kq2/|x-a|, con x distinto de 0 y de a."
+        ];
+      }
+      if (state.scenario === "farDipolePotential") {
+        return [
+          "Ubica -q en x=-l/2 y +q en x=+l/2.",
+          "En el eje, V=kq/(x-l/2)-kq/(x+l/2).",
+          "Combina fracciones: V=kq l/[x^2-l^2/4].",
+          "Si x >> l, se desprecia l^2/4 frente a x^2.",
+          "Resultado final: V aproximadamente kp/x^2, con p=ql."
+        ];
+      }
+      if (state.model?.type === "ringAxis") {
+        return [
+          "En el eje del anillo, cada elemento dq esta a la misma distancia r=sqrt(z^2+a^2).",
+          "El potencial elemental es dV=k dq/r.",
+          "Como r es constante para todos los dq, V=k/r integral dq.",
+          "Resultado final: V(z)=kQ/sqrt(z^2+a^2).",
+          "Conservacion de energia: 1/2 mv_f^2 = qV(z_i), si parte del reposo y V(infinito)=0."
+        ];
+      }
+      if (state.model?.type === "diskAxis") {
+        return [
+          "Modela el disco como anillos concentricos de radio a y espesor da.",
+          "El anillo tiene dq=sigma 2pi a da.",
+          "dV=k dq/sqrt(z^2+a^2).",
+          "Integra desde a=0 hasta R.",
+          "Resultado final: V(z)=2pi k sigma [sqrt(z^2+R^2)-|z|]."
+        ];
+      }
+      if (state.model?.type === "diskField") {
+        return [
+          "Parte del potencial del disco: V=2pi k sigma[(z^2+R^2)^(1/2)-|z|].",
+          "Usa E_z=-dV/dz.",
+          "La derivada de |z| es sign(z).",
+          "Resultado final: E_z=2pi k sigma[sign(z)-z/sqrt(z^2+R^2)].",
+          "Para z>0, el campo apunta en +z si Q es positiva; para z<0 apunta en -z."
+        ];
+      }
+      if (state.model?.type === "solidSphere") {
+        return [
+          "Fuera de la esfera, la carga se comporta como una carga puntual: V=kQ/r.",
+          "Dentro, el campo dado por Gauss es E(r)=kQr/R^3.",
+          "Usa dV=-E dr e integra desde R hasta r, manteniendo continuidad con V(R)=kQ/R.",
+          "Resultado final interior: V(r)=kQ/(2R)(3-r^2/R^2).",
+          "En r=0 se obtiene V(0)=3kQ/(2R), mayor que V(R)=kQ/R."
+        ];
+      }
+      return [
+        "Activa un escenario tipo Tipler para ver el desarrollo paso a paso.",
+        "Usa Formula ON para ver la expresion final y Desarrollo ON para ver como se obtiene."
       ];
     }
 
@@ -4166,6 +4506,7 @@
     document.getElementById("erGraphBtn").addEventListener("click", (e) => toggle("showErGraph", e.currentTarget));
     document.getElementById("vrGraphBtn").addEventListener("click", (e) => toggle("showVrGraph", e.currentTarget));
     document.getElementById("formulaBtn").addEventListener("click", (e) => toggle("showFormulas", e.currentTarget));
+    document.getElementById("developmentBtn").addEventListener("click", (e) => toggle("showDevelopment", e.currentTarget));
     document.getElementById("probePanelBtn").addEventListener("click", (e) => togglePanel("panelProbe", e.currentTarget));
     document.getElementById("geometryPanelBtn").addEventListener("click", (e) => togglePanel("panelGeometry", e.currentTarget));
     document.getElementById("chargesPanelBtn").addEventListener("click", (e) => togglePanel("panelCharges", e.currentTarget));
@@ -4325,6 +4666,7 @@
       state.conductor = null;
       state.graph = null;
       state.arc = null;
+      state.model = null;
     }
 
     function fitGeometryZoom(points) {
@@ -4608,6 +4950,9 @@
       if (state.graph) return "Grafica: E_x = -dV/dx; donde V es constante, E = 0.";
       if (state.conductor?.dielectric) return "Dielectrico: usa Gauss con carga encerrada; en cavidad sin carga central E = 0.";
       if (state.conductor) return "Conductor: E = 0 dentro del material; afuera depende de la carga neta encerrada.";
+      if (state.model?.type === "ringAxis") return "Anillo: sobre el eje todos los dq estan a la misma distancia, por eso V=kQ/sqrt(z^2+a^2).";
+      if (state.model?.type === "diskAxis" || state.model?.type === "diskField") return "Disco: integra anillos concentricos; luego E_z se obtiene con -dV/dz.";
+      if (state.model?.type === "solidSphere") return "Esfera solida uniforme: fuera V=kQ/r; dentro V=kQ/(2R)(3-r^2/R^2).";
       if (state.arc) return "Arco/espira: E y V se obtienen sumando pequenos elementos dq.";
       if (state.finiteSources) return "Fuente finita: el resultado se calcula por superposicion de muchas cargas pequenas.";
       return "Cargas puntuales: V se suma como escalar; E se suma como vector.";
