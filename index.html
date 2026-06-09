@@ -1621,6 +1621,7 @@
                 <input id="modelTopInnerRadius" type="number" min="0" max="4.9" step="0.1" value="0">
               </label>
               <span class="pill">cm</span>
+              <button class="toggle active" id="cubeEdgesBtn" title="Unir u ocultar las aristas del cubo" hidden>Aristas ON</button>
               <button class="toggle" id="erGraphTopBtn" title="Mostrar u ocultar grafica E(r)">E(r)</button>
               <button class="toggle" id="vrGraphTopBtn" title="Mostrar u ocultar grafica V(r)">V(r)</button>
             </div>
@@ -1755,6 +1756,7 @@
       showFigureText: true,
       showErGraph: false,
       showVrGraph: false,
+      showCubeEdges: true,
       showFormulas: false,
       showDevelopment: false,
       panelProbe: true,
@@ -3557,16 +3559,18 @@
         }
       }
       ctx.save();
-      ctx.strokeStyle = cssVar("--axis") || "#8899a0";
-      ctx.lineWidth = 2;
-      edges.forEach(([a, b]) => {
-        const pa = worldToScreen(a.p);
-        const pb = worldToScreen(b.p);
-        ctx.beginPath();
-        ctx.moveTo(pa.x, pa.y);
-        ctx.lineTo(pb.x, pb.y);
-        ctx.stroke();
-      });
+      if (state.showCubeEdges) {
+        ctx.strokeStyle = cssVar("--axis") || "#8899a0";
+        ctx.lineWidth = 2.4;
+        edges.forEach(([a, b]) => {
+          const pa = worldToScreen(a.p);
+          const pb = worldToScreen(b.p);
+          ctx.beginPath();
+          ctx.moveTo(pa.x, pa.y);
+          ctx.lineTo(pb.x, pb.y);
+          ctx.stroke();
+        });
+      }
       vertices
         .sort((a, b) => a.z3 - b.z3)
         .forEach(v => drawChargeSymbol(v.p, v.q, 15));
@@ -4466,6 +4470,12 @@
           : state.model.type === "cubeCharges"
             ? "Cubo: cambia a para modificar el lado. Q es la magnitud de cada carga en los vertices."
             : "r1 = 0 representa disco solido; r1 > 0 representa anillo ancho real.";
+      const cubeEdgesBtn = document.getElementById("cubeEdgesBtn");
+      if (cubeEdgesBtn) {
+        cubeEdgesBtn.hidden = state.model.type !== "cubeCharges";
+        cubeEdgesBtn.classList.toggle("active", state.showCubeEdges);
+        cubeEdgesBtn.textContent = state.showCubeEdges ? "Aristas ON" : "Aristas OFF";
+      }
     }
 
     function updateSearchNote() {
@@ -5046,6 +5056,11 @@
     document.getElementById("vrGraphBtn").addEventListener("click", (e) => toggle("showVrGraph", e.currentTarget));
     document.getElementById("erGraphTopBtn").addEventListener("click", (e) => toggle("showErGraph", e.currentTarget));
     document.getElementById("vrGraphTopBtn").addEventListener("click", (e) => toggle("showVrGraph", e.currentTarget));
+    document.getElementById("cubeEdgesBtn").addEventListener("click", () => {
+      state.showCubeEdges = !state.showCubeEdges;
+      syncModelControls();
+      draw();
+    });
     document.getElementById("formulaBtn").addEventListener("click", (e) => toggle("showFormulas", e.currentTarget));
     document.getElementById("developmentBtn").addEventListener("click", (e) => toggle("showDevelopment", e.currentTarget));
     document.getElementById("probePanelBtn").addEventListener("click", (e) => togglePanel("panelProbe", e.currentTarget));
