@@ -712,6 +712,38 @@
       padding: 0.45rem 0.55rem;
     }
 
+    .model-actions {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--option-bg);
+      padding: 0.45rem 0.55rem;
+      gap: 0.45rem;
+    }
+
+    .model-actions[hidden] {
+      display: none;
+    }
+
+    .mini-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      color: var(--ink);
+      font-weight: 800;
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+
+    .mini-label input {
+      width: 72px;
+      min-height: 34px;
+      padding: 0.35rem 0.4rem;
+    }
+
+    .mini-label input:disabled {
+      opacity: 0.55;
+    }
+
     #radialGraphSize {
       width: 92px;
     }
@@ -1576,6 +1608,19 @@
                 <option value="inside">Dentro</option>
                 <option value="outside">Derecha</option>
               </select>
+            </div>
+            <div class="small-actions model-actions" id="modelTopControls" hidden>
+              <span class="pill">Modelo</span>
+              <label class="mini-label">Q
+                <input id="modelTopCharge" type="number" min="-20" max="20" step="0.001" value="0.012">
+              </label>
+              <label class="mini-label">r2
+                <input id="modelTopRadius" type="number" min="0.4" max="5" step="0.1" value="3">
+              </label>
+              <label class="mini-label">r1
+                <input id="modelTopInnerRadius" type="number" min="0" max="4.9" step="0.1" value="0">
+              </label>
+              <span class="pill">cm</span>
             </div>
             <div class="small-actions search-actions">
               <button id="centerProbe">Punto al centro</button>
@@ -4246,16 +4291,25 @@
     }
 
     function syncModelControls() {
+      const topControls = document.getElementById("modelTopControls");
+      if (topControls) topControls.hidden = !state.model;
       if (!state.model) return;
       const qInput = document.getElementById("modelCharge");
       const rInput = document.getElementById("modelRadius");
       const innerInput = document.getElementById("modelInnerRadius");
+      const qTop = document.getElementById("modelTopCharge");
+      const rTop = document.getElementById("modelTopRadius");
+      const innerTop = document.getElementById("modelTopInnerRadius");
       const hint = document.getElementById("modelHint");
-      if (!qInput || !rInput || !innerInput || !hint) return;
+      if (!qInput || !rInput || !innerInput || !hint || !qTop || !rTop || !innerTop) return;
       if (document.activeElement !== qInput) qInput.value = state.model.q;
       if (document.activeElement !== rInput) rInput.value = state.model.radius;
       if (document.activeElement !== innerInput) innerInput.value = state.model.innerRadius || 0;
+      if (document.activeElement !== qTop) qTop.value = state.model.q;
+      if (document.activeElement !== rTop) rTop.value = state.model.radius;
+      if (document.activeElement !== innerTop) innerTop.value = state.model.innerRadius || 0;
       innerInput.disabled = state.model.type === "ringAxis" || state.model.type === "solidSphere";
+      innerTop.disabled = innerInput.disabled;
       hint.textContent = state.model.type === "ringAxis"
         ? "Anillo fino: cambia r2 para modificar el radio del anillo."
         : state.model.type === "solidSphere"
@@ -4833,20 +4887,28 @@
         draw();
       });
     });
+    function applyModelControlInputs(prefix = "model") {
+      if (!state.model) return;
+      const q = Number(document.getElementById(`${prefix}Charge`).value);
+      const radius = Number(document.getElementById(`${prefix}Radius`).value);
+      const inner = Number(document.getElementById(`${prefix}InnerRadius`).value);
+      state.model.q = Number.isFinite(q) ? Math.max(-20, Math.min(20, q)) : state.model.q;
+      state.model.radius = Number.isFinite(radius) ? Math.max(0.4, Math.min(5, radius)) : state.model.radius;
+      if (state.model.type !== "ringAxis" && state.model.type !== "solidSphere") {
+        state.model.innerRadius = Number.isFinite(inner) ? Math.max(0, Math.min(state.model.radius * 0.96, inner)) : (state.model.innerRadius || 0);
+      }
+      modelElementCache = { key: "", elements: [] };
+      syncModelControls();
+      draw();
+    }
     ["modelCharge", "modelRadius", "modelInnerRadius"].forEach(id => {
       document.getElementById(id).addEventListener("change", () => {
-        if (!state.model) return;
-        const q = Number(document.getElementById("modelCharge").value);
-        const radius = Number(document.getElementById("modelRadius").value);
-        const inner = Number(document.getElementById("modelInnerRadius").value);
-        state.model.q = Number.isFinite(q) ? Math.max(-20, Math.min(20, q)) : state.model.q;
-        state.model.radius = Number.isFinite(radius) ? Math.max(0.4, Math.min(5, radius)) : state.model.radius;
-        if (state.model.type !== "ringAxis" && state.model.type !== "solidSphere") {
-          state.model.innerRadius = Number.isFinite(inner) ? Math.max(0, Math.min(state.model.radius * 0.96, inner)) : (state.model.innerRadius || 0);
-        }
-        modelElementCache = { key: "", elements: [] };
-        syncModelControls();
-        draw();
+        applyModelControlInputs("model");
+      });
+    });
+    ["modelTopCharge", "modelTopRadius", "modelTopInnerRadius"].forEach(id => {
+      document.getElementById(id).addEventListener("change", () => {
+        applyModelControlInputs("modelTop");
       });
     });
     function setFinitePlateAngle(value) {
