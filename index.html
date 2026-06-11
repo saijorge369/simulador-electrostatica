@@ -2285,6 +2285,8 @@
       selected: null,
       startedAt: null,
       version: "",
+      lockedLevel: "basico",
+      lockedExamMode: true,
       ended: false,
       order: [],
       currentOptions: [],
@@ -2293,6 +2295,8 @@
       records: []
     };
 
+    let attemptHistory = loadAttemptHistory();
+
     let practiceStats = {
       count: 0,
       totalMs: 0,
@@ -2300,6 +2304,23 @@
     };
     let printMode = "test";
     let modelElementCache = { key: "", elements: [] };
+
+    function loadAttemptHistory() {
+      try {
+        const raw = localStorage.getItem("electrostaticaAttemptHistory");
+        return raw ? JSON.parse(raw) : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveAttemptHistory() {
+      try {
+        localStorage.setItem("electrostaticaAttemptHistory", JSON.stringify(attemptHistory.slice(-30)));
+      } catch {
+        // Si el navegador bloquea almacenamiento, el historial queda solo en memoria.
+      }
+    }
 
     const examQuestions = [
       { level: "basico", scenario: "singlePositive", text: "Para una carga puntual positiva, ¿como cambia el potencial V al aumentar la distancia r?", options: ["Disminuye como kq/r", "Aumenta como r^2", "Permanece constante", "Se hace siempre negativo"], answer: 0, feedback: "Para una carga puntual, V = kq/r. Si r aumenta, V disminuye." },
@@ -2362,7 +2383,18 @@
       { level: "avanzado", scenario: "cubePositive", text: "Para el mismo cubo +Q, ¿que cambio de energia produce colocar +1 uC en el centro?", options: ["+2.08 J", "-2.08 J", "0 J", "+5.12 J"], answer: 0, feedback: "Delta U=q0 V_c=(1e-6)(2.08e6)=+2.08 J." },
       { level: "avanzado", scenario: "cubePositive", text: "Cubo con 8 cargas +1 uC y lado 4.0 cm. ¿Cual es U_sistema aproximada?", options: ["+5.12 J", "+2.08 J", "-1.31 J", "0 J"], answer: 0, feedback: "U=(kQ^2/a)(12+12/sqrt2+4/sqrt3)=5.12 J." },
       { level: "avanzado", scenario: "cubeAlternating", text: "Cubo alternado +/-1 uC con lado 4.0 cm. Si se coloca +1 uC en el centro, ¿como cambia la energia?", options: ["No cambia", "Aumenta +2.08 J", "Disminuye -2.08 J", "Se hace infinita"], answer: 0, feedback: "En el centro V_c=0 porque hay cuatro +Q y cuatro -Q a igual distancia. Entonces Delta U=q0V_c=0." },
-      { level: "avanzado", scenario: "cubeAlternating", text: "Para el cubo alternado +/-Q, la energia del sistema es:", options: ["(kQ^2/a)(-12+12/sqrt2-4/sqrt3)", "(kQ^2/a)(12+12/sqrt2+4/sqrt3)", "0 siempre", "8kQ/a"], answer: 0, feedback: "Los pares por arista y diagonal del cuerpo son opuestos; los de diagonal de cara son iguales." }
+      { level: "avanzado", scenario: "cubeAlternating", text: "Para el cubo alternado +/-Q, la energia del sistema es:", options: ["(kQ^2/a)(-12+12/sqrt2-4/sqrt3)", "(kQ^2/a)(12+12/sqrt2+4/sqrt3)", "0 siempre", "8kQ/a"], answer: 0, feedback: "Los pares por arista y diagonal del cuerpo son opuestos; los de diagonal de cara son iguales." },
+      { level: "avanzado", scenario: "plates", text: "Placas paralelas: Delta V = 10 V y d = 0.050 m. ¿Cual es |E|?", options: ["200 N/C", "0.20 N/C", "2.0 x 10^4 N/C", "50 N/C"], answer: 0, feedback: "E=Delta V/d=10/0.050=200 N/C." },
+      { level: "avanzado", scenario: "plates", text: "Una carga +2 uC se mueve de A: 6 V a B: 3 V. ¿Que trabajo realiza el campo?", options: ["+6.0 x 10^-6 J", "-6.0 x 10^-6 J", "+1.2 x 10^-5 J", "0 J"], answer: 0, feedback: "W_campo=q(V_A-V_B)=2e-6(6-3)=6e-6 J." },
+      { level: "avanzado", scenario: "plates", text: "Una carga -2 uC se mueve de A: 6 V a B: 3 V. ¿Cual es Delta U?", options: ["+6.0 x 10^-6 J", "-6.0 x 10^-6 J", "+1.2 x 10^-5 J", "0 J"], answer: 0, feedback: "Delta U=q(V_B-V_A)=(-2e-6)(3-6)=+6e-6 J." },
+      { level: "avanzado", scenario: "ringAxisEnergy", text: "Anillo fino con Q=8.0 nC, radio a=4.0 cm. ¿Cual es V en el eje a z=5.0 cm?", options: ["1.12 x 10^3 V", "1.44 x 10^3 V", "112 V", "0 V"], answer: 0, feedback: "V=kQ/sqrt(z^2+a^2)=8.99e9*8e-9/sqrt(0.05^2+0.04^2)=1.12e3 V." },
+      { level: "avanzado", scenario: "ringAxisEnergy", text: "Para un anillo, ¿cual expresion da el campo axial E_z?", options: ["E_z=kQz/(z^2+a^2)^(3/2)", "E_z=kQ/(z^2+a^2)", "E_z=kQ/a^2 siempre", "E_z=0 en todo el eje"], answer: 0, feedback: "Se deriva V=kQ/sqrt(z^2+a^2): E_z=-dV/dz=kQz/(z^2+a^2)^(3/2)." },
+      { level: "avanzado", scenario: "diskFieldFromV", text: "Disco con Q=12 nC, R=3.0 cm. ¿Cual es |E_z| en z=1.0 cm?", options: ["1.64 x 10^5 N/C", "1.07 x 10^5 N/C", "3.85 x 10^3 N/C", "0 N/C"], answer: 0, feedback: "E=2kQ/R^2[1-z/sqrt(z^2+R^2)]=1.64e5 N/C." },
+      { level: "avanzado", scenario: "diskPotential", text: "Para un anillo ancho con radios r1 y r2, ¿que densidad superficial se usa si la carga total es Q?", options: ["sigma=Q/[pi(r2^2-r1^2)]", "sigma=Q/(2pi r2)", "sigma=Q/r2^2", "sigma=Q/[pi(r1+r2)]"], answer: 0, feedback: "El area del anillo ancho es pi(r2^2-r1^2), por eso sigma=Q/area." },
+      { level: "avanzado", scenario: "singlePositive", text: "Una carga puntual +3 uC esta a 6.0 cm. ¿Cual es |E|?", options: ["7.49 x 10^6 N/C", "4.49 x 10^5 N/C", "7.49 x 10^4 N/C", "0 N/C"], answer: 0, feedback: "E=kq/r^2=8.99e9*3e-6/(0.060)^2=7.49e6 N/C." },
+      { level: "avanzado", scenario: "singlePositive", text: "Una carga +1 uC esta en V=2.5 x 10^4 V. ¿Cual es U?", options: ["2.5 x 10^-2 J", "2.5 x 10^4 J", "2.5 x 10^-6 J", "0 J"], answer: 0, feedback: "U=qV=(1e-6)(2.5e4)=2.5e-2 J." },
+      { level: "avanzado", scenario: "solidSpherePotential", text: "Esfera solida uniforme: Q=4 uC, R=2.0 cm. ¿Cual es V(0)?", options: ["2.70 x 10^6 V", "1.80 x 10^6 V", "8.99 x 10^5 V", "0 V"], answer: 0, feedback: "V(0)=3kQ/(2R)=3*8.99e9*4e-6/(2*0.020)=2.70e6 V." },
+      { level: "avanzado", scenario: "cubeAlternating", text: "Cubo alternado +/-1 uC, lado 4.0 cm. ¿Cual es U_sistema aproximada?", options: ["-1.31 J", "+5.12 J", "0 J", "+2.08 J"], answer: 0, feedback: "U=(kQ^2/a)(-12+12/sqrt2-4/sqrt3)=-1.31 J." }
     ];
 
     function worldToScreen(p) {
@@ -5106,8 +5138,26 @@
       syncModelControls();
       draw();
     });
-    document.getElementById("formulaBtn").addEventListener("click", (e) => toggle("showFormulas", e.currentTarget));
-    document.getElementById("developmentBtn").addEventListener("click", (e) => toggle("showDevelopment", e.currentTarget));
+    document.getElementById("formulaBtn").addEventListener("click", (e) => {
+      if (test.active && currentExamMode()) {
+        state.showFormulas = false;
+        e.currentTarget.classList.remove("active");
+        draw();
+        document.getElementById("testFeedback").textContent = "Formula bloqueada durante examen. Usa tu hoja de desarrollo.";
+        return;
+      }
+      toggle("showFormulas", e.currentTarget);
+    });
+    document.getElementById("developmentBtn").addEventListener("click", (e) => {
+      if (test.active && currentExamMode()) {
+        state.showDevelopment = false;
+        e.currentTarget.classList.remove("active");
+        draw();
+        document.getElementById("testFeedback").textContent = "Desarrollo bloqueado durante examen. Entregar hoja de calculos.";
+        return;
+      }
+      toggle("showDevelopment", e.currentTarget);
+    });
     document.getElementById("probePanelBtn").addEventListener("click", (e) => togglePanel("panelProbe", e.currentTarget));
     document.getElementById("geometryPanelBtn").addEventListener("click", (e) => togglePanel("panelGeometry", e.currentTarget));
     document.getElementById("chargesPanelBtn").addEventListener("click", (e) => togglePanel("panelCharges", e.currentTarget));
@@ -5126,11 +5176,24 @@
     });
     document.getElementById("sourcesPanelBtn").addEventListener("click", (e) => togglePanel("panelSources", e.currentTarget));
     document.getElementById("solutionBtn").addEventListener("click", (e) => {
+      if (test.active && currentExamMode()) {
+        state.showSolution = false;
+        updateSolutionView();
+        syncSolutionButtons();
+        document.getElementById("testFeedback").textContent = "Solucion bloqueada durante examen. Entregar hoja de desarrollo como evidencia.";
+        return;
+      }
       toggle("showSolution", e.currentTarget);
       updateSolutionView();
       syncSolutionButtons();
     });
     document.getElementById("printSolutionsBtn").addEventListener("click", (e) => {
+      if (test.active && currentExamMode()) {
+        state.printSolutions = false;
+        syncSolutionButtons();
+        document.getElementById("testFeedback").textContent = "Clave impresa bloqueada durante examen.";
+        return;
+      }
       state.printSolutions = !state.printSolutions;
       e.currentTarget.classList.toggle("active", state.printSolutions);
       updateSolutionView();
@@ -5418,8 +5481,15 @@
       }
     }
 
-    function filteredQuestions() {
-      const level = document.getElementById("level").value;
+    function currentTestLevel() {
+      return test.active || test.ended ? (test.lockedLevel || selectedLevel()) : selectedLevel();
+    }
+
+    function currentExamMode() {
+      return test.active || test.ended ? test.lockedExamMode !== false : isExamMode();
+    }
+
+    function filteredQuestions(level = selectedLevel()) {
       return examQuestions.filter(q => q.level === level);
     }
 
@@ -5431,31 +5501,71 @@
       return document.getElementById("level").value;
     }
 
-    function examDurationMinutes() {
-      return isExamMode() && selectedLevel() === "avanzado" ? 30 : 20;
+    function examDurationMinutes(level = currentTestLevel(), exam = currentExamMode()) {
+      return exam && level === "avanzado" ? 30 : 20;
     }
 
-    function generateExamVersion() {
-      const prefix = selectedLevel() === "avanzado" ? "A" : selectedLevel() === "medio" ? "M" : "B";
+    function generateExamVersion(level = selectedLevel()) {
+      const prefix = level === "avanzado" ? "A" : level === "medio" ? "M" : "B";
       return `${prefix}-${Math.floor(1000 + Math.random() * 9000)}`;
+    }
+
+    function setAssessmentControlsLocked(locked) {
+      const level = document.getElementById("level");
+      const examMode = document.getElementById("examMode");
+      if (level) level.disabled = locked;
+      if (examMode) examMode.disabled = locked;
+    }
+
+    function resetCurrentTest(message = "") {
+      if (test.active && !currentExamMode() && practiceStats.activeStart) {
+        practiceStats.totalMs += Date.now() - practiceStats.activeStart;
+        practiceStats.activeStart = null;
+      }
+      test.active = false;
+      test.ended = false;
+      test.order = [];
+      test.records = [];
+      test.answered = false;
+      test.selected = null;
+      test.score = 0;
+      test.index = 0;
+      setAssessmentControlsLocked(false);
+      document.getElementById("printResultBtn").disabled = true;
+      document.getElementById("resultBox").classList.remove("show");
+      document.getElementById("questionText").textContent = "Inicia el autotest para practicar con preguntas de campo, potencial, trabajo y energia.";
+      document.getElementById("answers").innerHTML = "";
+      document.getElementById("canvasTask").hidden = true;
+      document.getElementById("solutionKey").classList.remove("show");
+      document.getElementById("solutionKey").textContent = "";
+      document.getElementById("qCounter").textContent = "Pregunta 0/10";
+      document.getElementById("qLevel").textContent = `Nivel: ${selectedLevel()}`;
+      document.getElementById("testFeedback").textContent = message;
+      document.getElementById("submitAnswer").disabled = true;
+      document.getElementById("nextQuestion").disabled = true;
+      tickClock();
     }
 
     function startTest() {
       const exam = isExamMode();
+      const level = selectedLevel();
       test = {
         active: true,
         index: 0,
         score: 0,
         selected: null,
         startedAt: Date.now(),
-        version: generateExamVersion(),
+        version: generateExamVersion(level),
+        lockedLevel: level,
+        lockedExamMode: exam,
         ended: false,
-        order: shuffle(filteredQuestions()).slice(0, 10),
+        order: shuffle(filteredQuestions(level)).slice(0, 10),
         currentOptions: [],
         currentAnswer: 0,
         answered: false,
         records: []
       };
+      setAssessmentControlsLocked(true);
       if (!exam) {
         practiceStats.count++;
         practiceStats.activeStart = Date.now();
@@ -5464,6 +5574,11 @@
       document.getElementById("printResultBtn").disabled = true;
       if (exam) {
         state.showSolution = false;
+        state.showFormulas = false;
+        state.showDevelopment = false;
+        state.printSolutions = false;
+        document.getElementById("formulaBtn").classList.remove("active");
+        document.getElementById("developmentBtn").classList.remove("active");
         syncSolutionButtons();
       }
       showQuestion();
@@ -5485,10 +5600,12 @@
       test.answered = false;
       loadScenario(q.scenario);
       document.getElementById("qCounter").textContent = `Pregunta ${test.index + 1}/10`;
-      document.getElementById("qLevel").textContent = `Nivel: ${q.level} · Version: ${test.version || "N/A"}`;
+      document.getElementById("qLevel").textContent = `Nivel bloqueado: ${test.lockedLevel || q.level} · Version: ${test.version || "N/A"}`;
       document.getElementById("questionText").textContent = q.text;
-      document.getElementById("testFeedback").textContent = isExamMode() ? "Modo examen: al marcar una opcion queda registrada." : "";
-      document.getElementById("submitAnswer").disabled = isExamMode();
+      document.getElementById("testFeedback").textContent = currentExamMode()
+        ? "Modo examen: nivel bloqueado. Debes entregar hoja de desarrollo con dibujos, formulas, unidades y calculos."
+        : "Modo practica: corrige hasta acertar; la solucion aparece despues.";
+      document.getElementById("submitAnswer").disabled = currentExamMode();
       document.getElementById("nextQuestion").disabled = true;
       document.getElementById("solutionKey").classList.remove("show");
       document.getElementById("solutionKey").textContent = "";
@@ -5507,18 +5624,18 @@
         label.addEventListener("change", () => {
           if (test.answered) return;
           test.selected = idx;
-          if (isExamMode()) recordCurrentAnswer(false);
+          if (currentExamMode()) recordCurrentAnswer(false);
           else document.getElementById("submitAnswer").disabled = false;
         });
         answers.appendChild(label);
       });
-      if (isExamMode()) updateSolutionView();
+      if (currentExamMode()) updateSolutionView();
     }
 
     function updateSolutionView() {
       const box = document.getElementById("solutionKey");
       const scenarioBox = document.getElementById("scenarioSolution");
-      const allowSolution = state.showSolution && !(test.active && isExamMode());
+      const allowSolution = state.showSolution && !(test.active && currentExamMode());
       const readoutsPanel = document.getElementById("readoutsPanel");
       if (readoutsPanel) {
         readoutsPanel.hidden = false;
@@ -5526,7 +5643,7 @@
       }
       updateScenarioSolution(scenarioBox, allowSolution);
       if (!box) return;
-      if (test.active && !isExamMode()) {
+      if (test.active && !currentExamMode()) {
         document.querySelectorAll(".answers label").forEach(label => label.classList.remove("correct-answer"));
         return;
       }
@@ -5586,15 +5703,19 @@
     function preparePrintableTest() {
       const wasActive = test.active;
       if (!test.order.length || test.ended) {
+        const level = selectedLevel();
+        const exam = isExamMode();
         test = {
           active: false,
           index: 0,
           score: 0,
           selected: null,
           startedAt: Date.now(),
-          version: generateExamVersion(),
+          version: generateExamVersion(level),
+          lockedLevel: level,
+          lockedExamMode: exam,
           ended: false,
-          order: shuffle(filteredQuestions()).slice(0, 10),
+          order: shuffle(filteredQuestions(level)).slice(0, 10),
           currentOptions: [],
           currentAnswer: 0,
           answered: false,
@@ -5612,16 +5733,16 @@
       const sheet = document.getElementById("printSheet");
       const name = document.getElementById("studentName").value.trim() || "________________";
       const email = document.getElementById("studentEmail").value.trim() || "________________";
-      const level = document.getElementById("level").value;
-      const order = test.order.length ? test.order : shuffle(filteredQuestions()).slice(0, 10);
-      if (!test.version) test.version = generateExamVersion();
+      const level = test.lockedLevel || selectedLevel();
+      const order = test.order.length ? test.order : shuffle(filteredQuestions(level)).slice(0, 10);
+      if (!test.version) test.version = generateExamVersion(level);
       const version = test.version;
       sheet.innerHTML = `
         <h2>Autotest de campo electrico, potencial y energia</h2>
         <p><strong>Version del examen:</strong> ${escapeHtml(version)}</p>
         <p><strong>Estudiante:</strong> ${escapeHtml(name)} &nbsp; <strong>Correo:</strong> ${escapeHtml(email)}</p>
-        <p><strong>Nivel:</strong> ${escapeHtml(level)} &nbsp; <strong>Tiempo maximo:</strong> ${examDurationMinutes()} min</p>
-        ${level === "avanzado" ? `<p><strong>Observacion:</strong> Para que el examen universitario sea valido, el estudiante debe entregar una hoja fisica con dibujos, datos, formulas, unidades y calculos usados en cada pregunta numerica.</p>` : ""}
+        <p><strong>Nivel:</strong> ${escapeHtml(level)} &nbsp; <strong>Tiempo maximo:</strong> ${examDurationMinutes(level, test.lockedExamMode !== false)} min</p>
+        <p><strong>Observacion:</strong> Examen valido solo con hoja fisica de desarrollo: dibujos, datos, formulas, despejes, unidades y calculos.</p>
         ${order.map((q, i) => `
           <div class="print-question">
             <strong>${i + 1}. ${escapeHtml(q.text)}</strong>
@@ -5645,7 +5766,7 @@
       const sheet = document.getElementById("printSheet");
       const name = document.getElementById("studentName").value.trim() || "xxxxxxxxx";
       const email = document.getElementById("studentEmail").value.trim();
-      const level = document.getElementById("level").value;
+      const level = test.lockedLevel || selectedLevel();
       const now = new Date();
       const elapsedMs = test.startedAt ? Date.now() - test.startedAt : 0;
       const practiceMs = practiceStats.totalMs + (practiceStats.activeStart ? Date.now() - practiceStats.activeStart : 0);
@@ -5655,9 +5776,11 @@
         <p><strong>Estudiante:</strong> ${escapeHtml(name)}</p>
         ${email ? `<p><strong>Correo:</strong> ${escapeHtml(email)}</p>` : ""}
         <p><strong>Fecha y hora:</strong> ${escapeHtml(now.toLocaleString())}</p>
-        <p><strong>Nivel:</strong> ${escapeHtml(level)} &nbsp; <strong>Nota:</strong> ${test.score}/10 &nbsp; <strong>Tiempo:</strong> ${formatDuration(elapsedMs)}</p>
+        <p><strong>Nivel real del intento:</strong> ${escapeHtml(level)} &nbsp; <strong>Nota:</strong> ${test.score}/10 &nbsp; <strong>Tiempo:</strong> ${formatDuration(elapsedMs)}</p>
         <p><strong>Autotests de practica:</strong> ${practiceStats.count} &nbsp; <strong>Tiempo de practica:</strong> ${formatDuration(practiceMs)}</p>
-        ${level === "avanzado" ? `<p><strong>Observacion:</strong> Resultado valido solo con hoja fisica de dibujos, formulas, unidades y calculos revisada por el docente.</p>` : ""}
+        <p><strong>Intentos registrados en esta sesion:</strong> ${attemptHistory.length}</p>
+        ${attemptHistory.length ? `<ol>${attemptHistory.map(a => `<li>${escapeHtml(a.when)} · ${escapeHtml(a.level)} · ${escapeHtml(a.version)} · ${a.score}/10 · ${escapeHtml(a.time)}</li>`).join("")}</ol>` : ""}
+        <p><strong>Observacion:</strong> Resultado valido solo con hoja fisica de dibujos, formulas, despejes, unidades y calculos revisada por el docente.</p>
         ${test.score === 10 ? "<p><strong>Felicitaciones: 10/10. Dominio excelente.</strong></p>" : ""}
         <h3>Retroalimentacion</h3>
         ${test.records.length ? `<ol>${test.records.map(r => `
@@ -5673,7 +5796,7 @@
 
     function submitAnswer() {
       if (test.selected === null || test.ended || test.answered) return;
-      if (!isExamMode() && test.selected !== test.currentAnswer) {
+      if (!currentExamMode() && test.selected !== test.currentAnswer) {
         document.getElementById("testFeedback").textContent = "Incorrecto. Intenta otra opcion antes de avanzar.";
         test.selected = null;
         document.querySelectorAll(".answers input").forEach(input => {
@@ -5712,7 +5835,7 @@
       } else {
         document.getElementById("testFeedback").textContent = "Respuesta registrada. Pulsa Siguiente.";
       }
-      if (!isExamMode() && ok) {
+      if (!currentExamMode() && ok) {
         const box = document.getElementById("solutionKey");
         if (box) {
           box.textContent = `Solucion: ${String.fromCharCode(65 + test.currentAnswer)}. ${correct.text}`;
@@ -5740,14 +5863,23 @@
       test.ended = true;
       test.active = false;
       const elapsedMs = Date.now() - test.startedAt;
-      if (!isExamMode() && practiceStats.activeStart) {
+      if (!currentExamMode() && practiceStats.activeStart) {
         practiceStats.totalMs += Date.now() - practiceStats.activeStart;
         practiceStats.activeStart = null;
       }
+      const level = test.lockedLevel || selectedLevel();
+      attemptHistory.push({
+        when: new Date().toLocaleString(),
+        level,
+        version: test.version || "N/A",
+        score: test.score,
+        time: formatDuration(elapsedMs)
+      });
+      saveAttemptHistory();
+      setAssessmentControlsLocked(false);
       const minutes = Math.floor(elapsedMs / 60000);
       const seconds = Math.floor((elapsedMs % 60000) / 1000);
       const name = document.getElementById("studentName").value.trim() || "xxxxxxxxx";
-      const level = document.getElementById("level").value;
       const result = document.getElementById("resultBox");
       const percent = test.score / 10;
       const band = percent >= 0.85 ? "dominio alto" : percent >= 0.65 ? "dominio medio" : "repaso necesario";
@@ -5763,10 +5895,10 @@
               ${escapeHtml(r.feedback)}
             </li>`).join("")}</ol>`
         : "<br><br><strong>Retroalimentacion:</strong> No hay respuestas registradas.";
-      const observation = level === "avanzado"
-        ? "<br>Observacion: examen universitario valido solo con hoja fisica de dibujos, formulas, unidades y calculos revisada por el docente."
-        : "";
-      result.innerHTML = `<strong>Estudiante ${escapeHtml(name)}: ${test.score}/10</strong><br>Version del examen: ${escapeHtml(test.version || "N/A")}<br>Tiempo: ${minutes} min ${seconds} s<br>Nivel: ${level}<br>Resultado: ${band}${observation}${congrats}${feedbackHtml}`;
+      const attemptsHtml = `<br>Intentos registrados en esta sesion: ${attemptHistory.length}` +
+        (attemptHistory.length ? `<br>${attemptHistory.map((a, i) => `${i + 1}. ${escapeHtml(a.level)} · ${escapeHtml(a.version)} · ${a.score}/10 · ${escapeHtml(a.time)}`).join("<br>")}` : "");
+      const observation = "<br>Observacion: examen valido solo con hoja fisica de dibujos, formulas, despejes, unidades y calculos revisada por el docente.";
+      result.innerHTML = `<strong>Estudiante ${escapeHtml(name)}: ${test.score}/10</strong><br>Version del examen: ${escapeHtml(test.version || "N/A")}<br>Tiempo: ${minutes} min ${seconds} s<br>Nivel real del intento: ${level}<br>Resultado: ${band}${attemptsHtml}${observation}${congrats}${feedbackHtml}`;
       result.classList.add("show");
       document.getElementById("printResultBtn").disabled = false;
       document.getElementById("qCounter").textContent = "Autotest finalizado";
@@ -5784,7 +5916,7 @@
         document.getElementById("clock").textContent = `Autotest: ${String(examDurationMinutes()).padStart(2, "0")}:00`;
         return;
       }
-      const left = Math.max(0, examDurationMinutes() * 60 * 1000 - (Date.now() - test.startedAt));
+      const left = Math.max(0, examDurationMinutes(test.lockedLevel, test.lockedExamMode) * 60 * 1000 - (Date.now() - test.startedAt));
       const m = Math.floor(left / 60000);
       const s = Math.floor((left % 60000) / 1000);
       document.getElementById("clock").textContent = `Autotest: ${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
@@ -5796,24 +5928,13 @@
     document.getElementById("startTestBtn").addEventListener("click", startTest);
     document.getElementById("startTestBtn2").addEventListener("click", startTest);
     document.getElementById("resetTestBtn").addEventListener("click", () => {
-      if (test.active && !isExamMode() && practiceStats.activeStart) {
-        practiceStats.totalMs += Date.now() - practiceStats.activeStart;
-        practiceStats.activeStart = null;
-      }
-      test.active = false;
-      test.ended = false;
-      test.records = [];
-      test.answered = false;
-      document.getElementById("printResultBtn").disabled = true;
-      document.getElementById("resultBox").classList.remove("show");
-      document.getElementById("questionText").textContent = "Inicia el autotest para practicar con preguntas de campo, potencial, trabajo y energia.";
-      document.getElementById("answers").innerHTML = "";
-      document.getElementById("canvasTask").hidden = true;
-      document.getElementById("qCounter").textContent = "Pregunta 0/10";
-      document.getElementById("testFeedback").textContent = "";
-      document.getElementById("submitAnswer").disabled = true;
-      document.getElementById("nextQuestion").disabled = true;
-      tickClock();
+      resetCurrentTest("");
+    });
+    document.getElementById("level").addEventListener("change", () => {
+      resetCurrentTest("Nivel cambiado. El intento anterior se borro; empieza una evaluacion nueva.");
+    });
+    document.getElementById("examMode").addEventListener("change", () => {
+      resetCurrentTest("Modo de evaluacion cambiado. Empieza un intento nuevo.");
     });
     document.getElementById("submitAnswer").addEventListener("click", submitAnswer);
     document.getElementById("nextQuestion").addEventListener("click", nextQuestion);
